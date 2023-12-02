@@ -16,25 +16,26 @@
         <header>
             <div class="navbar">
                 <a id="lien" href="/">Accueil</a>
-                <a id="lien" href="/skins">Planning</a>
-                <div class="dropdown-content">
-                    <a id="lien" href="#"><span class="hover-underline-animation">Profil</span></a>
-                    <a id="lien" href="#"><span class="hover-underline-animation">Profil</span></a>
-                    <a id="lien" href="#"><span class="hover-underline-animation">Profil</span></a>
+                <div class="dropdown">
+                    <a id="lien" class="dropbtn" href="#">Planning</a>
+                    <div class="dropdown-content">
+                        <a id="lien" href="#"><span class="hover-underline-animation">Planning enfants</span></a>
+                        <a id="lien" href="#"><span class="hover-underline-animation">Planning employes</span></a>
+                    </div>
                 </div>
                 <a id="lien" href="/about">Employés</a>
                 <a id="lien" href="/achat">Enfants</a>
                 <a id="lien" href="/achat">Profile</a>
-                    <div id="profile-container" class="profile-container">
-                        <div class="popup" id="popup" style="display: none;">
-                            <a id="profil" href="/inventaire"><span class="hover-underline-animation">Profil</span></a>
-                            <a id="inventaire" href="/inventaire"><span class="hover-underline-animation">Inventaire</span></a>
-                            <a id="deconnexion" href="#" onclick="decoProfile()"><span class="hover-underline-animation">Sign out</span></a>
-                        </div>
+                <div id="profile-container" class="profile-container">
+                    <div class="popup" id="popup" style="display: none;">
+                        <a id="profil" href="/inventaire"><span class="hover-underline-animation">Profil</span></a>
+                        <a id="inventaire" href="/inventaire"><span class="hover-underline-animation">Inventaire</span></a>
+                        <a id="deconnexion" href="#" onclick="decoProfile()"><span class="hover-underline-animation">Sign out</span></a>
                     </div>
-                    <div class="log-container">
-                        <a id="loginButton" class="case-button">LogIn</a>
-                    </div>
+                </div>
+                <div class="log-container">
+                    <a id="loginButton" class="case-button">LogIn</a>
+                </div>
             </div>
         </header>
     </header>
