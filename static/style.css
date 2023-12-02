@@ -122,19 +122,47 @@ a{
     background-color: white;
 }
 
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    float: none;
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
 
 #calendar-container {
     display: flex;
-    width: 40%;
     align-items: center;
     justify-content: center;
-    margin: 0 auto;
+    width: 40%;
+    height: 80%;
+    margin: 15vh auto;
+    padding: 0 10px;
     border-radius: 15px;
+    background-color: #3498db;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 #calendar {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: #3498db;
     border-radius: 5px;
 }
 

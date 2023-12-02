@@ -17,6 +17,11 @@
             <div class="navbar">
                 <a id="lien" href="/">Accueil</a>
                 <a id="lien" href="/skins">Planning</a>
+                <div class="dropdown-content">
+                    <a id="lien" href="#"><span class="hover-underline-animation">Profil</span></a>
+                    <a id="lien" href="#"><span class="hover-underline-animation">Profil</span></a>
+                    <a id="lien" href="#"><span class="hover-underline-animation">Profil</span></a>
+                </div>
                 <a id="lien" href="/about">Employés</a>
                 <a id="lien" href="/achat">Enfants</a>
                 <a id="lien" href="/achat">Profile</a>
@@ -79,7 +84,8 @@
                     dow: [1, 2, 3, 4, 5], // Jours ouvrables (du lundi au vendredi)
                     start: '07:00', // Heure de début
                     end: '19:00'    // Heure de fin
-                }
+                },
+                allDaySlot: false
             });
         });
         
