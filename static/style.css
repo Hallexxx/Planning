@@ -109,6 +109,181 @@ a{
     top: 0;
 }
 
+.case-button {
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.case-button:hover {
+    background-color: #2980b9;
+}
+
+/******************************** SIGN IN / LOGIN **********************************************/
+
+
+#loginPopup{
+    background-color: white;
+    display: flex;
+    position: fixed;
+    left: 37%;
+    top:30%;
+    padding: 3vh 10vh;
+    flex-direction: column;
+    border-radius: 20px;
+    z-index: 10;
+}
+
+
+#loginForm{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#loginForm label{
+    color: black;
+    margin: 1vh 0 1vh 0;
+}
+
+#loginForm a{
+    color: black;
+    margin: 1vh 0 0 0;
+}
+
+.button_login{
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    margin: 2vh 0 2vh 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button_login:hover {
+    background-color: #2980b9;
+}
+
+#closePopup{
+    position: absolute;
+    top:0;
+    right:0;
+    background-color: #3498db;
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#closePopup:hover {
+    background-color: #2980b9;
+}
+
+#loginForm input{
+    padding: 10px;
+    margin: 1vh 0 0 0;
+    border-color: #3498db;
+    
+}
+
+.inscription{
+    background-color: white;
+    display: flex;
+    position: fixed;
+    left: 32%;
+    top:25%;
+    padding: 3vh 10vh;
+    flex-direction: column;
+    border-radius: 20px;
+    z-index: 9;
+}
+
+.Formin{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 2vh 0 0 0;
+}
+
+.Formin label{
+    color: black;
+    margin: 1vh 0 0 0;
+}
+
+.button_submit{
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button_submit:hover {
+    background-color: #2980b9;
+}
+
+.Formin input{
+    padding: 10px;
+    margin: 1vh 0 0 0;
+    border-color: #3498db;
+    
+}
+
+.image-selection-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.selected-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 100px;
+    border: 1px solid #3498db; /* Bordure pour l'image sélectionnée */
+    margin-right: 10px;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+.selected-image img{
+    border-radius: 50px;
+    width: 100px;
+    height: 100px;
+}
+
+.image-scroll {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    margin-bottom: 10px;
+}
+
+.image-scroll img {
+    width: 40px;
+    height: 40px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+
 .button {
     border-radius: 5px;
     background-color: #3498db;
@@ -209,3 +384,72 @@ a{
     font-size: 20px;
 }
 
+.add{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 15%;
+    right: 0;
+    position: absolute;
+    margin: 0 1vh 0 0;
+}
+
+#addEmployeeButton{
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#addEmployeeButton:hover {
+    background-color: #2980b9;
+}
+
+#addEmployeeForm{
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    background-color: black;
+    position: fixed;
+    left: 37%;
+    top:30%;
+    padding: 3vh 10vh;
+    border-radius: 20px;
+    z-index: 10;
+}
+
+#employeeForm{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: white;
+}
+
+#employeeForm input{
+    margin: 1vh 0 0 0;
+}
+
+#employeeForm label{
+    margin: 1vh 0 0 0;
+}
+
+#employeeForm button{
+    margin: 1vh 0 0 0;
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#employeeForm button:hover {
+    background-color: #2980b9;
+}

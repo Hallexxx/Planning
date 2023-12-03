@@ -53,8 +53,8 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
 
         // Récupérez les valeurs du formulaire et envoyez-les au serveur via une requête AJAX
-        const usernameLogin = document.getElementById('usernameLogin').value;
-        const passwordLogin = document.getElementById('passwordLogin').value;
+        const usernameLogin = document.getElementById('usernameLog').value;
+        const passwordLogin = document.getElementById('passwordLog').value;
 
         // Utilisez fetch ou XMLHttpRequest pour envoyer les informations de connexion au serveur
         fetch('/login', {
@@ -82,4 +82,46 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const addEmployeeButton = document.getElementById('addEmployeeButton');
+    const addEmployeeForm = document.getElementById('addEmployeeForm');
+    const employeeForm = document.getElementById('employeeForm');
+
+    addEmployeeButton.addEventListener('click', function () {
+        // Affichez ou cachez le formulaire selon l'état actuel
+        addEmployeeForm.style.display = (addEmployeeForm.style.display === 'none' || addEmployeeForm.style.display === '') ? 'block' : 'none';
+    });
+
+    employeeForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+    
+        // Récupérez les valeurs du formulaire
+        const firstname = document.getElementById('firstname').value;
+        const lastname = document.getElementById('lastname').value;
+        const workDays = document.getElementById('workDays').value;
+        const workHours = document.getElementById('workHours').value;
+    
+        // Utilisez fetch ou XMLHttpRequest pour envoyer les informations au serveur
+        fetch('/addEmployee', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ firstname, lastname, workDays, workHours }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Réponse du serveur :', data);
+    
+            // Gérez la réponse du serveur ici (par exemple, masquez le formulaire après l'ajout)
+            addEmployeeForm.style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Erreur lors de la demande d\'ajout d\'employé:', error);
+        });
+    });
+    
+    
 });

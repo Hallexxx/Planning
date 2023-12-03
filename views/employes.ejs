@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/style.css">
+        <title>Creche Planning</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment-with-locales.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+        <script src="/com_serveur.js" defer></script>
+        <script src="/popup.js" defer></script>
+    </head>
+<body>
+
+    <header>
+        <div class="navbar">
+            <a id="lien" href="/">Accueil</a>
+            <div class="dropdown">
+                <a id="lien" class="dropbtn" href="#">Planning</a>
+                <div class="dropdown-content">
+                    <a id="lien" href="#"><span class="hover-underline-animation">Planning enfants</span></a>
+                    <a id="lien" href="#"><span class="hover-underline-animation">Planning employes</span></a>
+                </div>
+            </div>
+            <a id="lien" href="/about">Employés</a>
+            <a id="lien" href="/achat">Enfants</a>
+            <% if (profile != undefined) { %>
+                <div id="profile-container" class="profile-container">
+                    <p><%= profile.username %></p>
+                    <div class="popup" id="popup" style="display: none;">
+                        <a id="profil" href="/inventaire"><span class="hover-underline-animation">Profil</span></a>
+                        <a id="inventaire" href="/inventaire"><span class="hover-underline-animation">Inventaire</span></a>
+                        <a id="deconnexion" href="#" onclick="decoProfile()"><span class="hover-underline-animation">Sign out</span></a>
+                    </div>
+                </div>
+            <% } else { %>
+                <div class="log-container">
+                    <a id="loginButton" class="case-button">LogIn</a>
+                </div>
+            <% } %>
+        </div>
+    </header>
+
+    <div class="add">
+        <button id="addEmployeeButton">Ajouter un employé</button>
+    </div>
+    
+
+    <!-- Formulaire pour ajouter un employé -->
+    <div id="addEmployeeForm" style="display: none;">
+        <form id="employeeForm" action="/addEmployee" method="post">
+            <!-- Les champs du formulaire (firstname, lastname, etc.) -->
+            <label for="firstname">Prénom:</label>
+            <input type="text" id="firstname" name="firstname" required>
+            
+            <label for="lastname">Nom:</label>
+            <input type="text" id="lastname" name="lastname" required>
+
+            <label for="workDays">Jours de travail (séparés par des virgules):</label>
+            <input type="text" id="workDays" name="workDays" required>
+
+            <label for="workHours">Nombre d'heures de travail par semaine:</label>
+            <input type="number" id="workHours" name="workHours" required>
+
+            <button type="submit">Ajouter</button>
+        </form>
+    </div>
+
+    <% if (employees.length > 0) { %>
+        <% employees.forEach(employee => { %>
+            <div class="container_employes">
+                <div class="employee-card">
+                    <img src="<%= employee.photo %>" alt="Photo de <%= employee.firstname %> <%= employee.lastname %>" class="employee-photo">
+                    <h2><%= employee.firstname %> <%= employee.lastname %></h2>
+                    <p>Jours de travail: <%= employee.workDays.join(', ') %></p>
+                    <p>Horaires: <%= employee.workHours %></p>
+                </div>
+            </div>
+        <% }); %>
+    <% } else { %>
+        <div class="no-employees">
+            <p>Vous n'avez aucun employé. Ajoutez des employés en utilisant le bouton ci-dessus.</p>
+        </div>
+    <% } %>
+
+</body>
+</html>
