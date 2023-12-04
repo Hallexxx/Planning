@@ -25,9 +25,9 @@
                             <a id="lien" href="#"><span class="hover-underline-animation">Planning employes</span></a>
                         </div>
                     </div>
-                    <a id="lien" href="/employes">Employés</a>
-                    <a id="lien" href="/achat">Enfants</a>
                     <% if (profile != undefined) { %>
+                        <a id="lien" href="/employes">Employés</a>
+                        <a id="lien" href="/achat">Enfants</a>
                         <div id="profile-container" class="profile-container">
                             <p><%= profile.username %></p>
                             <div class="popup" id="popup" style="display: none;">
@@ -37,6 +37,8 @@
                             </div>
                         </div>
                     <% } else { %>
+                        <a id="lien" href="#">Employés</a>
+                        <a id="lien" href="#">Enfants</a>
                         <div class="log-container">
                             <a id="loginButton" class="case-button">LogIn</a>
                         </div>

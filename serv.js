@@ -6,6 +6,8 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const fs = require('fs');
 
+
+
 const app = express();
 const port = process.env.PORT || 8000;
 
@@ -15,6 +17,7 @@ app.use(express.static('assets'));
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -57,6 +60,96 @@ app.get('/', (req, res) => {
     const logUser = res.locals.logUser;
     res.render('home', {profile: logUser});
 });
+
+app.get('/enfants', (req, res) => {
+    const logUser = res.locals.logUser;
+    const userId = req.session.logUser.id;
+
+    // Vérifiez si req.session.logUser est défini
+    if (!req.session.logUser || !req.session.logUser.id) {
+        // Gérez le cas où logUser ou son id ne sont pas définis
+        console.error('Erreur : Utilisateur non connecté');
+        return res.redirect('/'); // Redirigez l'utilisateur vers la page d'accueil ou une page de connexion
+    }
+
+    // Récupérez les informations des enfants liés à l'utilisateur connecté depuis la base de données
+    connection.query('SELECT * FROM children WHERE user_id = ?', [userId], (error, childrenResults) => {
+        if (error) {
+            console.error('Erreur lors de la récupération des enfants : ' + error.message);
+            return res.json({ success: false, message: 'Erreur lors de la récupération des enfants' });
+        }
+
+        // Rendez la page EJS avec les résultats des enfants
+        res.render('enfants', { children: childrenResults, profile: logUser });
+    });
+});
+
+app.get('/childrens', (req, res) => {
+    const userId = req.session.logUser.id;
+
+    connection.query('SELECT * FROM children WHERE user_id = ?', [userId], (error, results) => {
+        if (error) {
+            console.error('Erreur lors de la récupération des enfants : ' + error.message);
+            return res.json({ success: false, message: 'Erreur lors de la récupération des enfants' });
+        }
+
+        // Créez un tableau pour stocker les informations des enfants
+        const children = [];
+
+        // Parcourez les résultats de la requête pour construire les informations des enfants
+        results.forEach(child => {
+            const childInfo = {
+                firstname: child.firstname,
+                lastname: child.lastname,
+                age: child.age,
+                daycareDays: child.daycareDays.split(','), // Convertissez la chaîne en tableau
+                daycareHours: child.daycareHours.split(','), // Convertissez la chaîne en tableau
+                // Ajoutez d'autres propriétés si nécessaire
+            };
+            children.push(childInfo);
+        });
+
+        // Renvoyez les informations des enfants au format JSON
+        res.json({ success: true, children });
+    });
+});
+
+// Route pour ajouter un enfant
+app.post('/addChild', (req, res) => {
+    const userId = req.session.logUser.id;
+
+    // Récupérez les propriétés nécessaires du corps de la requête
+    const firstname = req.body.firstname;
+    const lastname = req.body.lastname;
+    const age = req.body.age;
+    const daycareDays = req.body.daycareDays.join(','); // Convertissez le tableau en chaîne
+    const daycareHours = req.body.daycareHours.join(','); // Convertissez le tableau en chaîne
+
+    console.log('Valeurs reçues du formulaire :', firstname, lastname, age, daycareDays, daycareHours);
+
+    if (typeof firstname === 'undefined' || firstname.trim() === '') {
+        return res.status(400).json({ success: false, message: "Le prénom de l'enfant est requis." });
+    }
+
+    // Ajoutez userId aux données de l'enfant directement dans la requête SQL
+    const sql = 'INSERT INTO children (firstname, lastname, age, daycareDays, daycareHours, user_id) VALUES (?, ?, ?, ?, ?, ?)';
+    const values = [firstname, lastname, age, daycareDays, daycareHours, userId];
+
+    connection.query(sql, values, (error, results) => {
+        if (error) {
+            console.error('Erreur lors de l\'ajout de l\'enfant : ' + error.message);
+            return res.status(500).json({ success: false, message: 'Erreur lors de l\'ajout de l\'enfant' });
+        }
+
+        console.log('Enfant ajouté avec succès. ID de l\'enfant :', results.insertId);
+
+        // Renvoyer une réponse avec un message de succès
+        res.json({ success: true, message: "Ajout de l'enfant réussi." });
+    });
+});
+
+// ...
+
 
 // Pour récupérer les employés liés à l'utilisateur connecté
 app.get('/employees', (req, res) => {
@@ -115,22 +208,17 @@ app.post('/addEmployee', (req, res) => {
     const userId = req.session.logUser.id;
 
     // Récupérez les propriétés nécessaires du corps de la requête
-    const firstname = req.body.firstname;
-    const lastname = req.body.lastname;
-    const workDays = req.body.workDays;
-    const workHours = req.body.workHours;
+    const { firstname, lastname, photo, workDays, workHours } = req.body;
+    // Ajoutez userId aux données de l'employé
+    const newEmployee = {
+        firstname,
+        lastname,
+        workDays,
+        workHours,
+        user_id: userId,
+    };
 
-    console.log('Valeurs reçues du formulaire :', firstname, lastname, workDays, workHours);
-
-    if (typeof firstname === 'undefined' || firstname.trim() === '') {
-        return res.json({ success: false, message: "Le prénom de l'employé est requis." });
-    }
-
-    // Ajoutez userId aux données de l'employé directement dans la requête SQL
-    const sql = 'INSERT INTO employees (firstname, lastname, workDays, workHours, user_id) VALUES (?, ?, ?, ?, ?)';
-    const values = [firstname, lastname, workDays, workHours, userId];
-
-    connection.query(sql, values, (error, results) => {
+    connection.query('INSERT INTO employees SET ?', newEmployee, (error, results) => {
         if (error) {
             console.error('Erreur lors de l\'ajout de l\'employé : ' + error.message);
             return res.json({ success: false, message: 'Erreur lors de l\'ajout de l\'employé' });
@@ -142,6 +230,7 @@ app.post('/addEmployee', (req, res) => {
         res.redirect('/employes');
     });
 });
+
 
 
 
@@ -217,11 +306,11 @@ app.post('/register', async (req, res) => {
 
 
 app.post('/login', async (req, res) => {
-    const username = req.body.usernameLogin;
-    const password = req.body.passwordLogin;
+    const username = req.body.usernameLogin; // Utilisez le nom correct du champ du formulaire
+    const password = req.body.passwordLogin; // Utilisez le nom correct du champ du formulaire
 
     connection.query('SELECT * FROM users WHERE username = ?', [username], async (error, results) => {
-         console.log('SQL Query:', 'SELECT * FROM users WHERE username = ?', [username]);
+        console.log('SQL Query:', 'SELECT * FROM users WHERE username = ?', [username]);
         if (error) {
             console.error('Erreur lors de la récupération des informations d\'identification : ' + error.message);
             return res.json({ success: false, message: 'Erreur lors de la connexion' });

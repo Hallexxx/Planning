@@ -453,3 +453,23 @@ a{
 #employeeForm button:hover {
     background-color: #2980b9;
 }
+
+.container_employes{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.employee-card{
+    margin: 4vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #1e1e1e;
+    padding: 20px 60px;
+    border-radius: 50px;
+    cursor: pointer;
+}

@@ -72,10 +72,14 @@
         <% employees.forEach(employee => { %>
             <div class="container_employes">
                 <div class="employee-card">
-                    <img src="<%= employee.photo %>" alt="Photo de <%= employee.firstname %> <%= employee.lastname %>" class="employee-photo">
+                    <!-- <img src="<%= employee.photo %>" alt="Photo de <%= employee.firstname %> <%= employee.lastname %>" class="employee-photo"> -->
                     <h2><%= employee.firstname %> <%= employee.lastname %></h2>
-                    <p>Jours de travail: <%= employee.workDays.join(', ') %></p>
-                    <p>Horaires: <%= employee.workHours %></p>
+                    <% if (Array.isArray(employee.workDays)) { %>
+                        <p>Jours de travail : <%= employee.workDays.join(' , ') %></p>
+                    <% } else { %>
+                        <p>Jours de travail : <%= employee.workDays %></p>
+                    <% } %>                    
+                    <p>Horaires par semaine : <%= employee.workHours %>h</p>
                 </div>
             </div>
         <% }); %>

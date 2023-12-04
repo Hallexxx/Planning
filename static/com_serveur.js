@@ -115,13 +115,16 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(data => {
             console.log('Réponse du serveur :', data);
     
-            // Gérez la réponse du serveur ici (par exemple, masquez le formulaire après l'ajout)
-            addEmployeeForm.style.display = 'none';
+            if (data.success) {
+                // Affichez une alerte
+                alert(data.message);
+                addEmployeeForm.style.display = 'none';
+            } else {
+                console.error('Erreur lors de la demande d\'ajout d\'employé:', data.message);
+            }
         })
         .catch(error => {
             console.error('Erreur lors de la demande d\'ajout d\'employé:', error);
         });
-    });
-    
-    
+    });   
 });
