@@ -61,6 +61,10 @@ app.get('/', (req, res) => {
     res.render('home', {profile: logUser});
 });
 
+
+///////////////////////////////////// ENFANTS ////////////////////////////////////////////////////////
+
+
 app.get('/enfants', (req, res) => {
     const logUser = res.locals.logUser;
     const userId = req.session.logUser.id;
@@ -114,44 +118,10 @@ app.get('/childrens', (req, res) => {
     });
 });
 
-// Route pour ajouter un enfant
-app.post('/addChild', (req, res) => {
-    const userId = req.session.logUser.id;
 
-    // Récupérez les propriétés nécessaires du corps de la requête
-    const firstname = req.body.firstname;
-    const lastname = req.body.lastname;
-    const age = req.body.age;
-    const daycareDays = req.body.daycareDays.join(','); // Convertissez le tableau en chaîne
-    const daycareHours = req.body.daycareHours.join(','); // Convertissez le tableau en chaîne
-
-    console.log('Valeurs reçues du formulaire :', firstname, lastname, age, daycareDays, daycareHours);
-
-    if (typeof firstname === 'undefined' || firstname.trim() === '') {
-        return res.status(400).json({ success: false, message: "Le prénom de l'enfant est requis." });
-    }
-
-    // Ajoutez userId aux données de l'enfant directement dans la requête SQL
-    const sql = 'INSERT INTO children (firstname, lastname, age, daycareDays, daycareHours, user_id) VALUES (?, ?, ?, ?, ?, ?)';
-    const values = [firstname, lastname, age, daycareDays, daycareHours, userId];
-
-    connection.query(sql, values, (error, results) => {
-        if (error) {
-            console.error('Erreur lors de l\'ajout de l\'enfant : ' + error.message);
-            return res.status(500).json({ success: false, message: 'Erreur lors de l\'ajout de l\'enfant' });
-        }
-
-        console.log('Enfant ajouté avec succès. ID de l\'enfant :', results.insertId);
-
-        // Renvoyer une réponse avec un message de succès
-        res.json({ success: true, message: "Ajout de l'enfant réussi." });
-    });
-});
-
-// ...
+///////////////////////////////////// EMPLOYES ////////////////////////////////////////////////////////
 
 
-// Pour récupérer les employés liés à l'utilisateur connecté
 app.get('/employees', (req, res) => {
     const userId = req.session.logUser.id;
 
@@ -204,41 +174,11 @@ app.get('/employes', (req, res) => {
     });
 });
 
-app.post('/addEmployee', (req, res) => {
-    const userId = req.session.logUser.id;
-
-    // Récupérez les propriétés nécessaires du corps de la requête
-    const { firstname, lastname, photo, workDays, workHours } = req.body;
-    // Ajoutez userId aux données de l'employé
-    const newEmployee = {
-        firstname,
-        lastname,
-        workDays,
-        workHours,
-        user_id: userId,
-    };
-
-    connection.query('INSERT INTO employees SET ?', newEmployee, (error, results) => {
-        if (error) {
-            console.error('Erreur lors de l\'ajout de l\'employé : ' + error.message);
-            return res.json({ success: false, message: 'Erreur lors de l\'ajout de l\'employé' });
-        }
-
-        console.log('Employé ajouté avec succès. ID de l\'employé :', results.insertId);
-
-        // Redirigez l'utilisateur vers la page des employés
-        res.redirect('/employes');
-    });
-});
-
-
-
-
-
 
 //////////////////////////////////////////// ROUTE POST /////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////// USERID ////////////////////////////////////////////////////////
+
 
 app.post('/UserId', (req, res) => {
     const reqUserId = req.body.userId;
@@ -262,7 +202,6 @@ app.post('/UserId', (req, res) => {
         res.redirect('/');
     }
 });
-
 
 
 ///////////////////////////////////// REGISTER ////////////////////////////////////////////////////////
@@ -301,7 +240,6 @@ app.post('/register', async (req, res) => {
 });
 
 
-
 ///////////////////////////////////// LOGIN ////////////////////////////////////////////////////////
 
 
@@ -334,6 +272,72 @@ app.post('/login', async (req, res) => {
     });
 });
 
+///////////////////////////////////// EMPLOYES ////////////////////////////////////////////////////////
+
+
+app.post('/addEmployee', (req, res) => {
+    const userId = req.session.logUser.id;
+
+    // Récupérez les propriétés nécessaires du corps de la requête
+    const { firstname, lastname, photo, workDays, workHours } = req.body;
+    // Ajoutez userId aux données de l'employé
+    const newEmployee = {
+        firstname,
+        lastname,
+        workDays,
+        workHours,
+        user_id: userId,
+    };
+
+    connection.query('INSERT INTO employees SET ?', newEmployee, (error, results) => {
+        if (error) {
+            console.error('Erreur lors de l\'ajout de l\'employé : ' + error.message);
+            return res.json({ success: false, message: 'Erreur lors de l\'ajout de l\'employé' });
+        }
+
+        console.log('Employé ajouté avec succès. ID de l\'employé :', results.insertId);
+
+        // Redirigez l'utilisateur vers la page des employés
+        res.redirect('/employes');
+    });
+});
+
+
+///////////////////////////////////// ENFANTS ////////////////////////////////////////////////////////
+
+
+app.post('/addChild', (req, res) => {
+    const userId = req.session.logUser.id;
+
+    // Récupérez les propriétés nécessaires du corps de la requête
+    const firstname = req.body.firstname;
+    const lastname = req.body.lastname;
+    const age = req.body.age;
+    const daycareDays = req.body.daycareDays.join(','); // Convertissez le tableau en chaîne
+    const daycareHours = req.body.daycareHours.join(','); // Convertissez le tableau en chaîne
+
+    console.log('Valeurs reçues du formulaire :', firstname, lastname, age, daycareDays, daycareHours);
+
+    if (typeof firstname === 'undefined' || firstname.trim() === '') {
+        return res.status(400).json({ success: false, message: "Le prénom de l'enfant est requis." });
+    }
+
+    // Ajoutez userId aux données de l'enfant directement dans la requête SQL
+    const sql = 'INSERT INTO children (firstname, lastname, age, daycareDays, daycareHours, user_id) VALUES (?, ?, ?, ?, ?, ?)';
+    const values = [firstname, lastname, age, daycareDays, daycareHours, userId];
+
+    connection.query(sql, values, (error, results) => {
+        if (error) {
+            console.error('Erreur lors de l\'ajout de l\'enfant : ' + error.message);
+            return res.status(500).json({ success: false, message: 'Erreur lors de l\'ajout de l\'enfant' });
+        }
+
+        console.log('Enfant ajouté avec succès. ID de l\'enfant :', results.insertId);
+
+        // Renvoyer une réponse avec un message de succès
+        res.json({ success: true, message: "Ajout de l'enfant réussi." });
+    });
+});
 
 
 // Start server

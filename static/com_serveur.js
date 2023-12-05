@@ -88,11 +88,26 @@ document.addEventListener('DOMContentLoaded', function () {
     const addEmployeeButton = document.getElementById('addEmployeeButton');
     const addEmployeeForm = document.getElementById('addEmployeeForm');
     const employeeForm = document.getElementById('employeeForm');
-
+    const addEnfantButton = document.getElementById('addEnfantButton');
+    const addEnfantForm = document.getElementById('addEnfantForm');
+    const enfantForm = document.getElementById('enfantForm');
+    
     addEmployeeButton.addEventListener('click', function () {
         // Affichez ou cachez le formulaire selon l'état actuel
         addEmployeeForm.style.display = (addEmployeeForm.style.display === 'none' || addEmployeeForm.style.display === '') ? 'block' : 'none';
     });
+    
+    addEnfantButton.addEventListener('click', function () {
+        console.log("oui");
+        if (addEnfantForm.style.display === 'none' || addEnfantForm.style.display === '') {
+            console.log("Affichage du formulaire");
+            addEnfantForm.style.display = 'block';
+        } else {
+            console.log("Masquage du formulaire");
+            addEnfantForm.style.display = 'none';
+        }
+    });
+    
 
     employeeForm.addEventListener('submit', function (event) {
         event.preventDefault();
@@ -127,12 +142,5 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Erreur lors de la demande d\'ajout d\'employé:', error);
         });
     });   
-    const addEnfantButton = document.getElementById('addEnfantButton');
-    const addEnfantForm = document.getElementById('addEnfantForm');
-    const enfantForm = document.getElementById('enfantForm');
-    addEnfantButton.addEventListener('click', function () {
-        console.log("oui");
-        addEnfantForm.style.display = (addEnfantForm.style.display === 'none' || addEnfantForm.style.display === '') ? 'block' : 'none';
-        console.log("non");
-    });
+    
 });

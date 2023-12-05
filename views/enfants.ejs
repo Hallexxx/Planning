@@ -75,11 +75,18 @@
         <% children.forEach((child) => { %>
             <div class="container_enfants">
                 <div class="enfant-card">
-                    <!-- <img src="<%= employee.photo %>" alt="Photo de <%= employee.firstname %> <%= employee.lastname %>" class="employee-photo"> -->
                     <h2><%= child.firstname %> <%= child.lastname %></h2>
                     <p>Âge : <%= child.age %> ans</p>
-                    <p>Jours de garde : <%= child.daycareDays.join(', ') %></p>
-                    <p>Horaires de garde : <%= child.daycareHours.join(', ') %></p>
+                    <% if (Array.isArray(child.daycareDays)) { %>
+                        <p>Jours de garde : <%= child.daycareDays.join(', ') %></p>
+                    <% } else { %>
+                        <p>Jours de garde : <%= child.daycareDays %></p>
+                    <% } %>
+                    <% if (Array.isArray(child.daycareHours)) { %>
+                        <p>Horaires de garde : <%= child.daycareHours.join(', ') %></p>
+                    <% } else { %>
+                        <p>Horaires de garde : <%= child.daycareHours %></p>
+                    <% } %>
                 </div>
             </div>
         <% }); %>

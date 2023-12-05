@@ -537,7 +537,7 @@ a{
     background-color: #2980b9;
 }
 
-.container_employes{
+.container_enfants{
     width: 100%;
     display: flex;
     flex-wrap: wrap;
@@ -545,7 +545,7 @@ a{
     align-items: center;
 }
 
-.employee-card{
+.enfant-card{
     margin: 4vh;
     display: flex;
     flex-direction: column;
