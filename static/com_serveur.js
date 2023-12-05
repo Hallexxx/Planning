@@ -127,4 +127,12 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Erreur lors de la demande d\'ajout d\'employé:', error);
         });
     });   
+    const addEnfantButton = document.getElementById('addEnfantButton');
+    const addEnfantForm = document.getElementById('addEnfantForm');
+    const enfantForm = document.getElementById('enfantForm');
+    addEnfantButton.addEventListener('click', function () {
+        console.log("oui");
+        addEnfantForm.style.display = (addEnfantForm.style.display === 'none' || addEnfantForm.style.display === '') ? 'block' : 'none';
+        console.log("non");
+    });
 });

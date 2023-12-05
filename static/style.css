@@ -473,3 +473,86 @@ a{
     border-radius: 50px;
     cursor: pointer;
 }
+
+
+
+
+#addEnfantButton{
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#addEnfantButton:hover {
+    background-color: #2980b9;
+}
+
+#addEnfantForm{
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    background-color: black;
+    position: fixed;
+    left: 37%;
+    top:30%;
+    padding: 3vh 10vh;
+    border-radius: 20px;
+    z-index: 10;
+}
+
+#enfantForm{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: white;
+}
+
+#enfantForm input{
+    margin: 1vh 0 0 0;
+}
+
+#enfantForm label{
+    margin: 1vh 0 0 0;
+}
+
+#enfantForm button{
+    margin: 1vh 0 0 0;
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#enfantForm button:hover {
+    background-color: #2980b9;
+}
+
+.container_employes{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.employee-card{
+    margin: 4vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #1e1e1e;
+    padding: 20px 60px;
+    border-radius: 50px;
+    cursor: pointer;
+}
