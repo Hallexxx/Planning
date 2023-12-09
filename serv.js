@@ -5,6 +5,7 @@ const mysql = require('mysql');
 const path = require('path');
 const bcrypt = require('bcrypt');
 const fs = require('fs');
+const moment = require('moment');
 
 
 
@@ -62,31 +63,66 @@ app.get('/', (req, res) => {
 });
 
 
-///////////////////////////////////// ENFANTS ////////////////////////////////////////////////////////
+///////////////////////////////////// AFFICHAGE ENFANTS ////////////////////////////////////////////////////////
 
 
 app.get('/enfants', (req, res) => {
     const logUser = res.locals.logUser;
     const userId = req.session.logUser.id;
 
-    // Vérifiez si req.session.logUser est défini
     if (!req.session.logUser || !req.session.logUser.id) {
-        // Gérez le cas où logUser ou son id ne sont pas définis
         console.error('Erreur : Utilisateur non connecté');
-        return res.redirect('/'); // Redirigez l'utilisateur vers la page d'accueil ou une page de connexion
+        return res.redirect('/');
     }
 
-    // Récupérez les informations des enfants liés à l'utilisateur connecté depuis la base de données
-    connection.query('SELECT * FROM children WHERE user_id = ?', [userId], (error, childrenResults) => {
-        if (error) {
-            console.error('Erreur lors de la récupération des enfants : ' + error.message);
-            return res.json({ success: false, message: 'Erreur lors de la récupération des enfants' });
-        }
+    connection.query(
+        'SELECT c.*, cs.dayOfWeek, cs.daycareHoursStart, cs.daycareHoursEnd, ds.dayName ' +
+        'FROM children c ' +
+        'LEFT JOIN child_schedule_hours cs ON c.id = cs.child_id ' +
+        'LEFT JOIN jours_semaine ds ON cs.dayOfWeek = ds.id ' +
+        'WHERE c.user_id = ?',
+        [userId],
+        (error, results, fields) => {
+            if (error) {
+                console.error('Erreur lors de la récupération des enfants : ' + error.message);
+                return res.json({ success: false, message: 'Erreur lors de la récupération des enfants' });
+            }
 
-        // Rendez la page EJS avec les résultats des enfants
-        res.render('enfants', { children: childrenResults, profile: logUser });
-    });
+            const childrenResults = results.reduce((acc, row) => {
+                const childId = row.id;
+                if (!acc[childId]) {
+                    acc[childId] = {
+                        id: row.id,
+                        user_id: row.user_id,
+                        firstname: row.firstname,
+                        lastname: row.lastname,
+                        age: row.age,
+                        child_schedules: [],
+                    };
+                }
+
+                if (row.dayOfWeek) {
+                    acc[childId].child_schedules.push({
+                        dayOfWeek: row.dayOfWeek,
+                        dayName: row.dayName,
+                        daycareHoursStart: row.daycareHoursStart,
+                        daycareHoursEnd: row.daycareHoursEnd,
+                    });
+                }
+
+                return acc;
+            }, {});
+
+            const childrenArray = Object.values(childrenResults);
+
+            res.render('enfants', { children: childrenArray, profile: logUser });
+        }
+    );
 });
+
+
+///////////////////////////////////// AJOUT ENFANTS PLANNING ////////////////////////////////////////////////////////
+
 
 app.get('/childrens', (req, res) => {
     const userId = req.session.logUser.id;
@@ -97,29 +133,66 @@ app.get('/childrens', (req, res) => {
             return res.json({ success: false, message: 'Erreur lors de la récupération des enfants' });
         }
 
-        // Créez un tableau pour stocker les informations des enfants
-        const children = [];
+        const events = [];
 
-        // Parcourez les résultats de la requête pour construire les informations des enfants
-        results.forEach(child => {
-            const childInfo = {
-                firstname: child.firstname,
-                lastname: child.lastname,
-                age: child.age,
-                daycareDays: child.daycareDays.split(','), // Convertissez la chaîne en tableau
-                daycareHours: child.daycareHours.split(','), // Convertissez la chaîne en tableau
-                // Ajoutez d'autres propriétés si nécessaire
-            };
-            children.push(childInfo);
-        });
+        if (results && results.length > 0) {
+            results.forEach(child => {
+                const event = {
+                    title: `${child.firstname} ${child.lastname}`,
+                    start: `${child.daycareDays}T${child.daycareHours.split(',')[0]}`,
+                    end: `${child.daycareDays}T${child.daycareHours.split(',')[1]}`,
+                };
+                events.push(event);
+            });
+        }
 
-        // Renvoyez les informations des enfants au format JSON
-        res.json({ success: true, children });
+        res.json({ success: true, events });
     });
 });
 
 
-///////////////////////////////////// EMPLOYES ////////////////////////////////////////////////////////
+
+
+///////////////////////////////////// AFFICHAGE EMPLOYES ////////////////////////////////////////////////////////
+
+
+app.get('/employes', (req, res) => {
+    const logUser = res.locals.logUser;
+    const userId = req.session.logUser.id;
+
+    if (!req.session.logUser || !req.session.logUser.id) {
+        console.error('Erreur : Utilisateur non connecté');
+        return res.redirect('/');
+    }
+
+    connection.query('SELECT * FROM employees WHERE user_id = ?', [userId], (error, results) => {
+        if (error) {
+            console.error('Erreur lors de la récupération des employés : ' + error.message);
+            return res.json({ success: false, message: 'Erreur lors de la récupération des employés' });
+        }
+
+        // Ajoutez workDays à la requête SQL
+        connection.query('SELECT * FROM employee_schedules WHERE employee_id IN (?)', [results.map(e => e.id)], (error, schedules) => {
+            if (error) {
+                console.error('Erreur lors de la récupération des horaires des employés : ' + error.message);
+                return res.json({ success: false, message: 'Erreur lors de la récupération des horaires des employés' });
+            }
+
+            // Associez les jours de travail aux employés
+            results.forEach(employee => {
+                const employeeSchedules = schedules.filter(schedule => schedule.employee_id === employee.id);
+                employee.workDays = employeeSchedules.map(schedule => schedule.day_id);
+            });
+
+            // Rendez la page EJS avec les résultats des employés
+            res.render('employes', { employees: results, profile: logUser });
+        });
+    });
+});
+
+
+
+///////////////////////////////////// AJOUT EMPLOYES PLANNING ////////////////////////////////////////////////////////
 
 
 app.get('/employees', (req, res) => {
@@ -131,46 +204,220 @@ app.get('/employees', (req, res) => {
             return res.json({ success: false, message: 'Erreur lors de la récupération des employés' });
         }
 
-        // Créez un tableau pour stocker les événements du calendrier
         const events = [];
 
-        // Parcourez les résultats de la requête pour construire les événements
         results.forEach(employee => {
             const event = {
                 title: `${employee.firstname} ${employee.lastname}`,
-                start: `${employee.workDays}T${employee.workHours[0]}`, // Supposons que workDays et workHours sont des colonnes de votre table
+                start: `${employee.workDays}T${employee.workHours[0]}`,
                 end: `${employee.workDays}T${employee.workHours[1]}`,
-                // Ajoutez d'autres propriétés d'événement si nécessaire
             };
             events.push(event);
         });
 
-        // Renvoyez les événements au format JSON
         res.json({ success: true, events });
     });
 });
 
 
-app.get('/employes', (req, res) => {
-    const logUser = res.locals.logUser;
+///////////////////////////////////// AJOUT EMPLOYES PLANNING ////////////////////////////////////////////////////////
+
+
+async function getChildDaycareHours(childId) {
+    const sqlQuery = `
+        SELECT daycareHoursStart, daycareHoursEnd
+        FROM child_hours
+        WHERE child_id = ${childId};
+    `;
+
+    return new Promise((resolve, reject) => {
+        connection.query(sqlQuery, (error, results) => {
+            if (error) {
+                console.error('Erreur lors de la récupération des heures de garde de l\'enfant : ' + error.message);
+                reject(error);
+            } else {
+                if (results.length > 0) {
+                    const childStartHour = results[0].daycareHoursStart;
+                    const childEndHour = results[0].daycareHoursEnd;
+
+                    resolve({ childStartHour, childEndHour });
+                } else {
+                    console.error('Aucune heure de garde trouvée pour l\'enfant avec l\'ID ' + childId);
+                    reject(new Error('Aucune heure de garde trouvée pour l\'enfant avec l\'ID ' + childId));
+                }
+            }
+        });
+    });
+}
+
+
+///////////////////////////////////// ASSIGNEMENT EMPLOYES ////////////////////////////////////////////////////////
+
+
+function assignEmployeesToChildren(employees, childSchedules, events) {
+    events.forEach(event => {
+        const titleParts = event.title.split(':');
+
+        if (titleParts.length > 1) {
+            const childId = titleParts[1] ? titleParts[1].trim() : null;
+
+            if (childId) {
+                const childSchedule = childSchedules.find(schedule => schedule.childId === parseInt(childId, 10));
+
+                if (childSchedule) {
+                    const { daycareHoursStart, daycareHoursEnd } = childSchedule;
+
+                    console.log('Heure de début de garde de l\'enfant : ' + daycareHoursStart);
+                    console.log('Heure de fin de garde de l\'enfant : ' + daycareHoursEnd);
+
+                    event.start = moment().isoWeekday(childSchedule.dayOfWeek).hour(daycareHoursStart);
+                    event.end = moment().isoWeekday(childSchedule.dayOfWeek).hour(daycareHoursEnd);
+                } else {
+                    console.error('Aucun horaire de garde trouvé pour l\'enfant avec l\'ID ' + childId);
+                }
+            } else {
+                console.error('Le titre de l\'événement ne contient pas de childId valide.');
+            }
+        } else {
+            console.error('Le titre de l\'événement ne contient pas de séparateur ":".');
+        }
+    });
+}
+
+///////////////////////////////////// DONNEES ENFANTS ////////////////////////////////////////////////////////
+
+
+async function getChildData(userId) {
+    return new Promise((resolve, reject) => {
+        // Remplacez les champs et la logique suivante par vos propres besoins
+        connection.query('SELECT id, daycareHoursStart, daycareHoursEnd FROM child_schedule_hours WHERE child_schedule_id = ?', [userId], (error, results) => {
+            if (error) {
+                console.error('Erreur lors de la récupération des données des enfants : ' + error.message);
+                reject(error);
+            } else {
+                const childrenData = results.map(result => ({
+                    id: result.id,
+                    daycareHoursStart: result.daycareHoursStart,
+                    daycareHoursEnd: result.daycareHoursEnd,
+                    // Ajoutez d'autres champs au besoin
+                }));
+                resolve(childrenData);
+            }
+        });
+    });
+}
+
+///////////////////////////////////// DONNEES EMPLOYES ////////////////////////////////////////////////////////
+
+
+async function getEmployeeData(userId) {
+    return new Promise((resolve, reject) => {
+        connection.query('SELECT id, workDays, workHours FROM employees WHERE user_id = ?', [userId], (error, results) => {
+            if (error) {
+                console.error('Erreur lors de la récupération des données des employés : ' + error.message);
+                reject(error);
+            } else {
+                const employeesData = results.map(result => ({
+                    id: result.id,
+                    workDays: result.workDays,
+                    workHours: result.workHours,
+                    // Ajoutez d'autres champs au besoin
+                }));
+                resolve(employeesData);
+            }
+        });
+    });
+}
+
+///////////////////////////////////// AJOUT EMPLOYES PLANNING ////////////////////////////////////////////////////////
+
+
+function getChildSchedules(userId) {
+    return new Promise((resolve, reject) => {
+        connection.query('SELECT id, child_id, dayOfWeek, daycareHoursStart, daycareHoursEnd FROM child_schedules WHERE child_id IN (SELECT id FROM children WHERE user_id = ?)', [userId], (error, results) => {
+            if (error) {
+                console.error('Erreur lors de la récupération des horaires de garde des enfants : ' + error.message);
+                reject(error);
+            } else {
+                const childSchedules = results.map(result => ({
+                    id: result.id,
+                    childId: result.child_id,
+                    dayOfWeek: result.dayOfWeek,
+                    daycareHoursStart: result.daycareHoursStart,
+                    daycareHoursEnd: result.daycareHoursEnd,
+                    // Ajoutez d'autres champs au besoin
+                }));
+                resolve(childSchedules);
+            }
+        });
+    });
+}
+
+
+///////////////////////////////////// PLANNING ////////////////////////////////////////////////////////
+
+
+app.get('/planning', async (req, res) => {
+    const userId = req.session.logUser ? req.session.logUser.id : null;
+
+    try {
+        if (userId) {
+            // Récupérez les données des enfants, des employés et les horaires de garde des enfants
+            const childrenResults = await getChildData(userId);
+            const employeesResults = await getEmployeeData(userId);
+            const childSchedules = await getChildSchedules(userId);
+    
+            // Créez un tableau pour stocker les événements du calendrier
+            const events = [];
+    
+            childrenResults.forEach(child => {
+                if (child.daycareHours) { // Vérifiez si daycareHours est défini
+                    const daycareHoursParts = child.daycareHours.split(',');
+    
+                    if (daycareHoursParts.length === 2) {
+                        const childEvent = {
+                            title: `Enfant:${child.id}`,
+                            start: moment().isoWeekday(child.daycareDays).hour(daycareHoursParts[0]),
+                            end: moment().isoWeekday(child.daycareDays).hour(daycareHoursParts[1]),
+                            color: 'blue',
+                        };                                              
+                        events.push(childEvent);
+                    } else {
+                        console.error(`Format invalide pour daycareHours pour l'enfant avec l'ID ${child.id}`);
+                    }
+                } else {
+                    console.error(`Aucune valeur daycareHours pour l'enfant avec l'ID ${child.id}`);
+                }
+            });
+    
+            // Assignez les employés aux enfants en fonction des horaires de garde
+            assignEmployeesToChildren(employeesResults, childSchedules, events);
+    
+            res.json({ success: true, events });
+        } else {
+            // Si l'utilisateur n'est pas connecté, renvoyez un planning vide
+            res.json({ success: true, events: [] });
+        }
+    } catch (error) {
+        console.error('Erreur lors de la récupération des données du planning : ' + error.message);
+        res.json({ success: false, message: 'Erreur lors de la récupération des données du planning' });
+    }
+});
+
+
+///////////////////////////////////// AJOUT EMPLOYES PLANNING ////////////////////////////////////////////////////////
+
+
+app.get('/childSchedules', (req, res) => {
     const userId = req.session.logUser.id;
 
-    // Vérifiez si req.session.logUser est défini
-    if (!req.session.logUser || !req.session.logUser.id) {
-        // Gérez le cas où logUser ou son id ne sont pas définis
-        console.error('Erreur : Utilisateur non connecté');
-        return res.redirect('/'); // Redirigez l'utilisateur vers la page d'accueil ou une page de connexion
-    }
-
-
-    connection.query('SELECT * FROM employees WHERE user_id = ?', [userId], (error, results) => {
+    connection.query('SELECT * FROM children WHERE user_id = ?', [userId], (error, results) => {
         if (error) {
-            console.error('Erreur lors de la récupération des employés : ' + error.message);
-            return res.json({ success: false, message: 'Erreur lors de la récupération des employés' });
+            console.error('Erreur lors de la récupération des horaires de garde des enfants : ' + error.message);
+            return res.json({ success: false, message: 'Erreur lors de la récupération des horaires de garde des enfants' });
         }
 
-        // Rendez la page EJS avec les résultats des employés
-        res.render('employes', { employees: results, profile: logUser});
+        res.json({ success: true, childSchedules: results });
     });
 });
 
@@ -272,49 +519,94 @@ app.post('/login', async (req, res) => {
     });
 });
 
-///////////////////////////////////// EMPLOYES ////////////////////////////////////////////////////////
+
+///////////////////////////////////// AJOUT EMPLOYES ////////////////////////////////////////////////////////
 
 
 app.post('/addEmployee', (req, res) => {
     const userId = req.session.logUser.id;
+    const { firstname, lastname, workDays, workHours } = req.body;
 
-    // Récupérez les propriétés nécessaires du corps de la requête
-    const { firstname, lastname, photo, workDays, workHours } = req.body;
-    // Ajoutez userId aux données de l'employé
     const newEmployee = {
         firstname,
         lastname,
-        workDays,
         workHours,
         user_id: userId,
     };
 
-    connection.query('INSERT INTO employees SET ?', newEmployee, (error, results) => {
-        if (error) {
-            console.error('Erreur lors de l\'ajout de l\'employé : ' + error.message);
+    connection.beginTransaction(async (err) => {
+        if (err) {
+            console.error('Erreur lors du démarrage de la transaction : ' + err.message);
             return res.json({ success: false, message: 'Erreur lors de l\'ajout de l\'employé' });
         }
 
-        console.log('Employé ajouté avec succès. ID de l\'employé :', results.insertId);
+        try {
+            const { insertId: employeeId } = await insertEmployee(newEmployee);
 
-        // Redirigez l'utilisateur vers la page des employés
-        res.redirect('/employes');
+            await insertEmployeeSchedules(employeeId, workDays);
+
+            connection.commit((commitErr) => {
+                if (commitErr) {
+                    return connection.rollback(() => {
+                        console.error('Erreur lors de la validation de la transaction : ' + commitErr.message);
+                        return res.json({ success: false, message: 'Erreur lors de l\'ajout de l\'employé' });
+                    });
+                }
+
+                console.log('Employé ajouté avec succès. ID de l\'employé :', employeeId);
+                res.json({ success: true, message: 'Employé ajouté avec succès.' });
+            });
+        } catch (error) {
+            console.error('Erreur lors de l\'ajout de l\'employé : ' + error.message);
+            connection.rollback(() => {
+                res.json({ success: false, message: 'Erreur lors de l\'ajout de l\'employé' });
+            });
+        }
     });
 });
 
+async function insertEmployee(employee) {
+    return new Promise((resolve, reject) => {
+        connection.query('INSERT INTO employees SET ?', employee, (error, results) => {
+            if (error) {
+                console.error('Erreur lors de l\'ajout de l\'employé : ' + error.message);
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+}
 
-///////////////////////////////////// ENFANTS ////////////////////////////////////////////////////////
+async function insertEmployeeSchedules(employeeId, workDays) {
+    const values = workDays.map(day => [employeeId, day]);
+
+    return new Promise((resolve, reject) => {
+        connection.query('INSERT INTO employee_schedules (employee_id, day_id) VALUES ?', [values], (error, results) => {
+            if (error) {
+                console.error('Erreur lors de l\'ajout des jours de travail : ' + error.message);
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+}
+
+
+
+///////////////////////////////////// AJOUT ENFANTS ////////////////////////////////////////////////////////
 
 
 app.post('/addChild', (req, res) => {
     const userId = req.session.logUser.id;
 
-    // Récupérez les propriétés nécessaires du corps de la requête
     const firstname = req.body.firstname;
     const lastname = req.body.lastname;
     const age = req.body.age;
-    const daycareDays = req.body.daycareDays.join(','); // Convertissez le tableau en chaîne
-    const daycareHours = req.body.daycareHours.join(','); // Convertissez le tableau en chaîne
+
+    const daycareDays = Array.isArray(req.body.daycareDays) ? req.body.daycareDays : [req.body.daycareDays];
+    const daycareHours = Array.isArray(req.body.daycareHours) ? req.body.daycareHours : [req.body.daycareHours];
 
     console.log('Valeurs reçues du formulaire :', firstname, lastname, age, daycareDays, daycareHours);
 
@@ -322,9 +614,8 @@ app.post('/addChild', (req, res) => {
         return res.status(400).json({ success: false, message: "Le prénom de l'enfant est requis." });
     }
 
-    // Ajoutez userId aux données de l'enfant directement dans la requête SQL
-    const sql = 'INSERT INTO children (firstname, lastname, age, daycareDays, daycareHours, user_id) VALUES (?, ?, ?, ?, ?, ?)';
-    const values = [firstname, lastname, age, daycareDays, daycareHours, userId];
+    const sql = 'INSERT INTO children (firstname, lastname, age, user_id) VALUES (?, ?, ?, ?)';
+    const values = [firstname, lastname, age, userId];
 
     connection.query(sql, values, (error, results) => {
         if (error) {
@@ -334,13 +625,134 @@ app.post('/addChild', (req, res) => {
 
         console.log('Enfant ajouté avec succès. ID de l\'enfant :', results.insertId);
 
+        const childId = results.insertId;
+
+        const insertChildHoursSql = 'INSERT INTO child_schedule_hours (child_id, dayOfWeek, daycareHoursStart, daycareHoursEnd) VALUES (?, ?, ?, ?)';
+
+        daycareDays.forEach((day, index) => {
+            const hours = daycareHours[index].split('-');
+            const startHour = hours[0].trim();
+            const endHour = hours[1].trim();
+
+            const valuesChildHours = [childId, day, startHour, endHour];
+
+            connection.query(insertChildHoursSql, valuesChildHours, (errorChildHours) => {
+                if (errorChildHours) {
+                    console.error('Erreur lors de l\'ajout des heures de garde : ' + errorChildHours.message);
+                }
+            });
+        });
+
         // Renvoyer une réponse avec un message de succès
-        res.json({ success: true, message: "Ajout de l'enfant réussi." });
+        res.redirect('/enfants');
     });
 });
 
 
-// Start server
+///////////////////////////////////// SUPPRESSION ENFANTS ////////////////////////////////////////////////////////
+
+
+app.delete('/deleteChild/:childId', (req, res) => {
+    const childId = req.params.childId;
+
+    // Commencez par supprimer les entrées liées dans la table child_schedule_hours
+    connection.query('DELETE FROM child_schedule_hours WHERE child_id = ?', [childId], (errorChildScheduleHours, resultsChildScheduleHours) => {
+        if (errorChildScheduleHours) {
+            console.error('Erreur lors de la suppression des heures de garde de l\'enfant : ' + errorChildScheduleHours.message);
+            return res.json({ success: false, message: 'Erreur lors de la suppression des heures de garde de l\'enfant' });
+        }
+
+        // Ensuite, supprimez l'enfant de la table children
+        connection.query('DELETE FROM children WHERE id = ?', [childId], (errorChildren, resultsChildren) => {
+            if (errorChildren) {
+                console.error('Erreur lors de la suppression de l\'enfant : ' + errorChildren.message);
+                return res.json({ success: false, message: 'Erreur lors de la suppression de l\'enfant' });
+            }
+
+            console.log('Enfant supprimé avec succès');
+            return res.json({ success: true, message: 'Enfant supprimé avec succès' });
+        });
+    });
+});
+
+
+///////////////////////////////////// SUPPRESSION EMPLOYES ////////////////////////////////////////////////////////
+
+
+app.delete('/deleteEmployee/:employeeId', async (req, res) => {
+    const employeeId = req.params.employeeId;
+
+    try {
+        // Supprimez d'abord les horaires d'employé associés
+        await new Promise((resolve, reject) => {
+            connection.query('DELETE FROM employee_schedules WHERE employee_id = ?', [employeeId], (error) => {
+                if (error) reject(error);
+                else resolve();
+            });
+        });
+
+        // Ensuite, supprimez l'employé lui-même
+        await new Promise((resolve, reject) => {
+            connection.query('DELETE FROM employees WHERE id = ?', [employeeId], (error) => {
+                if (error) reject(error);
+                else resolve();
+            });
+        });
+
+        console.log('Employé supprimé avec succès');
+        return res.json({ success: true, message: 'Employé supprimé avec succès' });
+    } catch (error) {
+        console.error('Erreur lors de la suppression de l\'employé : ' + error.message);
+        return res.json({ success: false, message: 'Erreur lors de la suppression de l\'employé' });
+    }
+});
+
+
+// Exemple pour récupérer les détails d'un employé
+app.get('/getEmployeeDetails/:employeeId', (req, res) => {
+    const employeeId = req.params.employeeId;
+
+    // Effectuez une requête SQL pour récupérer les détails de l'employé en fonction de l'ID
+    const sql = 'SELECT * FROM employees WHERE id = ?';
+    connection.query(sql, [employeeId], (error, results) => {
+        if (error) {
+            console.error('Erreur lors de la récupération des détails de l\'employé : ' + error.message);
+            return res.json({ success: false, message: 'Erreur lors de la récupération des détails de l\'employé' });
+        }
+
+        // Retournez les détails sous forme de JSON
+        return res.json({ success: true, employeeDetails: results[0] });
+    });
+});
+
+
+// Exemple de route pour gérer la soumission du formulaire de modification d'un employé
+app.post('/editEmployee', (req, res) => {
+    const employeeId = req.body.employeeId;
+    const editedFirstName = req.body.editFirstName;
+    const editedLastName = req.body.editLastName;
+    const editedAge = req.body.editAge;
+    // ... Autres champs du formulaire ...
+
+    // Effectuez une requête SQL pour mettre à jour les informations de l'employé
+    const sql = 'UPDATE employees SET firstname = ?, lastname = ?, age = ? WHERE id = ?';
+    const values = [editedFirstName, editedLastName, editedAge, employeeId];
+
+    connection.query(sql, values, (error, results) => {
+        if (error) {
+            console.error('Erreur lors de la mise à jour des informations de l\'employé : ' + error.message);
+            return res.status(500).json({ success: false, message: 'Erreur lors de la mise à jour des informations de l\'employé' });
+        }
+
+        console.log('Informations de l\'employé mises à jour avec succès');
+        return res.json({ success: true, message: 'Informations de l\'employé mises à jour avec succès' });
+    });
+});
+
+
+
+///////////////////////////////////// LANCEMENT DU PORT ////////////////////////////////////////////////////////
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

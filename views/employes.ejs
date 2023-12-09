@@ -12,82 +12,153 @@
         <script src="/com_serveur.js" defer></script>
         <script src="/popup.js" defer></script>
     </head>
-<body>
+    <body>
 
-    <header>
-        <div class="navbar">
-            <a id="lien" href="/">Accueil</a>
-            <div class="dropdown">
-                <a id="lien" class="dropbtn" href="#">Planning</a>
-                <div class="dropdown-content">
-                    <a id="lien" href="#"><span class="hover-underline-animation">Planning enfants</span></a>
-                    <a id="lien" href="#"><span class="hover-underline-animation">Planning employes</span></a>
-                </div>
-            </div>
-            <a id="lien" href="/about">Employés</a>
-            <a id="lien" href="/achat">Enfants</a>
-            <% if (profile != undefined) { %>
-                <div id="profile-container" class="profile-container">
-                    <p><%= profile.username %></p>
-                    <div class="popup" id="popup" style="display: none;">
-                        <a id="profil" href="/inventaire"><span class="hover-underline-animation">Profil</span></a>
-                        <a id="inventaire" href="/inventaire"><span class="hover-underline-animation">Inventaire</span></a>
-                        <a id="deconnexion" href="#" onclick="decoProfile()"><span class="hover-underline-animation">Sign out</span></a>
+        <header>
+            <div class="navbar">
+                <a id="lien" href="/">Accueil</a>
+                <div class="dropdown">
+                    <a id="lien" class="dropbtn" href="#">Planning</a>
+                    <div class="dropdown-content">
+                        <a id="lien" href="#"><span class="hover-underline-animation">Planning enfants</span></a>
+                        <a id="lien" href="#"><span class="hover-underline-animation">Planning employes</span></a>
                     </div>
                 </div>
-            <% } else { %>
-                <div class="log-container">
-                    <a id="loginButton" class="case-button">LogIn</a>
-                </div>
-            <% } %>
-        </div>
-    </header>
-
-    <div class="add">
-        <button id="addEmployeeButton">Ajouter un employé</button>
-    </div>
-    
-
-    <!-- Formulaire pour ajouter un employé -->
-    <div id="addEmployeeForm" style="display: none;">
-        <form id="employeeForm" action="/addEmployee" method="post">
-            <!-- Les champs du formulaire (firstname, lastname, etc.) -->
-            <label for="firstname">Prénom:</label>
-            <input type="text" id="firstname" name="firstname" required>
-            
-            <label for="lastname">Nom:</label>
-            <input type="text" id="lastname" name="lastname" required>
-
-            <label for="workDays">Jours de travail (séparés par des virgules):</label>
-            <input type="text" id="workDays" name="workDays" required>
-
-            <label for="workHours">Nombre d'heures de travail par semaine:</label>
-            <input type="number" id="workHours" name="workHours" required>
-
-            <button type="submit">Ajouter</button>
-        </form>
-    </div>
-
-    <% if (employees.length > 0) { %>
-        <% employees.forEach(employee => { %>
-            <div class="container_employes">
-                <div class="employee-card">
-                    <!-- <img src="<%= employee.photo %>" alt="Photo de <%= employee.firstname %> <%= employee.lastname %>" class="employee-photo"> -->
-                    <h2><%= employee.firstname %> <%= employee.lastname %></h2>
-                    <% if (Array.isArray(employee.workDays)) { %>
-                        <p>Jours de travail : <%= employee.workDays.join(' , ') %></p>
-                    <% } else { %>
-                        <p>Jours de travail : <%= employee.workDays %></p>
-                    <% } %>                    
-                    <p>Horaires par semaine : <%= employee.workHours %>h</p>
-                </div>
+                <% if (profile != undefined) { %>
+                    <a id="lien" href="/employes">Employés</a>
+                    <a id="lien" href="/enfants">Enfants</a>
+                    <div id="profile-container" class="profile-container">
+                        <p><%= profile.username %></p>
+                        <div class="popup" id="popup" style="display: none;">
+                            <a id="profil" href="/inventaire"><span class="hover-underline-animation">Profil</span></a>
+                            <a id="inventaire" href="/inventaire"><span class="hover-underline-animation">Inventaire</span></a>
+                            <a id="deconnexion" href="#" onclick="decoProfile()"><span class="hover-underline-animation">Sign out</span></a>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <a id="lien" href="#">Employés</a>
+                    <a id="lien" href="#">Enfants</a>
+                    <div class="log-container">
+                        <a id="loginButton" class="case-button">LogIn</a>
+                    </div>
+                <% } %>
             </div>
-        <% }); %>
-    <% } else { %>
-        <div class="no-employees">
-            <p>Vous n'avez aucun employé. Ajoutez des employés en utilisant le bouton ci-dessus.</p>
-        </div>
-    <% } %>
+        </header>
 
-</body>
+        <div class="add">
+            <button id="addEmployeeButton">Ajouter un employé</button>
+        </div>
+        
+        <div id="addEmployeeForm" style="display: none;">
+            <form id="employeeForm" action="/addEmployee" method="post">
+                <label for="firstname">Prénom:</label>
+                <input type="text" id="firstname" name="firstname" required>
+                
+                <label for="lastname">Nom:</label>
+                <input type="text" id="lastname" name="lastname" required>
+        
+                <label for="workDays">Jours de travail:</label>
+                <div>
+                    <input type="checkbox" id="monday" name="workDays[]" value="1">
+                    <label for="monday">Lundi</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="tuesday" name="workDays[]" value="2">
+                    <label for="tuesday">Mardi</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="wednesday" name="workDays[]" value="3">
+                    <label for="wednesday">Mercredi</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="thursday" name="workDays[]" value="4">
+                    <label for="thursday">Jeudi</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="friday" name="workDays[]" value="5">
+                    <label for="friday">Vendredi</label>
+                </div>
+        
+                <label for="workHours">Nombre d'heures de travail par semaine:</label>
+                <input type="number" id="workHours" name="workHours" required>
+        
+                <button type="submit">Ajouter</button>
+            </form>
+        </div>
+    
+        <!-- Exemple de formulaire de modification (à intégrer selon votre préférence) -->
+        <div id="editEmployeeForm" style="display: none;">
+            <form id="employeeForm" action="/editEmployee" method="post">
+                <!-- Les champs du formulaire -->
+                <input type="hidden" id="editEmployeeId" name="editEmployeeId"> <!-- Champ caché pour stocker l'ID de l'employé -->
+
+                <label for="editFirstName">Prénom:</label>
+                <input type="text" id="editFirstName" name="editFirstName" required>
+
+                <label for="editLastName">Nom:</label>
+                <input type="text" id="editLastName" name="editLastName" required>
+
+                <label for="editWorkDays">Jours de travail:</label>
+                <div>
+                    <input type="checkbox" id="editMonday" name="editWorkDays[]" value="1">
+                    <label for="editMonday">Lundi</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="editTuesday" name="editWorkDays[]" value="2">
+                    <label for="editTuesday">Mardi</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="editWednesday" name="editWorkDays[]" value="3">
+                    <label for="editWednesday">Mercredi</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="editThursday" name="editWorkDays[]" value="4">
+                    <label for="editThursday">Jeudi</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="editFriday" name="editWorkDays[]" value="5">
+                    <label for="editFriday">Vendredi</label>
+                </div>
+
+                <label for="editWorkHours">Nombre d'heures de travail par semaine:</label>
+                <input type="number" id="editWorkHours" name="editWorkHours" required>
+
+                <button type="submit">Enregistrer</button>
+            </form>
+        </div>
+
+        
+
+        <% function getDayName(dayNumber) { %>
+            <% const daysOfWeek = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi']; %>
+            <%= daysOfWeek[dayNumber - 1] %>
+        <% } %>
+        
+        <% if (employees.length > 0) { %>
+            <% employees.forEach(employee => { %>
+                <div class="container_employes" data-employee-id="<%= employee.id %>">
+                    <div class="employee-card" onmouseover="afficherBoutonSupprimer(this)" onmouseout="cacherBoutonSupprimer(this)">
+                        <button class="btn-supprimer" onclick="deleteEmployee('<%= employee.id %>')">Supprimer</button>
+                        <h2><%= employee.firstname %> <%= employee.lastname %></h2>
+                        <p>Jours de travail :
+                            <% if (Array.isArray(employee.workDays)) { %>
+                                <% employee.workDays.forEach(day => { %>
+                                    <%= getDayName(day) %>
+                                <% }); %>
+                            <% } else { %>
+                                <%= getDayName(employee.workDays) %>
+                            <% } %>
+                        </p>
+                        <p>Horaires par semaine : <%= employee.workHours %>h</p>
+                        <button class="edit-icon" onclick="openEditForm('<%= employee.id %>')">✏️</button>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <div class="no-employees">
+                <p>Vous n'avez aucun employé. Ajoutez des employés en utilisant le bouton ci-dessus.</p>
+            </div>
+        <% } %>
+        
+    </body>
 </html>

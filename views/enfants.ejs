@@ -24,9 +24,9 @@
                     <a id="lien" href="#"><span class="hover-underline-animation">Planning employes</span></a>
                 </div>
             </div>
-            <a id="lien" href="/about">Employés</a>
-            <a id="lien" href="/achat">Enfants</a>
             <% if (profile != undefined) { %>
+                <a id="lien" href="/employes">Employés</a>
+                <a id="lien" href="/enfants">Enfants</a>
                 <div id="profile-container" class="profile-container">
                     <p><%= profile.username %></p>
                     <div class="popup" id="popup" style="display: none;">
@@ -36,6 +36,8 @@
                     </div>
                 </div>
             <% } else { %>
+                <a id="lien" href="#">Employés</a>
+                <a id="lien" href="#">Enfants</a>
                 <div class="log-container">
                     <a id="loginButton" class="case-button">LogIn</a>
                 </div>
@@ -48,53 +50,113 @@
     </div>
     
 
-    <!-- Formulaire pour ajouter un employé -->
     <div id="addEnfantForm" style="display: none;">
-        <form id="enfantForm" action="/addEenfant" method="post">
+        <form id="enfantForm" action="/addChild" method="post">
             <!-- Les champs du formulaire (firstname, lastname, etc.) -->
             <label for="firstname">Prénom:</label>
             <input type="text" id="firstname" name="firstname" required>
-
+    
             <label for="lastname">Nom:</label>
             <input type="text" id="lastname" name="lastname" required>
-
+    
             <label for="age">Âge:</label>
             <input type="number" id="age" name="age" required>
-
-            <label for="daycareDays">Jours de garde (séparés par des virgules):</label>
-            <input type="text" id="daycareDays" name="daycareDays" required>
-
-            <label for="daycareHours">Horaires de garde (séparés par des virgules):</label>
-            <input type="text" id="daycareHours" name="daycareHours" required>
-
+    
+            <!-- Jours de garde -->
+            <label>Jours de garde:</label>
+            <div>
+                <input type="checkbox" id="daycareMonday" name="daycareDays[]" value="1">
+                <label for="daycareMonday">Lundi</label>
+                <input type="text" id="daycareHoursMonday" name="daycareHours[]" placeholder="HH:mm-HH:mm">
+            </div>
+    
+            <div>
+                <input type="checkbox" id="daycareTuesday" name="daycareDays[]" value="2">
+                <label for="daycareTuesday">Mardi</label>
+                <input type="text" id="daycareHoursTuesday" name="daycareHours[]" placeholder="HH:mm-HH:mm">
+            </div>
+    
+            <div>
+                <input type="checkbox" id="daycareWednesday" name="daycareDays[]" value="3">
+                <label for="daycareWednesday">Mercredi</label>
+                <input type="text" id="daycareHoursWednesday" name="daycareHours[]" placeholder="HH:mm-HH:mm">
+            </div>
+    
+            <div>
+                <input type="checkbox" id="daycareThursday" name="daycareDays[]" value="4">
+                <label for="daycareThursday">Jeudi</label>
+                <input type="text" id="daycareHoursThursday" name="daycareHours[]" placeholder="HH:mm-HH:mm">
+            </div>
+    
+            <div>
+                <input type="checkbox" id="daycareFriday" name="daycareDays[]" value="5">
+                <label for="daycareFriday">Vendredi</label>
+                <input type="text" id="daycareHoursFriday" name="daycareHours[]" placeholder="HH:mm-HH:mm">
+            </div>
+    
+            <div>
+                <input type="checkbox" id="daycareSaturday" name="daycareDays[]" value="6">
+                <label for="daycareSaturday">Samedi</label>
+                <input type="text" id="daycareHoursSaturday" name="daycareHours[]" placeholder="HH:mm-HH:mm">
+            </div>
+    
             <button type="submit">Ajouter</button>
         </form>
     </div>
+    
 
+    <% function getDayName(dayNumber) { %>
+        <% const daysOfWeek = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi']; %>
+        <%= daysOfWeek[dayNumber - 1] %>
+    <% } %>
+    
+    <% function getChildSchedule(child, dayOfWeek) { %>
+        <% const childSchedule = child.child_schedules.find(schedule => schedule.dayOfWeek === dayOfWeek); %>
+        <% if (childSchedule) { %>
+            <% const childHours = child.child_schedule_hours.find(hours => hours.dayOfWeek === dayOfWeek); %>
+            <!-- Ajout de débogage -->
+            <%= console.log('childHours:', childHours, 'dayOfWeek:', dayOfWeek) %>
+            <% if (childHours) { %>
+                <%= childHours.daycareHoursStart %> - <%= childHours.daycareHoursEnd %>
+            <% } else { %>
+                Horaires non définis pour le jour <%= dayOfWeek %>
+            <% } %>
+        <% } else { %>
+            Horaires non définis pour le jour <%= dayOfWeek %>
+        <% } %>
+    <% } %>
+    
     <% if (children.length > 0) { %>
         <% children.forEach((child) => { %>
             <div class="container_enfants">
-                <div class="enfant-card">
+                <div class="enfant-card" onmouseover="afficherBoutonSupprimer(this)" onmouseout="cacherBoutonSupprimer(this)">
+                    <button class="btn-supprimer" onclick="deleteChild('<%= child.id %>')">Supprimer</button>
                     <h2><%= child.firstname %> <%= child.lastname %></h2>
                     <p>Âge : <%= child.age %> ans</p>
-                    <% if (Array.isArray(child.daycareDays)) { %>
-                        <p>Jours de garde : <%= child.daycareDays.join(', ') %></p>
+                    <% if (Array.isArray(child.child_schedules) && child.child_schedules.length > 0) { %>
+                        <p>Jours et horaires de garde :</p>
+                        <ul>
+                            <% child.child_schedules.forEach(schedule => { %>
+                                <li>
+                                    Jour : <%= schedule.dayName %>,
+                                    Horaire : <%= schedule.daycareHoursStart %> - <%= schedule.daycareHoursEnd %>
+                                </li>
+                            <% }); %>
+                        </ul>
                     <% } else { %>
-                        <p>Jours de garde : <%= child.daycareDays %></p>
-                    <% } %>
-                    <% if (Array.isArray(child.daycareHours)) { %>
-                        <p>Horaires de garde : <%= child.daycareHours.join(', ') %></p>
-                    <% } else { %>
-                        <p>Horaires de garde : <%= child.daycareHours %></p>
+                        <p>Aucun horaire défini pour cet enfant.</p>
                     <% } %>
                 </div>
             </div>
         <% }); %>
     <% } else { %>
-        <div class="no-employees">
-            <p>Vous n'avez aucun employé. Ajoutez des employés en utilisant le bouton ci-dessus.</p>
+        <div class="no-children">
+            <p>Vous n'avez aucun enfant. Ajoutez des enfants en utilisant le bouton ci-dessus.</p>
         </div>
     <% } %>
+    
+    
+    
 
 </body>
 </html>

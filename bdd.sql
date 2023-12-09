@@ -28,17 +28,38 @@ CREATE TABLE IF NOT EXISTS `children` (
   `firstname` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,
   `age` int NOT NULL,
-  `daycareDays` varchar(255) NOT NULL,
-  `daycareHours` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `children_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table creche_planning.children : ~1 rows (environ)
+-- Listage des données de la table creche_planning.children : ~2 rows (environ)
 DELETE FROM `children`;
-INSERT INTO `children` (`id`, `user_id`, `firstname`, `lastname`, `age`, `daycareDays`, `daycareHours`) VALUES
-	(1, 26, 'ALEX', 'PEREZ', 6, 'lundi , mardi, jeudiI', '9h/18h lundi 9h/15h mardi');
+INSERT INTO `children` (`id`, `user_id`, `firstname`, `lastname`, `age`) VALUES
+	(3, 26, 'Alexandre', 'Perez', 8),
+	(4, 26, 'paupau', 'rainguez', 8);
+
+-- Listage de la structure de table creche_planning. child_schedule_hours
+DROP TABLE IF EXISTS `child_schedule_hours`;
+CREATE TABLE IF NOT EXISTS `child_schedule_hours` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `child_id` int NOT NULL,
+  `dayOfWeek` int NOT NULL,
+  `daycareHoursStart` varchar(255) NOT NULL,
+  `daycareHoursEnd` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `child_id` (`child_id`),
+  KEY `fk_child_schedule_hours_dayOfWeek` (`dayOfWeek`),
+  CONSTRAINT `fk_child_schedule_hours_child_id` FOREIGN KEY (`child_id`) REFERENCES `children` (`id`),
+  CONSTRAINT `fk_child_schedule_hours_dayOfWeek` FOREIGN KEY (`dayOfWeek`) REFERENCES `jours_semaine` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Listage des données de la table creche_planning.child_schedule_hours : ~3 rows (environ)
+DELETE FROM `child_schedule_hours`;
+INSERT INTO `child_schedule_hours` (`id`, `child_id`, `dayOfWeek`, `daycareHoursStart`, `daycareHoursEnd`) VALUES
+	(4, 3, 4, '8', '15'),
+	(5, 4, 1, '9', '18'),
+	(6, 4, 1, '10', '17');
 
 -- Listage de la structure de table creche_planning. employees
 DROP TABLE IF EXISTS `employees`;
@@ -47,18 +68,59 @@ CREATE TABLE IF NOT EXISTS `employees` (
   `user_id` int DEFAULT NULL,
   `firstname` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,
-  `workDays` varchar(255) NOT NULL,
-  `workHours` int NOT NULL DEFAULT '0',
+  `workHours` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `employees_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table creche_planning.employees : ~2 rows (environ)
+-- Listage des données de la table creche_planning.employees : ~0 rows (environ)
 DELETE FROM `employees`;
-INSERT INTO `employees` (`id`, `user_id`, `firstname`, `lastname`, `workDays`, `workHours`) VALUES
-	(1, 26, 'alex', 'alex', 'lundi,mardi', 15),
-	(12, 26, 'pauline', 'rainguez', 'lundi,mardi,jeudi', 10);
+INSERT INTO `employees` (`id`, `user_id`, `firstname`, `lastname`, `workHours`) VALUES
+	(14, 26, 'Pauline', 'Rainguez', 30),
+	(15, 26, 'alexandre', 'perez', 20);
+
+-- Listage de la structure de table creche_planning. employee_schedules
+DROP TABLE IF EXISTS `employee_schedules`;
+CREATE TABLE IF NOT EXISTS `employee_schedules` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `employee_id` int NOT NULL,
+  `day_id` int NOT NULL,
+  `workHoursStart` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `workHoursEnd` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `employee_id` (`employee_id`),
+  KEY `day_id` (`day_id`),
+  CONSTRAINT `employee_schedules_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`),
+  CONSTRAINT `employee_schedules_ibfk_2` FOREIGN KEY (`day_id`) REFERENCES `jours_semaine` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Listage des données de la table creche_planning.employee_schedules : ~0 rows (environ)
+DELETE FROM `employee_schedules`;
+INSERT INTO `employee_schedules` (`id`, `employee_id`, `day_id`, `workHoursStart`, `workHoursEnd`) VALUES
+	(4, 14, 1, NULL, NULL),
+	(5, 15, 1, NULL, NULL),
+	(6, 15, 2, NULL, NULL),
+	(7, 15, 3, NULL, NULL);
+
+-- Listage de la structure de table creche_planning. jours_semaine
+DROP TABLE IF EXISTS `jours_semaine`;
+CREATE TABLE IF NOT EXISTS `jours_semaine` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `dayName` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Listage des données de la table creche_planning.jours_semaine : ~7 rows (environ)
+DELETE FROM `jours_semaine`;
+INSERT INTO `jours_semaine` (`id`, `dayName`) VALUES
+	(1, 'Lundi'),
+	(2, 'Mardi'),
+	(3, 'Mercredi'),
+	(4, 'Jeudi'),
+	(5, 'Vendredi'),
+	(6, 'Samedi'),
+	(7, 'Dimanche');
 
 -- Listage de la structure de table creche_planning. users
 DROP TABLE IF EXISTS `users`;
@@ -69,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table creche_planning.users : ~1 rows (environ)
+-- Listage des données de la table creche_planning.users : ~2 rows (environ)
 DELETE FROM `users`;
 INSERT INTO `users` (`id`, `username`, `password`) VALUES
 	(26, 'alex', '$2b$10$XrK6UtFbFlS6/cg.cAcB3.CSXCJTO800qXjvgcE7F5/bc7LIXfe9K');

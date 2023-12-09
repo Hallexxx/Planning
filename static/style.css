@@ -384,6 +384,10 @@ a{
     font-size: 20px;
 }
 
+
+/******************************** PAGE EMPLOYES **********************************************/
+
+
 .add{
     display: flex;
     align-items: center;
@@ -474,7 +478,22 @@ a{
     cursor: pointer;
 }
 
+#editEmployeeForm{
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    background-color: black;
+    position: fixed;
+    left: 37%;
+    top:30%;
+    padding: 3vh 10vh;
+    border-radius: 20px;
+    z-index: 10;
+}
 
+
+
+/******************************** PAGE ENFANTS **********************************************/
 
 
 #addEnfantButton{
@@ -555,4 +574,25 @@ a{
     padding: 20px 60px;
     border-radius: 50px;
     cursor: pointer;
+}
+
+.btn-supprimer {
+    display: none; /* Par défaut, le bouton est caché */
+    margin: 0 0 2vh 0;
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-supprimer:hover {
+    background-color: #2980b9;
+}
+
+.visible {
+    display: inline-block !important; /* Rend le bouton visible */
 }
