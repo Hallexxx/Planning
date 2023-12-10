@@ -597,6 +597,23 @@ async function insertEmployeeSchedules(employeeId, workDays) {
 
 ///////////////////////////////////// AJOUT ENFANTS ////////////////////////////////////////////////////////
 
+function getDayOfWeek(dayName) {
+    switch (dayName) {
+        case 'Lundi':
+            return 1;
+        case 'Mardi':
+            return 2;
+        case 'Mercredi':
+            return 3;
+        case 'Jeudi':
+            return 4;
+        case 'Vendredi':
+            return 5;
+        // Ajoutez les autres jours au besoin
+        default:
+            return 0; // ou une valeur par défaut appropriée
+    }
+}
 
 app.post('/addChild', (req, res) => {
     const userId = req.session.logUser.id;
@@ -614,39 +631,60 @@ app.post('/addChild', (req, res) => {
         return res.status(400).json({ success: false, message: "Le prénom de l'enfant est requis." });
     }
 
-    const sql = 'INSERT INTO children (firstname, lastname, age, user_id) VALUES (?, ?, ?, ?)';
-    const values = [firstname, lastname, age, userId];
+    const sqlInsertChild = 'INSERT INTO children (firstname, lastname, age, user_id) VALUES (?, ?, ?, ?)';
+    const valuesInsertChild = [firstname, lastname, age, userId];
 
-    connection.query(sql, values, (error, results) => {
-        if (error) {
-            console.error('Erreur lors de l\'ajout de l\'enfant : ' + error.message);
+    connection.query(sqlInsertChild, valuesInsertChild, (errorInsertChild, resultsInsertChild) => {
+        if (errorInsertChild) {
+            console.error('Erreur lors de l\'ajout de l\'enfant : ' + errorInsertChild.message);
             return res.status(500).json({ success: false, message: 'Erreur lors de l\'ajout de l\'enfant' });
         }
 
-        console.log('Enfant ajouté avec succès. ID de l\'enfant :', results.insertId);
+        console.log('Enfant ajouté avec succès. ID de l\'enfant :', resultsInsertChild.insertId);
 
-        const childId = results.insertId;
+        const childId = resultsInsertChild.insertId;
 
-        const insertChildHoursSql = 'INSERT INTO child_schedule_hours (child_id, dayOfWeek, daycareHoursStart, daycareHoursEnd) VALUES (?, ?, ?, ?)';
+        const sqlInsertChildHours = 'INSERT INTO child_schedule_hours (child_id, dayOfWeek, daycareHoursStart, daycareHoursEnd) VALUES (?, ?, ?, ?)';
 
-        daycareDays.forEach((day, index) => {
-            const hours = daycareHours[index].split('-');
-            const startHour = hours[0].trim();
-            const endHour = hours[1].trim();
+        for (let i = 0; i < daycareDays.length; i++) {
+            const day = daycareDays[i];
 
-            const valuesChildHours = [childId, day, startHour, endHour];
+            if (day) {
+                // Assurez-vous que l'index est valide pour daycareHours
+                if (i < daycareHours.length) {
+                    const dayHours = daycareHours[i];
 
-            connection.query(insertChildHoursSql, valuesChildHours, (errorChildHours) => {
-                if (errorChildHours) {
-                    console.error('Erreur lors de l\'ajout des heures de garde : ' + errorChildHours.message);
+                    // Ajoutez une vérification supplémentaire pour s'assurer qu'il y a des heures spécifiées
+                    if (dayHours && typeof dayHours === 'string' && dayHours.trim() !== '') {
+                        const hours = dayHours.split('-');
+
+                        const startHour = hours[0] ? hours[0].trim() : '';
+                        const endHour = hours[1] ? hours[1].trim() : '';
+
+                        console.log('Valeurs pour l\'insertion des heures de garde :', childId, day, startHour, endHour);
+
+                        const valuesInsertChildHours = [childId, getDayOfWeek(day), startHour, endHour];
+
+                        connection.query(sqlInsertChildHours, valuesInsertChildHours, (errorInsertChildHours, resultsInsertChildHours) => {
+                            if (errorInsertChildHours) {
+                                console.error('Erreur lors de l\'ajout des heures de garde : ' + errorInsertChildHours.message);
+                            } else {
+                                console.log('Heures de garde ajoutées avec succès. ID des heures de garde :', resultsInsertChildHours.insertId);
+                            }
+                        });
+                    } else {
+                        console.error('Heures de garde invalides pour le jour ' + day);
+                    }
+                } else {
+                    console.error('Index en dehors de la plage pour daycareHours : ' + i);
                 }
-            });
-        });
+            }
+        }
 
-        // Renvoyer une réponse avec un message de succès
         res.redirect('/enfants');
     });
 });
+
 
 
 ///////////////////////////////////// SUPPRESSION ENFANTS ////////////////////////////////////////////////////////
@@ -726,29 +764,137 @@ app.get('/getEmployeeDetails/:employeeId', (req, res) => {
 });
 
 
-// Exemple de route pour gérer la soumission du formulaire de modification d'un employé
+///////////////////////////////////// MODIFICATION EMPLOYES ////////////////////////////////////////////////////////
+
+
 app.post('/editEmployee', (req, res) => {
-    const employeeId = req.body.employeeId;
+    const employeeId = req.body.editEmployeeId;
     const editedFirstName = req.body.editFirstName;
     const editedLastName = req.body.editLastName;
-    const editedAge = req.body.editAge;
-    // ... Autres champs du formulaire ...
+    const editedWorkDays = req.body.editWorkDays; // Si vous utilisez les jours de travail
+    const editedWorkHours = req.body.editWorkHours;
+
+    console.log('ID de l\'employé à mettre à jour :', employeeId);
+    console.log('Nouveaux détails :', editedFirstName, editedLastName, editedWorkDays, editedWorkHours);
 
     // Effectuez une requête SQL pour mettre à jour les informations de l'employé
-    const sql = 'UPDATE employees SET firstname = ?, lastname = ?, age = ? WHERE id = ?';
-    const values = [editedFirstName, editedLastName, editedAge, employeeId];
+    const updateEmployeeSql = 'UPDATE employees SET firstname = ?, lastname = ?, workHours = ? WHERE id = ?';
+    const employeeValues = [editedFirstName, editedLastName, editedWorkHours, employeeId];
 
-    connection.query(sql, values, (error, results) => {
+    connection.query(updateEmployeeSql, employeeValues, (error, employeeResults) => {
         if (error) {
             console.error('Erreur lors de la mise à jour des informations de l\'employé : ' + error.message);
             return res.status(500).json({ success: false, message: 'Erreur lors de la mise à jour des informations de l\'employé' });
         }
 
-        console.log('Informations de l\'employé mises à jour avec succès');
-        return res.json({ success: true, message: 'Informations de l\'employé mises à jour avec succès' });
+        const editedWorkHoursStart = req.body.editWorkHoursStart;  // Assurez-vous que le champ correspondant existe dans votre formulaire
+        const editedWorkHoursEnd = req.body.editWorkHoursEnd;      // Assurez-vous que le champ correspondant existe dans votre formulaire
+
+        console.log('Nouveaux horaires de travail :', editedWorkHoursStart, editedWorkHoursEnd);
+
+        // Mise à jour des jours de travail dans la table employee_schedules
+        const deleteScheduleSql = 'DELETE FROM employee_schedules WHERE employee_id = ?';
+        connection.query(deleteScheduleSql, [employeeId], (deleteError, deleteResults) => {
+            if (deleteError) {
+                console.error('Erreur lors de la suppression des anciens horaires de travail : ' + deleteError.message);
+                return res.status(500).json({ success: false, message: 'Erreur lors de la suppression des anciens horaires de travail' });
+            }
+
+            // Insertion des nouveaux horaires de travail
+            const insertScheduleSql = 'INSERT INTO employee_schedules (employee_id, day_id, workHoursStart, workHoursEnd) VALUES (?, ?, ?, ?)';
+            
+            // Itérer sur les jours de travail et les insérer dans la table
+            editedWorkDays.forEach(day => {
+                const scheduleValues = [employeeId, day, editedWorkHoursStart, editedWorkHoursEnd];
+                connection.query(insertScheduleSql, scheduleValues, (insertError, insertResults) => {
+                    if (insertError) {
+                        console.error('Erreur lors de l\'ajout des nouveaux horaires de travail : ' + insertError.message);
+                        return res.status(500).json({ success: false, message: 'Erreur lors de l\'ajout des nouveaux horaires de travail' });
+                    }
+                });
+            });
+
+            console.log('Informations de l\'employé mises à jour avec succès');
+            res.redirect('/employes');
+        });
+    })
+});
+
+
+app.post('/editChild', (req, res) => {
+    const childId = req.body.editChildId;
+    const editedFirstName = req.body.editFirstName;
+    const editedLastName = req.body.editLastName;
+    const editedAge = req.body.editAge;
+    const editedWorkDays = req.body.editWorkDays;
+    const editedWorkHoursStart = req.body.editWorkHoursStart;
+    const editedWorkHoursEnd = req.body.editWorkHoursEnd;
+
+    console.log('ID de l\'enfant à mettre à jour :', childId);
+    console.log('Nouveaux détails :', editedFirstName, editedLastName, editedAge, editedWorkDays, editedWorkHoursStart, editedWorkHoursEnd);
+
+    // Vérifiez que les heures de garde sont définies
+    if (editedWorkHoursStart === undefined || editedWorkHoursEnd === undefined) {
+        return res.status(400).json({ success: false, message: 'Les heures de garde doivent être spécifiées' });
+    }
+
+    // Effectuez une requête SQL pour mettre à jour les informations de l'enfant
+    const updateChildSql = 'UPDATE children SET firstname = ?, lastname = ?, age = ? WHERE id = ?';
+    const childValues = [editedFirstName, editedLastName, editedAge, childId];
+
+    connection.query(updateChildSql, childValues, (error, childResults) => {
+        if (error) {
+            console.error('Erreur lors de la mise à jour des informations de l\'enfant : ' + error.message);
+            return res.status(500).json({ success: false, message: 'Erreur lors de la mise à jour des informations de l\'enfant' });
+        }
+
+        // Supprimez les anciens horaires de travail de l'enfant
+        const deleteScheduleSql = 'DELETE FROM child_schedule_hours WHERE child_id = ?';
+        connection.query(deleteScheduleSql, [childId], (deleteError, deleteResults) => {
+            if (deleteError) {
+                console.error('Erreur lors de la suppression des anciens horaires de travail de l\'enfant : ' + deleteError.message);
+                return res.status(500).json({ success: false, message: 'Erreur lors de la suppression des anciens horaires de travail de l\'enfant' });
+            }
+
+            // Insérez les nouveaux horaires de travail
+            const insertScheduleSql = 'INSERT INTO child_schedule_hours (child_id, dayOfWeek, daycareHoursStart, daycareHoursEnd) VALUES (?, ?, ?, ?)';
+
+            // Itérez sur les jours de travail et insérez-les dans la table
+            editedWorkDays.forEach((day, index) => {
+                const scheduleValues = [childId, day, editedWorkHoursStart[index], editedWorkHoursEnd[index]];
+                connection.query(insertScheduleSql, scheduleValues, (insertError, insertResults) => {
+                    if (insertError) {
+                        console.error('Erreur lors de l\'ajout des nouveaux horaires de travail de l\'enfant : ' + insertError.message);
+                        return res.status(500).json({ success: false, message: 'Erreur lors de l\'ajout des nouveaux horaires de travail de l\'enfant' });
+                    }
+                });
+            });
+
+
+            console.log('Informations de l\'enfant mises à jour avec succès');
+            res.redirect('/enfantss');
+        });
     });
 });
 
+
+
+
+app.get('/getChildDetails/:childId', (req, res) => {
+    const childId = req.params.childId;
+
+    // Effectuez une requête SQL pour récupérer les détails de l'enfant en fonction de l'ID
+    const sql = 'SELECT * FROM children WHERE id = ?';
+    connection.query(sql, [childId], (error, results) => {
+        if (error) {
+            console.error('Erreur lors de la récupération des détails de l\'enfant : ' + error.message);
+            return res.json({ success: false, message: 'Erreur lors de la récupération des détails de l\'enfant' });
+        }
+
+        // Retournez les détails sous forme de JSON
+        return res.json({ success: true, childDetails: results[0] });
+    });
+});
 
 
 ///////////////////////////////////// LANCEMENT DU PORT ////////////////////////////////////////////////////////

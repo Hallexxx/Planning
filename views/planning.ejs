@@ -15,34 +15,35 @@
     <body>
 
         <header>
-            <div class="navbar">
-                <a id="lien" href="/">Accueil</a>
-                <div class="dropdown">
-                    <a id="lien" class="dropbtn" href="#">Planning</a>
-                    <div class="dropdown-content">
-                        <a id="lien" href="#"><span class="hover-underline-animation">Planning enfants</span></a>
-                        <a id="lien" href="#"><span class="hover-underline-animation">Planning employes</span></a>
-                    </div>
-                </div>
-                <% if (profile != undefined) { %>
-                    <a id="lien" href="/employes">Employés</a>
-                    <a id="lien" href="/enfants">Enfants</a>
-                    <div id="profile-container" class="profile-container">
-                        <p><%= profile.username %></p>
-                        <div class="popup" id="popup" style="display: none;">
-                            <a id="profil" href="/inventaire"><span class="hover-underline-animation">Profil</span></a>
-                            <a id="inventaire" href="/inventaire"><span class="hover-underline-animation">Inventaire</span></a>
-                            <a id="deconnexion" href="#" onclick="decoProfile()"><span class="hover-underline-animation">Sign out</span></a>
+            <nav class="navbar">
+                <ul class="nav-list">
+                    <a id="lien" href="/">Accueil</a>
+                    <li class="menu-deroulant"><a href="#">Planning</a>
+                        <ul class="sous">
+                            <a id="lien" href="#"><span class="hover-underline-animation">Planning enfants</span></a>
+                            <a id="lien" href="#"><span class="hover-underline-animation">Planning employes</span></a>
+                        </ul>
+                    </li>
+                    <% if (profile != undefined) { %>
+                        <a id="lien" href="/employes">Employés</a>
+                        <a id="lien" href="/enfants">Enfants</a>
+                        <div id="profile-container" class="profile-container">
+                            <p><%= profile.username %></p>
+                            <div class="popup" id="popup" style="display: none;">
+                                <a id="profil" href="/inventaire"><span class="hover-underline-animation">Profil</span></a>
+                                <a id="inventaire" href="/inventaire"><span class="hover-underline-animation">Inventaire</span></a>
+                                <a id="deconnexion" href="#" onclick="decoProfile()"><span class="hover-underline-animation">Sign out</span></a>
+                            </div>
                         </div>
-                    </div>
-                <% } else { %>
-                    <a id="lien" href="#">Employés</a>
-                    <a id="lien" href="#">Enfants</a>
-                    <div class="log-container">
-                        <a id="loginButton" class="case-button">LogIn</a>
-                    </div>
-                <% } %>
-            </div>
+                    <% } else { %>
+                        <a id="lien" href="#">Employés</a>
+                        <a id="lien" href="#">Enfants</a>
+                        <div class="log-container">
+                            <a id="loginButton" class="case-button">LogIn</a>
+                        </div>
+                    <% } %>
+                </ul>
+            </nav>
         </header>
 
         

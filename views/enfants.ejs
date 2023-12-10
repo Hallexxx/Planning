@@ -15,34 +15,34 @@
 <body>
 
     <header>
-        <div class="navbar">
-            <a id="lien" href="/">Accueil</a>
-            <div class="dropdown">
-                <a id="lien" class="dropbtn" href="#">Planning</a>
-                <div class="dropdown-content">
-                    <a id="lien" href="#"><span class="hover-underline-animation">Planning enfants</span></a>
-                    <a id="lien" href="#"><span class="hover-underline-animation">Planning employes</span></a>
-                </div>
-            </div>
-            <% if (profile != undefined) { %>
-                <a id="lien" href="/employes">Employés</a>
-                <a id="lien" href="/enfants">Enfants</a>
-                <div id="profile-container" class="profile-container">
-                    <p><%= profile.username %></p>
-                    <div class="popup" id="popup" style="display: none;">
-                        <a id="profil" href="/inventaire"><span class="hover-underline-animation">Profil</span></a>
-                        <a id="inventaire" href="/inventaire"><span class="hover-underline-animation">Inventaire</span></a>
-                        <a id="deconnexion" href="#" onclick="decoProfile()"><span class="hover-underline-animation">Sign out</span></a>
+        <nav class="navbar">
+            <ul class="nav-list">
+                <a id="lien" href="/">Accueil</a>
+                <li class="menu-deroulant"><a href="#">Planning</a>
+                    <ul class="sous">
+                        <a id="lien" href="#"><span class="hover-underline-animation">Planning enfants</span></a>
+                        <a id="lien" href="#"><span class="hover-underline-animation">Planning employes</span></a>
+                    </ul>
+                </li>
+                <% if (profile != undefined) { %>
+                    <a id="lien" href="/employes">Employés</a>
+                    <a id="lien" href="/enfants">Enfants</a>
+                    <div id="profile-container" class="profile-container">
+                        <p><%= profile.username %></p>
+                        <div class="popup" id="popup" style="display: none;">
+                            <a id="profil" href="/inventaire"><span class="hover-underline-animation">Profil</span></a>
+                            <a id="deconnexion" href="#" onclick="decoProfile()"><span class="hover-underline-animation">Sign out</span></a>
+                        </div>
                     </div>
-                </div>
-            <% } else { %>
-                <a id="lien" href="#">Employés</a>
-                <a id="lien" href="#">Enfants</a>
-                <div class="log-container">
-                    <a id="loginButton" class="case-button">LogIn</a>
-                </div>
-            <% } %>
-        </div>
+                <% } else { %>
+                    <a id="lien" href="#">Employés</a>
+                    <a id="lien" href="#">Enfants</a>
+                    <div class="log-container">
+                        <a id="loginButton" class="case-button">LogIn</a>
+                    </div>
+                <% } %>
+            </ul>
+        </nav>
     </header>
 
     <div class="add">
@@ -52,57 +52,123 @@
 
     <div id="addEnfantForm" style="display: none;">
         <form id="enfantForm" action="/addChild" method="post">
-            <!-- Les champs du formulaire (firstname, lastname, etc.) -->
-            <label for="firstname">Prénom:</label>
-            <input type="text" id="firstname" name="firstname" required>
+            <label for="firstname">Prénom :</label>
+            <input type="text" id="firstname" name="firstname" placeholder="Prénom" required>
     
-            <label for="lastname">Nom:</label>
-            <input type="text" id="lastname" name="lastname" required>
+            <label for="lastname">Nom :</label>
+            <input type="text" id="lastname" name="lastname" placeholder="Nom" required>
     
-            <label for="age">Âge:</label>
-            <input type="number" id="age" name="age" required>
+            <label for="age">Âge :</label>
+            <input type="number" id="age" name="age" placeholder="Âge" required>
     
             <!-- Jours de garde -->
-            <label>Jours de garde:</label>
+            <label>Jours de garde :</label>
             <div>
-                <input type="checkbox" id="daycareMonday" name="daycareDays[]" value="1">
-                <label for="daycareMonday">Lundi</label>
-                <input type="text" id="daycareHoursMonday" name="daycareHours[]" placeholder="HH:mm-HH:mm">
-            </div>
+                <div class="JG">
+                    <label for="daycareMonday">
+                        <input type="checkbox" id="daycareMonday" name="daycareDays[]" value="Lundi">Lundi
+                    </label>
+                    <div>
+                        <input type="text" id="daycareHoursMonday" name="daycareHours[]" placeholder="HH:mm-HH:mm">
+                    </div>
+                </div>
     
-            <div>
-                <input type="checkbox" id="daycareTuesday" name="daycareDays[]" value="2">
-                <label for="daycareTuesday">Mardi</label>
-                <input type="text" id="daycareHoursTuesday" name="daycareHours[]" placeholder="HH:mm-HH:mm">
-            </div>
+                <div class="JG">
+                    <label for="daycareTuesday">
+                        <input type="checkbox" id="daycareTuesday" name="daycareDays[]" value="Mardi">Mardi
+                    </label>
+                    <div>
+                        <input type="text" id="daycareHoursTuesday" name="daycareHours[]" placeholder="HH:mm-HH:mm">
+                    </div>
+                </div>
     
-            <div>
-                <input type="checkbox" id="daycareWednesday" name="daycareDays[]" value="3">
-                <label for="daycareWednesday">Mercredi</label>
-                <input type="text" id="daycareHoursWednesday" name="daycareHours[]" placeholder="HH:mm-HH:mm">
-            </div>
+                <div class="JG">
+                    <label for="daycareWednesday">
+                        <input type="checkbox" id="daycareWednesday" name="daycareDays[]" value="Mercredi">Mercredi
+                    </label>
+                    <div>
+                        <input type="text" id="daycareHoursWednesday" name="daycareHours[]" placeholder="HH:mm-HH:mm">
+                    </div>
+                </div>
     
-            <div>
-                <input type="checkbox" id="daycareThursday" name="daycareDays[]" value="4">
-                <label for="daycareThursday">Jeudi</label>
-                <input type="text" id="daycareHoursThursday" name="daycareHours[]" placeholder="HH:mm-HH:mm">
-            </div>
+                <div class="JG">
+                    <label for="daycareThursday">
+                        <input type="checkbox" id="daycareThursday" name="daycareDays[]" value="Jeudi">Jeudi
+                    </label>
+                    <div>
+                        <input type="text" id="daycareHoursThursday" name="daycareHours[]" placeholder="HH:mm-HH:mm">
+                    </div>
+                </div>
     
-            <div>
-                <input type="checkbox" id="daycareFriday" name="daycareDays[]" value="5">
-                <label for="daycareFriday">Vendredi</label>
-                <input type="text" id="daycareHoursFriday" name="daycareHours[]" placeholder="HH:mm-HH:mm">
-            </div>
-    
-            <div>
-                <input type="checkbox" id="daycareSaturday" name="daycareDays[]" value="6">
-                <label for="daycareSaturday">Samedi</label>
-                <input type="text" id="daycareHoursSaturday" name="daycareHours[]" placeholder="HH:mm-HH:mm">
+                <div class="JG">
+                    <label for="daycareFriday">
+                        <input type="checkbox" id="daycareFriday" name="daycareDays[]" value="Vendredi">Vendredi
+                    </label>
+                    <div>
+                        <input type="text" id="daycareHoursFriday" name="daycareHours[]" placeholder="HH:mm-HH:mm">
+                    </div>
+                </div>
             </div>
     
             <button type="submit">Ajouter</button>
         </form>
     </div>
+    
+
+    <div id="editEnfantForm" style="display: none;">
+        <form id="enfantForm" action="/editChild" method="post">
+            <!-- Les champs du formulaire -->
+            <input type="hidden" id="editChildId" name="editChildId">
+    
+            <label for="editFirstname">Prénom :</label>
+            <input type="text" id="editFirstname" name="editFirstname" required>
+    
+            <label for="editLastname">Nom :</label>
+            <input type="text" id="editLastname" name="editLastname" required>
+    
+            <label for="editAge">Âge :</label>
+            <input type="number" id="editAge" name="editAge" required>
+    
+            <label>Jours de garde :</label>
+            <div class="check">
+                <input type="checkbox" id="editDaycareMonday" name="editDaycareDays[]" value="1">
+                <label for="editDaycareMonday">Lundi</label>
+                <input type="text" id="editDaycareHoursMondayStart" name="editDaycareHoursStart[]" placeholder="HH:mm">
+                <input type="text" id="editDaycareHoursMondayEnd" name="editDaycareHoursEnd[]" placeholder="HH:mm">
+            </div>
+    
+            <div class="check">
+                <input type="checkbox" id="editDaycareTuesday" name="editDaycareDays[]" value="2">
+                <label for="editDaycareTuesday">Mardi</label>
+                <input type="text" id="editDaycareHoursTuesdayStart" name="editDaycareHoursStart[]" placeholder="HH:mm">
+                <input type="text" id="editDaycareHoursTuesdayEnd" name="editDaycareHoursEnd[]" placeholder="HH:mm">
+            </div>
+    
+            <div class="check">
+                <input type="checkbox" id="editDaycareWednesday" name="editDaycareDays[]" value="3">
+                <label for="editDaycareWednesday">Mercredi</label>
+                <input type="text" id="editDaycareHoursWednesdayStart" name="editDaycareHoursStart[]" placeholder="HH:mm">
+                <input type="text" id="editDaycareHoursWednesdayEnd" name="editDaycareHoursEnd[]" placeholder="HH:mm">
+            </div>
+    
+            <div class="check">
+                <input type="checkbox" id="editDaycareThursday" name="editDaycareDays[]" value="4">
+                <label for="editDaycareThursday">Jeudi</label>
+                <input type="text" id="editDaycareHoursThursdayStart" name="editDaycareHoursStart[]" placeholder="HH:mm">
+                <input type="text" id="editDaycareHoursThursdayEnd" name="editDaycareHoursEnd[]" placeholder="HH:mm">
+            </div>
+    
+            <div class="check">
+                <input type="checkbox" id="editDaycareFriday" name="editDaycareDays[]" value="5">
+                <label for="editDaycareFriday">Vendredi</label>
+                <input type="text" id="editDaycareHoursFridayStart" name="editDaycareHoursStart[]" placeholder="HH:mm">
+                <input type="text" id="editDaycareHoursFridayEnd" name="editDaycareHoursEnd[]" placeholder="HH:mm">
+            </div>
+            <button type="submit">Enregistrer</button>
+        </form>
+    </div>
+    
+    
     
 
     <% function getDayName(dayNumber) { %>
@@ -114,7 +180,6 @@
         <% const childSchedule = child.child_schedules.find(schedule => schedule.dayOfWeek === dayOfWeek); %>
         <% if (childSchedule) { %>
             <% const childHours = child.child_schedule_hours.find(hours => hours.dayOfWeek === dayOfWeek); %>
-            <!-- Ajout de débogage -->
             <%= console.log('childHours:', childHours, 'dayOfWeek:', dayOfWeek) %>
             <% if (childHours) { %>
                 <%= childHours.daycareHoursStart %> - <%= childHours.daycareHoursEnd %>
@@ -146,6 +211,7 @@
                     <% } else { %>
                         <p>Aucun horaire défini pour cet enfant.</p>
                     <% } %>
+                    <button class="edit-icon" onclick="openEditChildForm('<%= child.id %>')">✏️</button>
                 </div>
             </div>
         <% }); %>

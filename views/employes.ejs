@@ -15,34 +15,34 @@
     <body>
 
         <header>
-            <div class="navbar">
-                <a id="lien" href="/">Accueil</a>
-                <div class="dropdown">
-                    <a id="lien" class="dropbtn" href="#">Planning</a>
-                    <div class="dropdown-content">
-                        <a id="lien" href="#"><span class="hover-underline-animation">Planning enfants</span></a>
-                        <a id="lien" href="#"><span class="hover-underline-animation">Planning employes</span></a>
-                    </div>
-                </div>
-                <% if (profile != undefined) { %>
-                    <a id="lien" href="/employes">Employés</a>
-                    <a id="lien" href="/enfants">Enfants</a>
-                    <div id="profile-container" class="profile-container">
-                        <p><%= profile.username %></p>
-                        <div class="popup" id="popup" style="display: none;">
-                            <a id="profil" href="/inventaire"><span class="hover-underline-animation">Profil</span></a>
-                            <a id="inventaire" href="/inventaire"><span class="hover-underline-animation">Inventaire</span></a>
-                            <a id="deconnexion" href="#" onclick="decoProfile()"><span class="hover-underline-animation">Sign out</span></a>
+            <nav class="navbar">
+                <ul class="nav-list">
+                    <a id="lien" href="/">Accueil</a>
+                    <li class="menu-deroulant"><a href="#">Planning</a>
+                        <ul class="sous">
+                            <a id="lien" href="#"><span class="hover-underline-animation">Planning enfants</span></a>
+                            <a id="lien" href="#"><span class="hover-underline-animation">Planning employes</span></a>
+                        </ul>
+                    </li>
+                    <% if (profile != undefined) { %>
+                        <a id="lien" href="/employes">Employés</a>
+                        <a id="lien" href="/enfants">Enfants</a>
+                        <div id="profile-container" class="profile-container">
+                            <p><%= profile.username %></p>
+                            <div class="popup" id="popup" style="display: none;">
+                                <a id="profil" href="/inventaire"><span class="hover-underline-animation">Profil</span></a>
+                                <a id="deconnexion" href="#" onclick="decoProfile()"><span class="hover-underline-animation">Sign out</span></a>
+                            </div>
                         </div>
-                    </div>
-                <% } else { %>
-                    <a id="lien" href="#">Employés</a>
-                    <a id="lien" href="#">Enfants</a>
-                    <div class="log-container">
-                        <a id="loginButton" class="case-button">LogIn</a>
-                    </div>
-                <% } %>
-            </div>
+                    <% } else { %>
+                        <a id="lien" href="#">Employés</a>
+                        <a id="lien" href="#">Enfants</a>
+                        <div class="log-container">
+                            <a id="loginButton" class="case-button">LogIn</a>
+                        </div>
+                    <% } %>
+                </ul>
+            </nav>
         </header>
 
         <div class="add">
@@ -90,37 +90,39 @@
         <div id="editEmployeeForm" style="display: none;">
             <form id="employeeForm" action="/editEmployee" method="post">
                 <!-- Les champs du formulaire -->
-                <input type="hidden" id="editEmployeeId" name="editEmployeeId"> <!-- Champ caché pour stocker l'ID de l'employé -->
+                <input type="hidden" id="editEmployeeId" name="editEmployeeId">
 
-                <label for="editFirstName">Prénom:</label>
+                <label for="editFirstName">Prénom :</label>
                 <input type="text" id="editFirstName" name="editFirstName" required>
 
-                <label for="editLastName">Nom:</label>
+                <label for="editLastName">Nom :</label>
                 <input type="text" id="editLastName" name="editLastName" required>
 
-                <label for="editWorkDays">Jours de travail:</label>
-                <div>
-                    <input type="checkbox" id="editMonday" name="editWorkDays[]" value="1">
-                    <label for="editMonday">Lundi</label>
-                </div>
-                <div>
-                    <input type="checkbox" id="editTuesday" name="editWorkDays[]" value="2">
-                    <label for="editTuesday">Mardi</label>
-                </div>
-                <div>
-                    <input type="checkbox" id="editWednesday" name="editWorkDays[]" value="3">
-                    <label for="editWednesday">Mercredi</label>
-                </div>
-                <div>
-                    <input type="checkbox" id="editThursday" name="editWorkDays[]" value="4">
-                    <label for="editThursday">Jeudi</label>
-                </div>
-                <div>
-                    <input type="checkbox" id="editFriday" name="editWorkDays[]" value="5">
-                    <label for="editFriday">Vendredi</label>
+                <label for="editWorkDays">Jours de travail :</label>
+                <div class="test">
+                    <div class="check">
+                        <input type="checkbox" id="editMonday" name="editWorkDays[]" value="1">
+                        <label for="editMonday">Lundi</label>
+                    </div>
+                    <div class="check">
+                        <input type="checkbox" id="editTuesday" name="editWorkDays[]" value="2">
+                        <label for="editTuesday">Mardi</label>
+                    </div>
+                    <div class="check">
+                        <input type="checkbox" id="editWednesday" name="editWorkDays[]" value="3">
+                        <label for="editWednesday">Mercredi</label>
+                    </div>
+                    <div class="check">
+                        <input type="checkbox" id="editThursday" name="editWorkDays[]" value="4">
+                        <label for="editThursday">Jeudi</label>
+                    </div>
+                    <div class="check">
+                        <input type="checkbox" id="editFriday" name="editWorkDays[]" value="5">
+                        <label for="editFriday">Vendredi</label>
+                    </div>
                 </div>
 
-                <label for="editWorkHours">Nombre d'heures de travail par semaine:</label>
+                <label for="editWorkHours">Nombre d'heures de travail par semaine :</label>
                 <input type="number" id="editWorkHours" name="editWorkHours" required>
 
                 <button type="submit">Enregistrer</button>

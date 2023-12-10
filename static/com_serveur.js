@@ -133,6 +133,17 @@ document.addEventListener('DOMContentLoaded', function () {
     });   
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    const addEnfantButton = document.getElementById('addEnfantButton');
+    const addEnfantForm = document.getElementById('addEnfantForm');
+    const enfantForm = document.getElementById('employeeForm');
+    
+    addEnfantButton.addEventListener('click', function () {
+        // Affichez ou cachez le formulaire selon l'état actuel
+        addEnfantForm.style.display = (addEnfantForm.style.display === 'none' || addEnfantForm.style.display === '') ? 'block' : 'none';
+    });
+});
+
 
 ///////////////////////////////////// BUTTON DELETE SUPPRESSION ENFANTS ////////////////////////////////////////////////////////
 
@@ -220,6 +231,7 @@ async function deleteEmployee(employeeId) {
 }
 
 
+///////////////////////////////////// MODIFICATION EMPLOYES ////////////////////////////////////////////////////////
 
 
 // Fonction pour ouvrir le formulaire de modification
@@ -241,25 +253,29 @@ function openEditForm(employeeId) {
         });
 }
 
-// Fonction pour afficher le formulaire de modification avec les détails
 function displayEditForm(employeeDetails) {
-    // Affichez le formulaire de modification, remplissez-le avec les détails récupérés
+    // Assurez-vous que l'élément existe avant de manipuler ses propriétés
     const editForm = document.getElementById('editEmployeeForm');
-    editForm.style.display = 'block';
+    if (editForm) {
+        // Affichez le formulaire de modification, remplissez-le avec les détails récupérés
+        editForm.style.display = 'block';
 
-    // Remplissez le formulaire avec les détails récupérés
-    document.getElementById('editEmployeeId').value = employeeDetails.id;
-    document.getElementById('editFirstName').value = employeeDetails.firstname;
-    document.getElementById('editLastName').value = employeeDetails.lastname;
+        // Remplissez le formulaire avec les détails récupérés
+        document.getElementById('editEmployeeId').value = employeeDetails.id;
+        document.getElementById('editFirstName').value = employeeDetails.firstname;
+        document.getElementById('editLastName').value = employeeDetails.lastname;
 
-    // Cochez les jours de travail appropriés
-    employeeDetails.workDays.forEach(day => {
-        document.getElementById(`edit${day}`).checked = true;
-    });
+        // Cochez les jours de travail appropriés
+        employeeDetails.workDays.forEach(day => {
+            document.getElementById(`edit${day}`).checked = true;
+        });
 
-    document.getElementById('editWorkHours').value = employeeDetails.workHours;
-    // ... Autres champs du formulaire ...
+        document.getElementById('editWorkHours').value = employeeDetails.workHours;
+    } else {
+        console.error('L\'élément avec l\'ID "editEmployeeForm" n\'a pas été trouvé.');
+    }
 }
+
 
 // Fonction pour fermer le formulaire de modification
 function closeEditForm() {
@@ -269,3 +285,82 @@ function closeEditForm() {
 }
 
 
+///////////////////////////////////// MODIFICATION ENFANTS  ////////////////////////////////////////////////////////
+
+
+function openEditChildForm(childId) {
+    // Utilisez AJAX pour récupérer les détails de l'enfant côté serveur
+    fetch(`/getChildDetails/${childId}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Réponse JSON du serveur :', data);
+            if (data.success) {
+                const childDetails = data.childDetails;
+                // Appelez une fonction pour afficher le formulaire de modification avec les détails récupérés
+                displayEditChildForm(childDetails);
+            } else {
+                console.error('Erreur lors de la récupération des détails de l\'enfant');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur AJAX : ' + error.message);
+        });
+}
+
+
+function displayEditChildForm(childDetails) {
+    // Assurez-vous que l'élément existe avant de manipuler ses propriétés
+    const editChildForm = document.getElementById('editEnfantForm');
+    if (editChildForm) {
+        // Affichez le formulaire de modification, remplissez-le avec les détails récupérés
+        editChildForm.style.display = 'block';
+
+        // Remplissez le formulaire avec les détails récupérés
+        document.getElementById('editChildId').value = childDetails.id;
+        document.getElementById('editFirstname').value = childDetails.firstname;
+        document.getElementById('editLastname').value = childDetails.lastname;
+        document.getElementById('editAge').value = childDetails.age;
+
+        // Cochez les jours de garde appropriés si editDaycareDays est défini et est un tableau
+        if (childDetails.editDaycareDays && Array.isArray(childDetails.editDaycareDays)) {
+            childDetails.editDaycareDays.forEach(day => {
+                const checkbox = document.getElementById(`editDaycare${day}`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+        }
+
+        // Remplissez les heures de garde si editDaycareHoursStart et editDaycareHoursEnd sont définis et sont des tableaux
+        if (
+            childDetails.editDaycareDays && Array.isArray(childDetails.editDaycareDays) &&
+            childDetails.editDaycareHoursStart && Array.isArray(childDetails.editDaycareHoursStart) &&
+            childDetails.editDaycareHoursEnd && Array.isArray(childDetails.editDaycareHoursEnd) &&
+            childDetails.editDaycareHoursStart.length === childDetails.editDaycareHoursEnd.length
+        ) {
+            childDetails.editDaycareDays.forEach((day, index) => {
+                const checkbox = document.getElementById(`editDaycare${day}`);
+                const inputStart = document.getElementById(`editDaycareHours${index + 1}Start`);
+                const inputEnd = document.getElementById(`editDaycareHours${index + 1}End`);
+
+                if (checkbox && inputStart && inputEnd) {
+                    checkbox.checked = true;
+                    inputStart.value = childDetails.editDaycareHoursStart[index];
+                    inputEnd.value = childDetails.editDaycareHoursEnd[index];
+                }
+            });
+        }
+        } else {
+            console.error('L\'élément avec l\'ID "editEnfantForm" n\'a pas été trouvé.');
+        }
+}
+
+
+
+
+// Fonction pour fermer le formulaire de modification des enfants
+function closeEditChildForm() {
+    // Fermez la fenêtre modale ou masquez le formulaire selon votre méthode d'affichage
+    const editChildForm = document.getElementById('editChildForm');
+    editChildForm.style.display = 'none';
+}
