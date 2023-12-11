@@ -32,8 +32,7 @@ nav {
     z-index: 3;
 }
 
-nav .menu-deroulant:hover {
-    color: grey;
+nav #lien:hover {
     text-decoration: underline;
     text-underline-offset: 1vh;
     text-decoration-color: rgb(181, 181, 181);

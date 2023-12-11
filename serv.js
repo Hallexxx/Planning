@@ -192,97 +192,6 @@ app.get('/employes', (req, res) => {
 
 
 
-///////////////////////////////////// AJOUT EMPLOYES PLANNING ////////////////////////////////////////////////////////
-
-
-app.get('/employees', (req, res) => {
-    const userId = req.session.logUser.id;
-
-    connection.query('SELECT * FROM employees WHERE user_id = ?', [userId], (error, results) => {
-        if (error) {
-            console.error('Erreur lors de la récupération des employés : ' + error.message);
-            return res.json({ success: false, message: 'Erreur lors de la récupération des employés' });
-        }
-
-        const events = [];
-
-        results.forEach(employee => {
-            const event = {
-                title: `${employee.firstname} ${employee.lastname}`,
-                start: `${employee.workDays}T${employee.workHours[0]}`,
-                end: `${employee.workDays}T${employee.workHours[1]}`,
-            };
-            events.push(event);
-        });
-
-        res.json({ success: true, events });
-    });
-});
-
-
-///////////////////////////////////// AJOUT EMPLOYES PLANNING ////////////////////////////////////////////////////////
-
-
-async function getChildDaycareHours(childId) {
-    const sqlQuery = `
-        SELECT daycareHoursStart, daycareHoursEnd
-        FROM child_hours
-        WHERE child_id = ${childId};
-    `;
-
-    return new Promise((resolve, reject) => {
-        connection.query(sqlQuery, (error, results) => {
-            if (error) {
-                console.error('Erreur lors de la récupération des heures de garde de l\'enfant : ' + error.message);
-                reject(error);
-            } else {
-                if (results.length > 0) {
-                    const childStartHour = results[0].daycareHoursStart;
-                    const childEndHour = results[0].daycareHoursEnd;
-
-                    resolve({ childStartHour, childEndHour });
-                } else {
-                    console.error('Aucune heure de garde trouvée pour l\'enfant avec l\'ID ' + childId);
-                    reject(new Error('Aucune heure de garde trouvée pour l\'enfant avec l\'ID ' + childId));
-                }
-            }
-        });
-    });
-}
-
-
-///////////////////////////////////// ASSIGNEMENT EMPLOYES ////////////////////////////////////////////////////////
-
-
-function assignEmployeesToChildren(employees, childSchedules, events) {
-    events.forEach(event => {
-        const titleParts = event.title.split(':');
-
-        if (titleParts.length > 1) {
-            const childId = titleParts[1] ? titleParts[1].trim() : null;
-
-            if (childId) {
-                const childSchedule = childSchedules.find(schedule => schedule.childId === parseInt(childId, 10));
-
-                if (childSchedule) {
-                    const { daycareHoursStart, daycareHoursEnd } = childSchedule;
-
-                    console.log('Heure de début de garde de l\'enfant : ' + daycareHoursStart);
-                    console.log('Heure de fin de garde de l\'enfant : ' + daycareHoursEnd);
-
-                    event.start = moment().isoWeekday(childSchedule.dayOfWeek).hour(daycareHoursStart);
-                    event.end = moment().isoWeekday(childSchedule.dayOfWeek).hour(daycareHoursEnd);
-                } else {
-                    console.error('Aucun horaire de garde trouvé pour l\'enfant avec l\'ID ' + childId);
-                }
-            } else {
-                console.error('Le titre de l\'événement ne contient pas de childId valide.');
-            }
-        } else {
-            console.error('Le titre de l\'événement ne contient pas de séparateur ":".');
-        }
-    });
-}
 
 ///////////////////////////////////// DONNEES ENFANTS ////////////////////////////////////////////////////////
 
@@ -329,29 +238,111 @@ async function getEmployeeData(userId) {
     });
 }
 
+
 ///////////////////////////////////// AJOUT EMPLOYES PLANNING ////////////////////////////////////////////////////////
 
 
-function getChildSchedules(userId) {
+app.get('/employees', (req, res) => {
+    const userId = req.session.logUser.id;
+
+    connection.query('SELECT * FROM employees WHERE user_id = ?', [userId], (error, results) => {
+        if (error) {
+            console.error('Erreur lors de la récupération des employés : ' + error.message);
+            return res.json({ success: false, message: 'Erreur lors de la récupération des employés' });
+        }
+
+        const events = [];
+
+        results.forEach(employee => {
+            const event = {
+                title: `${employee.firstname} ${employee.lastname}`,
+                start: `${employee.workDays}T${employee.workHours[0]}`,
+                end: `${employee.workDays}T${employee.workHours[1]}`,
+            };
+            events.push(event);
+        });
+
+        res.json({ success: true, events });
+    });
+});
+
+// Fonction pour récupérer les horaires de garde des enfants
+async function getChildSchedules(userId) {
+    const sqlQuery = `
+        SELECT id as child_schedule_id, child_id, dayOfWeek, daycareHoursStart, daycareHoursEnd
+        FROM child_schedule_hours
+        WHERE child_id IN (SELECT id FROM children WHERE user_id = ?);
+    `;
+
     return new Promise((resolve, reject) => {
-        connection.query('SELECT id, child_id, dayOfWeek, daycareHoursStart, daycareHoursEnd FROM child_schedules WHERE child_id IN (SELECT id FROM children WHERE user_id = ?)', [userId], (error, results) => {
+        connection.query(sqlQuery, [userId], (error, results) => {
             if (error) {
                 console.error('Erreur lors de la récupération des horaires de garde des enfants : ' + error.message);
                 reject(error);
             } else {
-                const childSchedules = results.map(result => ({
-                    id: result.id,
-                    childId: result.child_id,
-                    dayOfWeek: result.dayOfWeek,
-                    daycareHoursStart: result.daycareHoursStart,
-                    daycareHoursEnd: result.daycareHoursEnd,
-                    // Ajoutez d'autres champs au besoin
-                }));
-                resolve(childSchedules);
+                resolve(results);
             }
         });
     });
 }
+
+
+async function getChildDaycareHours(childId) {
+    const sqlQuery = `
+        SELECT daycareHoursStart, daycareHoursEnd
+        FROM child_schedule_hours
+        WHERE child_id = ${childId};
+    `;
+
+
+    return new Promise((resolve, reject) => {
+        connection.query(sqlQuery, (error, results) => {
+            if (error) {
+                console.error('Erreur lors de la récupération des heures de garde de l\'enfant : ' + error.message);
+                reject(error);
+            } else {
+                if (results.length > 0) {
+                    const childStartHour = results[0].daycareHoursStart;
+                    const childEndHour = results[0].daycareHoursEnd;
+
+                    resolve({ childStartHour, childEndHour });
+                } else {
+                    console.error('Aucune heure de garde trouvée pour l\'enfant avec l\'ID ' + childId);
+                    reject(new Error('Aucune heure de garde trouvée pour l\'enfant avec l\'ID ' + childId));
+                }
+            }
+        });
+    });
+}
+
+
+
+
+app.get('/childSchedules', async (req, res) => {
+    // Vérifiez si req.session.logUser est défini
+    if (!req.session.logUser || !req.session.logUser.id) {
+        return res.json({ success: false, message: 'Utilisateur non connecté' });
+    }
+
+    const userId = req.session.logUser.id;
+
+    try {
+        // Récupérez les horaires de garde des enfants avec les heures de garde
+        const childSchedules = await getChildSchedules(userId);
+
+        // Enrichissez les données des horaires de garde avec les heures de garde
+        for (const schedule of childSchedules) {
+            const { daycareHoursStart, daycareHoursEnd } = await getChildDaycareHours(schedule.child_schedule_id);
+            schedule.daycareHoursStart = daycareHoursStart;
+            schedule.daycareHoursEnd = daycareHoursEnd;
+        }
+
+        res.json({ success: true, childSchedules });
+    } catch (error) {
+        console.error('Erreur lors de la récupération des horaires de garde des enfants : ' + error.message);
+        res.json({ success: false, message: 'Erreur lors de la récupération des horaires de garde des enfants' });
+    }
+});
 
 
 ///////////////////////////////////// PLANNING ////////////////////////////////////////////////////////
@@ -363,24 +354,25 @@ app.get('/planning', async (req, res) => {
     try {
         if (userId) {
             // Récupérez les données des enfants, des employés et les horaires de garde des enfants
-            const childrenResults = await getChildData(userId);
-            const employeesResults = await getEmployeeData(userId);
+            const childrenResults = await getChildData(userId); // Assurez-vous d'avoir cette fonction définie
+            const employeesResults = await getEmployeeData(userId); // Assurez-vous d'avoir cette fonction définie
             const childSchedules = await getChildSchedules(userId);
-    
+
             // Créez un tableau pour stocker les événements du calendrier
             const events = [];
-    
+
+            // Ajoutez les événements pour les enfants
             childrenResults.forEach(child => {
-                if (child.daycareHours) { // Vérifiez si daycareHours est défini
+                if (child.daycareHours) {
                     const daycareHoursParts = child.daycareHours.split(',');
-    
+
                     if (daycareHoursParts.length === 2) {
                         const childEvent = {
                             title: `Enfant:${child.id}`,
                             start: moment().isoWeekday(child.daycareDays).hour(daycareHoursParts[0]),
                             end: moment().isoWeekday(child.daycareDays).hour(daycareHoursParts[1]),
                             color: 'blue',
-                        };                                              
+                        };
                         events.push(childEvent);
                     } else {
                         console.error(`Format invalide pour daycareHours pour l'enfant avec l'ID ${child.id}`);
@@ -389,10 +381,10 @@ app.get('/planning', async (req, res) => {
                     console.error(`Aucune valeur daycareHours pour l'enfant avec l'ID ${child.id}`);
                 }
             });
-    
+
             // Assignez les employés aux enfants en fonction des horaires de garde
             assignEmployeesToChildren(employeesResults, childSchedules, events);
-    
+
             res.json({ success: true, events });
         } else {
             // Si l'utilisateur n'est pas connecté, renvoyez un planning vide
@@ -404,22 +396,6 @@ app.get('/planning', async (req, res) => {
     }
 });
 
-
-///////////////////////////////////// AJOUT EMPLOYES PLANNING ////////////////////////////////////////////////////////
-
-
-app.get('/childSchedules', (req, res) => {
-    const userId = req.session.logUser.id;
-
-    connection.query('SELECT * FROM children WHERE user_id = ?', [userId], (error, results) => {
-        if (error) {
-            console.error('Erreur lors de la récupération des horaires de garde des enfants : ' + error.message);
-            return res.json({ success: false, message: 'Erreur lors de la récupération des horaires de garde des enfants' });
-        }
-
-        res.json({ success: true, childSchedules: results });
-    });
-});
 
 
 //////////////////////////////////////////// ROUTE POST /////////////////////////////////////////////////////////////////
@@ -615,7 +591,7 @@ function getDayOfWeek(dayName) {
     }
 }
 
-app.post('/addChild', (req, res) => {
+app.post('/addChild', async (req, res) => {
     const userId = req.session.logUser.id;
 
     const firstname = req.body.firstname;
@@ -631,60 +607,98 @@ app.post('/addChild', (req, res) => {
         return res.status(400).json({ success: false, message: "Le prénom de l'enfant est requis." });
     }
 
-    const sqlInsertChild = 'INSERT INTO children (firstname, lastname, age, user_id) VALUES (?, ?, ?, ?)';
-    const valuesInsertChild = [firstname, lastname, age, userId];
+    const childData = {
+        firstname,
+        lastname,
+        age,
+        user_id: userId,
+    };
 
-    connection.query(sqlInsertChild, valuesInsertChild, (errorInsertChild, resultsInsertChild) => {
-        if (errorInsertChild) {
-            console.error('Erreur lors de l\'ajout de l\'enfant : ' + errorInsertChild.message);
-            return res.status(500).json({ success: false, message: 'Erreur lors de l\'ajout de l\'enfant' });
+    connection.beginTransaction(async (err) => {
+        if (err) {
+            console.error('Erreur lors du démarrage de la transaction : ' + err.message);
+            return res.json({ success: false, message: 'Erreur lors de l\'ajout de l\'enfant' });
         }
 
-        console.log('Enfant ajouté avec succès. ID de l\'enfant :', resultsInsertChild.insertId);
+        try {
+            const { insertId: childId } = await insertChild(childData);
 
-        const childId = resultsInsertChild.insertId;
+            await insertChildSchedule(childId, daycareDays, daycareHours);
 
-        const sqlInsertChildHours = 'INSERT INTO child_schedule_hours (child_id, dayOfWeek, daycareHoursStart, daycareHoursEnd) VALUES (?, ?, ?, ?)';
-
-        for (let i = 0; i < daycareDays.length; i++) {
-            const day = daycareDays[i];
-
-            if (day) {
-                // Assurez-vous que l'index est valide pour daycareHours
-                if (i < daycareHours.length) {
-                    const dayHours = daycareHours[i];
-
-                    // Ajoutez une vérification supplémentaire pour s'assurer qu'il y a des heures spécifiées
-                    if (dayHours && typeof dayHours === 'string' && dayHours.trim() !== '') {
-                        const hours = dayHours.split('-');
-
-                        const startHour = hours[0] ? hours[0].trim() : '';
-                        const endHour = hours[1] ? hours[1].trim() : '';
-
-                        console.log('Valeurs pour l\'insertion des heures de garde :', childId, day, startHour, endHour);
-
-                        const valuesInsertChildHours = [childId, getDayOfWeek(day), startHour, endHour];
-
-                        connection.query(sqlInsertChildHours, valuesInsertChildHours, (errorInsertChildHours, resultsInsertChildHours) => {
-                            if (errorInsertChildHours) {
-                                console.error('Erreur lors de l\'ajout des heures de garde : ' + errorInsertChildHours.message);
-                            } else {
-                                console.log('Heures de garde ajoutées avec succès. ID des heures de garde :', resultsInsertChildHours.insertId);
-                            }
-                        });
-                    } else {
-                        console.error('Heures de garde invalides pour le jour ' + day);
-                    }
-                } else {
-                    console.error('Index en dehors de la plage pour daycareHours : ' + i);
+            connection.commit((commitErr) => {
+                if (commitErr) {
+                    return connection.rollback(() => {
+                        console.error('Erreur lors de la validation de la transaction : ' + commitErr.message);
+                        return res.json({ success: false, message: 'Erreur lors de l\'ajout de l\'enfant' });
+                    });
                 }
-            }
-        }
 
-        res.redirect('/enfants');
+                console.log('Enfant ajouté avec succès. ID de l\'enfant :', childId);
+                res.json({ success: true, message: 'Enfant ajouté avec succès.' });
+            });
+        } catch (error) {
+            console.error('Erreur lors de l\'ajout de l\'enfant : ' + error.message);
+            connection.rollback(() => {
+                res.json({ success: false, message: 'Erreur lors de l\'ajout de l\'enfant' });
+            });
+        }
     });
 });
 
+async function insertChild(childData) {
+    return new Promise((resolve, reject) => {
+        connection.query('INSERT INTO children SET ?', childData, (error, results) => {
+            if (error) {
+                console.error('Erreur lors de l\'ajout de l\'enfant : ' + error.message);
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+}
+
+async function insertChildSchedule(childId, daycareDays, daycareHours) {
+    const allDaysOfWeek = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
+
+    const values = [];
+
+    allDaysOfWeek.forEach((day, index) => {
+        const isChecked = daycareDays.includes(day);
+
+        if (isChecked) {
+            const hours = daycareHours[index];
+
+            if (hours && hours.includes('-')) {
+                const [startHour, endHour] = hours.split('-').map(time => time.trim());
+
+                if (startHour !== '' && endHour !== '' && startHour !== null && endHour !== null) {
+                    values.push([childId, getDayOfWeek(day), startHour, endHour]);
+                } else {
+                    console.error(`Heures de garde invalides pour le jour ${day}`);
+                }
+            } else {
+                console.error(`Aucune heure de garde spécifiée pour le jour ${day}`);
+            }
+        }
+    });
+
+    if (values.length === 0) {
+        console.log('Aucune heure de garde valide spécifiée.');
+        return;
+    }
+
+    return new Promise((resolve, reject) => {
+        connection.query('INSERT INTO child_schedule_hours (child_id, dayOfWeek, daycareHoursStart, daycareHoursEnd) VALUES ?', [values], (error, results) => {
+            if (error) {
+                console.error('Erreur lors de l\'ajout des heures de garde : ' + error.message);
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+}
 
 
 ///////////////////////////////////// SUPPRESSION ENFANTS ////////////////////////////////////////////////////////
@@ -823,16 +837,15 @@ app.post('/editEmployee', (req, res) => {
 
 app.post('/editChild', (req, res) => {
     const childId = req.body.editChildId;
-    const editedFirstName = req.body.editFirstName;
-    const editedLastName = req.body.editLastName;
-    const editedAge = req.body.editAge;
-    const editedWorkDays = req.body.editWorkDays;
-    const editedWorkHoursStart = req.body.editWorkHoursStart;
-    const editedWorkHoursEnd = req.body.editWorkHoursEnd;
+    const editedFirstName = req.body.editFirstname;  // Corrected field name
+    const editedLastName = req.body.editLastname;    // Corrected field name
+    const editedAge = req.body.editAge;              // Corrected field name
+    const editedWorkDays = req.body.editDaycareDays; // Corrected field name
+    const editedWorkHoursStart = req.body.editDaycareHoursStart; // Corrected field name
+    const editedWorkHoursEnd = req.body.editDaycareHoursEnd;     // Corrected field name
 
     console.log('ID de l\'enfant à mettre à jour :', childId);
     console.log('Nouveaux détails :', editedFirstName, editedLastName, editedAge, editedWorkDays, editedWorkHoursStart, editedWorkHoursEnd);
-
     // Vérifiez que les heures de garde sont définies
     if (editedWorkHoursStart === undefined || editedWorkHoursEnd === undefined) {
         return res.status(400).json({ success: false, message: 'Les heures de garde doivent être spécifiées' });
@@ -872,7 +885,7 @@ app.post('/editChild', (req, res) => {
 
 
             console.log('Informations de l\'enfant mises à jour avec succès');
-            res.redirect('/enfantss');
+            res.redirect('/enfants');
         });
     });
 });

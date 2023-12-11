@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data.success) {
                 loginPopup.style.display = 'none';
                 window.location.reload();
+                loadCalendarData();
             } else {
                 alert('La connexion a échoué. Veuillez réessayer.');
             }
@@ -123,6 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Affichez une alerte
                 alert(data.message);
                 addEmployeeForm.style.display = 'none';
+                window.location.reload();
             } else {
                 console.error('Erreur lors de la demande d\'ajout d\'employé:', data.message);
             }
@@ -136,13 +138,50 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('DOMContentLoaded', function () {
     const addEnfantButton = document.getElementById('addEnfantButton');
     const addEnfantForm = document.getElementById('addEnfantForm');
-    const enfantForm = document.getElementById('employeeForm');
+    const enfantForm = document.getElementById('enfantForm');
     
     addEnfantButton.addEventListener('click', function () {
         // Affichez ou cachez le formulaire selon l'état actuel
         addEnfantForm.style.display = (addEnfantForm.style.display === 'none' || addEnfantForm.style.display === '') ? 'block' : 'none';
     });
+
+    enfantForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+    
+        // Récupérez les valeurs du formulaire
+        const firstname = document.getElementById('firstname').value;
+        const lastname = document.getElementById('lastname').value;
+        const age = document.getElementById('age').value;
+        const daycareDays = Array.from(document.querySelectorAll('input[name="daycareDays[]"]:checked')).map(day => day.value);
+        const daycareHours = Array.from(document.querySelectorAll('input[name="daycareHours[]"]')).map(hour => hour.value);
+    
+        // Utilisez fetch ou XMLHttpRequest pour envoyer les informations au serveur
+        fetch('/addChild', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ firstname, lastname, age, daycareDays, daycareHours }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Réponse du serveur :', data);
+    
+            if (data.success) {
+                // Affichez une alerte
+                alert(data.message);
+                addEnfantForm.style.display = 'none';
+                window.location.reload();
+            } else {
+                console.error('Erreur lors de la demande d\'ajout d\'enfant:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors de la demande d\'ajout d\'enfant:', error);
+        });
+    });
 });
+
 
 
 ///////////////////////////////////// BUTTON DELETE SUPPRESSION ENFANTS ////////////////////////////////////////////////////////
