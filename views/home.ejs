@@ -186,7 +186,7 @@
                     url: '/employees',
                     success: function (response) {
                         if (response.success) {
-                            employees = response.events;
+                            employees = response.employees;
 
                             $.ajax({
                                 type: 'GET',
@@ -242,8 +242,8 @@
             
                             function updateCalendar() {
                                 $('#calendar').fullCalendar('removeEvents');
+                                $('#calendar').fullCalendar('rerenderEvents'); // Déplacez ceci avant 'addEventSource'
                                 $('#calendar').fullCalendar('addEventSource', events);
-                                $('#calendar').fullCalendar('rerenderEvents');
                             }
                             
                         } else {
@@ -258,3 +258,5 @@
         </script>            
     </body>
 </html>
+
+

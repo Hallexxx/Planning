@@ -269,7 +269,7 @@ app.get('/employees', (req, res) => {
 // Fonction pour récupérer les horaires de garde des enfants
 async function getChildSchedules(userId) {
     const sqlQuery = `
-        SELECT id as child_schedule_id, child_id, dayOfWeek, daycareHoursStart, daycareHoursEnd
+        SELECT id, child_id, dayOfWeek, daycareHoursStart, daycareHoursEnd
         FROM child_schedule_hours
         WHERE child_id IN (SELECT id FROM children WHERE user_id = ?);
     `;
@@ -285,6 +285,7 @@ async function getChildSchedules(userId) {
         });
     });
 }
+
 
 
 async function getChildDaycareHours(childId) {
