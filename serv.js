@@ -199,7 +199,7 @@ app.get('/employes', (req, res) => {
 async function getChildData(userId) {
     return new Promise((resolve, reject) => {
         // Remplacez les champs et la logique suivante par vos propres besoins
-        connection.query('SELECT id, daycareHoursStart, daycareHoursEnd FROM child_schedule_hours WHERE child_schedule_id = ?', [userId], (error, results) => {
+        connection.query('SELECT id, daycareHoursStart, daycareHoursEnd FROM child_schedule_hours WHERE id = ?', [userId], (error, results) => {
             if (error) {
                 console.error('Erreur lors de la récupération des données des enfants : ' + error.message);
                 reject(error);
@@ -221,18 +221,32 @@ async function getChildData(userId) {
 
 async function getEmployeeData(userId) {
     return new Promise((resolve, reject) => {
-        connection.query('SELECT id, workDays, workHours FROM employees WHERE user_id = ?', [userId], (error, results) => {
+        // Sélectionnez les employés en fonction de leur ID utilisateur
+        connection.query('SELECT id, workHours FROM employees WHERE user_id = ?', [userId], (error, results) => {
             if (error) {
                 console.error('Erreur lors de la récupération des données des employés : ' + error.message);
                 reject(error);
             } else {
-                const employeesData = results.map(result => ({
-                    id: result.id,
-                    workDays: result.workDays,
-                    workHours: result.workHours,
-                    // Ajoutez d'autres champs au besoin
-                }));
-                resolve(employeesData);
+                // Récupérez les informations sur les jours de travail à partir de la table employee_schedules
+                connection.query('SELECT day_id FROM employee_schedules WHERE employee_id = ?', [results[0].id], (error, scheduleResults) => {
+                    if (error) {
+                        console.error('Erreur lors de la récupération des données des horaires des employés : ' + error.message);
+                        reject(error);
+                    } else {
+                        // Créez un tableau pour stocker les identifiants des jours de travail des employés
+                        const workDays = scheduleResults.map(schedule => schedule.day_id);
+                        
+                        // Créez un tableau d'objets pour les employés avec les jours de travail
+                        const employeesData = results.map(result => ({
+                            id: result.id,
+                            workDays: workDays, // Utilisez les identifiants des jours de travail
+                            workHours: result.workHours,
+                            // Ajoutez d'autres champs au besoin
+                        }));
+                        
+                        resolve(employeesData);
+                    }
+                });
             }
         });
     });

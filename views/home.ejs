@@ -85,82 +85,83 @@
         
 
         <script>
-            function assignEmployeesToChildren(employees, childSchedules, events) {
-                if (!employees || !Array.isArray(employees) || !childSchedules || !Array.isArray(childSchedules) || !events) {
-                    console.error('Données d\'entrée invalides pour assignEmployeesToChildren');
-                    return;
-                }
-                const assignedHours = {};
+
             
-                // Créer un objet pour stocker le nombre d'heures déjà assignées à chaque employé pour la semaine
-                const weeklyAssignedHours = {};
-            
-                // Fonction pour vérifier si un employé peut être assigné à une heure donnée
-                function canAssignEmployee(employee, hour) {
-                    if (!assignedHours[employee.id]) {
-                        assignedHours[employee.id] = {};
+            $(document).ready(function () {
+                function assignEmployeesToChildren(employees, childSchedules, events) {
+                    if (!employees || !Array.isArray(employees) || !childSchedules || !Array.isArray(childSchedules) || !events) {
+                        console.error('Données d\'entrée invalides pour assignEmployeesToChildren');
+                        return;
                     }
-            
-                    if (!assignedHours[employee.id][hour]) {
-                        assignedHours[employee.id][hour] = 0;
-                    }
-            
-                    if (!weeklyAssignedHours[employee.id]) {
-                        weeklyAssignedHours[employee.id] = 0;
-                    }
-            
-                    // Vérifier le nombre d'heures maximum par semaine pour l'employé
-                    if (weeklyAssignedHours[employee.id] + 1 <= employee.maxWeeklyHours) {
-                        // Vérifier le nombre d'enfants déjà assignés à cette heure
-                        if (assignedHours[employee.id][hour] < 3) {
-                            assignedHours[employee.id][hour]++;
-                            weeklyAssignedHours[employee.id]++;
-                            return true;
+                    const assignedHours = {};
+                
+                    // Créer un objet pour stocker le nombre d'heures déjà assignées à chaque employé pour la semaine
+                    const weeklyAssignedHours = {};
+                
+                    // Fonction pour vérifier si un employé peut être assigné à une heure donnée
+                    function canAssignEmployee(employee, hour) {
+                        if (!assignedHours[employee.id]) {
+                            assignedHours[employee.id] = {};
                         }
+                
+                        if (!assignedHours[employee.id][hour]) {
+                            assignedHours[employee.id][hour] = 0;
+                        }
+                
+                        if (!weeklyAssignedHours[employee.id]) {
+                            weeklyAssignedHours[employee.id] = 0;
+                        }
+                
+                        // Vérifier le nombre d'heures maximum par semaine pour l'employé
+                        if (weeklyAssignedHours[employee.id] + 1 <= employee.maxWeeklyHours) {
+                            // Vérifier le nombre d'enfants déjà assignés à cette heure
+                            if (assignedHours[employee.id][hour] < 3) {
+                                assignedHours[employee.id][hour]++;
+                                weeklyAssignedHours[employee.id]++;
+                                return true;
+                            }
+                        }
+                
+                        return false;
                     }
-            
-                    return false;
-                }
-            
-                events.forEach(event => {
-                    const titleParts = event.title.split(':');
-            
-                    if (titleParts.length > 1) {
-                        const childId = titleParts[1] ? titleParts[1].trim() : null;
-            
-                        if (childId) {
-                            const childSchedule = childSchedules.find(schedule => schedule.child_id === parseInt(childId, 10));
-            
-                            if (childSchedule) {
-                                const { daycareHoursStart, daycareHoursEnd } = childSchedule;
-            
-                                // Assigner les employés aux enfants en fonction des horaires de garde
-                                employees.forEach(employee => {
-                                    const startHour = moment().isoWeekday(childSchedule.dayOfWeek).hour(daycareHoursStart);
-                                    const endHour = moment().isoWeekday(childSchedule.dayOfWeek).hour(daycareHoursEnd);
-                                
-                                    for (let hour = startHour; hour < endHour; hour++) {
-                                        if (canAssignEmployee(employee, hour)) {
-                                            event.start = moment().isoWeekday(childSchedule.dayOfWeek).hour(daycareHoursStart).toDate();
-                                            event.end = moment().isoWeekday(childSchedule.dayOfWeek).hour(daycareHoursEnd).toDate();
-                                            event.employeeId = employee.id; // Ajouter l'ID de l'employé à l'événement
-                                            break;
+                
+                    events.forEach(event => {
+                        const titleParts = event.title.split(':');
+                
+                        if (titleParts.length > 1) {
+                            const childId = titleParts[1] ? titleParts[1].trim() : null;
+                
+                            if (childId) {
+                                const childSchedule = childSchedules.find(schedule => schedule.child_id === parseInt(childId, 10));
+                
+                                if (childSchedule) {
+                                    const { daycareHoursStart, daycareHoursEnd } = childSchedule;
+                
+                                    // Assigner les employés aux enfants en fonction des horaires de garde
+                                    employees.forEach(employee => {
+                                        const startHour = moment().isoWeekday(childSchedule.dayOfWeek).set({ 'hour': daycareHoursStart });
+                                        const endHour = moment().isoWeekday(childSchedule.dayOfWeek).set({ 'hour': daycareHoursEnd });
+                                    
+                                        for (let hour = startHour; hour < endHour; hour++) {
+                                            if (canAssignEmployee(employee, hour)) {
+                                                event.start = moment().isoWeekday(childSchedule.dayOfWeek).hour(daycareHoursStart).toDate();
+                                                event.end = moment().isoWeekday(childSchedule.dayOfWeek).hour(daycareHoursEnd).toDate();
+                                                event.employeeId = employee.id; // Ajouter l'ID de l'employé à l'événement
+                                                break;
+                                            }
                                         }
-                                    }
-                                });                                                                                                  
+                                    });                                                                                                  
+                                } else {
+                                    console.error('Aucun horaire de garde trouvé pour l\'enfant avec l\'ID ' + childId);
+                                }
                             } else {
-                                console.error('Aucun horaire de garde trouvé pour l\'enfant avec l\'ID ' + childId);
+                                console.error('Le titre de l\'événement ne contient pas de childId valide.');
                             }
                         } else {
-                            console.error('Le titre de l\'événement ne contient pas de childId valide.');
+                            console.error('Le titre de l\'événement ne contient pas de séparateur ":".');
                         }
-                    } else {
-                        console.error('Le titre de l\'événement ne contient pas de séparateur ":".');
-                    }
-                });
-            }
-
-            $(document).ready(function () {
+                    });
+                }
                 var events = [];
 
                 var employees = [];
