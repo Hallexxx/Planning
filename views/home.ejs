@@ -85,178 +85,207 @@
         
 
         <script>
-
-            
-            $(document).ready(function () {
-                function assignEmployeesToChildren(employees, childSchedules, events) {
-                    if (!employees || !Array.isArray(employees) || !childSchedules || !Array.isArray(childSchedules) || !events) {
-                        console.error('Données d\'entrée invalides pour assignEmployeesToChildren');
-                        return;
-                    }
-                    const assignedHours = {};
-                
-                    // Créer un objet pour stocker le nombre d'heures déjà assignées à chaque employé pour la semaine
-                    const weeklyAssignedHours = {};
-                
-                    // Fonction pour vérifier si un employé peut être assigné à une heure donnée
-                    function canAssignEmployee(employee, hour) {
-                        if (!assignedHours[employee.id]) {
-                            assignedHours[employee.id] = {};
-                        }
-                
-                        if (!assignedHours[employee.id][hour]) {
-                            assignedHours[employee.id][hour] = 0;
-                        }
-                
-                        if (!weeklyAssignedHours[employee.id]) {
-                            weeklyAssignedHours[employee.id] = 0;
-                        }
-                
-                        // Vérifier le nombre d'heures maximum par semaine pour l'employé
-                        if (weeklyAssignedHours[employee.id] + 1 <= employee.maxWeeklyHours) {
-                            // Vérifier le nombre d'enfants déjà assignés à cette heure
-                            if (assignedHours[employee.id][hour] < 3) {
-                                assignedHours[employee.id][hour]++;
-                                weeklyAssignedHours[employee.id]++;
-                                return true;
-                            }
-                        }
-                
-                        return false;
-                    }
-                
-                    events.forEach(event => {
-                        const titleParts = event.title.split(':');
-                
-                        if (titleParts.length > 1) {
-                            const childId = titleParts[1] ? titleParts[1].trim() : null;
-                
-                            if (childId) {
-                                const childSchedule = childSchedules.find(schedule => schedule.child_id === parseInt(childId, 10));
-                
-                                if (childSchedule) {
-                                    const { daycareHoursStart, daycareHoursEnd } = childSchedule;
-                
-                                    // Assigner les employés aux enfants en fonction des horaires de garde
-                                    employees.forEach(employee => {
-                                        const startHour = moment().isoWeekday(childSchedule.dayOfWeek).set({ 'hour': daycareHoursStart });
-                                        const endHour = moment().isoWeekday(childSchedule.dayOfWeek).set({ 'hour': daycareHoursEnd });
-                                    
-                                        for (let hour = startHour; hour < endHour; hour++) {
-                                            if (canAssignEmployee(employee, hour)) {
-                                                event.start = moment().isoWeekday(childSchedule.dayOfWeek).hour(daycareHoursStart).toDate();
-                                                event.end = moment().isoWeekday(childSchedule.dayOfWeek).hour(daycareHoursEnd).toDate();
-                                                event.employeeId = employee.id; // Ajouter l'ID de l'employé à l'événement
-                                                break;
-                                            }
-                                        }
-                                    });                                                                                                  
-                                } else {
-                                    console.error('Aucun horaire de garde trouvé pour l\'enfant avec l\'ID ' + childId);
-                                }
-                            } else {
-                                console.error('Le titre de l\'événement ne contient pas de childId valide.');
-                            }
-                        } else {
-                            console.error('Le titre de l\'événement ne contient pas de séparateur ":".');
-                        }
+        $(document).ready(function () {
+            async function loadEmployees() {
+                try {
+                    const response = await $.ajax({
+                        type: 'GET',
+                        url: '/employees',
                     });
+                    if (response.success && Array.isArray(response.events)) {
+                        return response.events;
+                    } else {
+                        console.error('Erreur lors de la récupération des données des employés.');
+                        return [];
+                    }
+                } catch (error) {
+                    console.error('Erreur AJAX (Employees) : ', error);
+                    return [];
                 }
-                var events = [];
+            }
 
-                var employees = [];
-
-                function extractChildIdFromEvents(events) {
-                    let childId = null;
-                
-                    events.forEach(event => {
-                        const titleParts = event.title.split(':');
-                        if (titleParts.length === 2 && titleParts[0].trim() === 'Garde') {
-                            const eventId = parseInt(titleParts[1].trim(), 10);
-                            if (!isNaN(eventId)) {
-                                childId = eventId;
-                            }
-                        }
+            async function loadChildSchedules(childId) {
+                try {
+                    const response = await $.ajax({
+                        url: '/childSchedules/' + childId,
+                        method: 'GET',
                     });
-                
-                    return childId;
+                    if (response.success && Array.isArray(response.childSchedules)) {
+                        return response.childSchedules;
+                    } else {
+                        console.error('Erreur lors de la récupération des horaires des enfants.');
+                        return [];
+                    }
+                } catch (error) {
+                    console.error('Erreur AJAX (Child Schedules) : ', error);
+                    return [];
+                }
+            }
+
+            function assignEmployeesToChildren(employees, childSchedules, events) {
+                if (!employees || !Array.isArray(employees) || !childSchedules || !Array.isArray(childSchedules) || !events) {
+                    console.error('Données d\'entrée invalides pour assignEmployeesToChildren');
+                    return;
                 }
 
-                $.ajax({
-                    type: 'GET',
-                    url: '/employees',
-                    success: function (response) {
-                        if (response.success) {
-                            employees = response.employees;
+                const assignedHours = {};
+                const weeklyAssignedHours = {};
 
-                            $.ajax({
-                                type: 'GET',
-                                url: '/planning',
-                                success: function (response) {
-                                    if (response.success) {
-                                        events = response.events;
-            
-                                        const childId = extractChildIdFromEvents(events);
-            
-                                        if (childId) {
-                                            $.ajax({
-                                                url: '/childSchedules/' + childId,
-                                                method: 'GET',
-                                                success: function (childScheduleData) {
-                                                    if (childScheduleData.success && Array.isArray(childScheduleData.childSchedules)) {
-                                                        var childSchedules = childScheduleData.childSchedules;
-            
-                                                        childSchedules.forEach(childSchedule => {
-                                                            var childEvent = {
-                                                                title: `Garde: ${childSchedule.id}`,
-                                                                start: moment().isoWeekday(childSchedule.dayOfWeek).set({ 'hour': childSchedule.daycareHoursStart }),
-                                                                end: moment().isoWeekday(childSchedule.dayOfWeek).set({ 'hour': childSchedule.daycareHoursEnd }),
-                                                                color: 'orange',
-                                                            };
-                                                            events.push(childEvent);
-                                                        });
-            
-                                                        $('#calendar').fullCalendar('removeEvents');
-            
-                                                        assignEmployeesToChildren(employees, childSchedules, events);
-            
-                                                        $('#calendar').fullCalendar('rerenderEvents');
-                                                    } else {
-                                                        console.error('Erreur : Aucune donnée d\'horaire de garde d\'enfant disponible');
-                                                    }
-                                                },
-                                                error: function (error) {
-                                                    console.error('Erreur AJAX (Child Schedules) : ' + error.message);
-                                                }
-                                            });
-                                        } else {
-                                            console.error('Erreur : Aucun identifiant d\'enfant disponible');
+                function canAssignEmployee(employee, dayOfWeek, hour) {
+                    if (!assignedHours[employee.id]) {
+                        assignedHours[employee.id] = {};
+                    }
+
+                    if (!assignedHours[employee.id][dayOfWeek]) {
+                        assignedHours[employee.id][dayOfWeek] = {};
+                    }
+
+                    if (!assignedHours[employee.id][dayOfWeek][hour]) {
+                        assignedHours[employee.id][dayOfWeek][hour] = 0;
+                    }
+
+                    if (!weeklyAssignedHours[employee.id]) {
+                        weeklyAssignedHours[employee.id] = 0;
+                    }
+
+                    if (weeklyAssignedHours[employee.id] + 1 <= employee.maxWeeklyHours) {
+                        if (assignedHours[employee.id][dayOfWeek][hour] < 3) {
+                            assignedHours[employee.id][dayOfWeek][hour]++;
+                            weeklyAssignedHours[employee.id]++;
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+
+                events.forEach(event => {
+                    const titleParts = event.title.split(':');
+
+                    if (titleParts.length > 1) {
+                        const childId = titleParts[1] ? titleParts[1].trim() : null;
+
+                        if (childId) {
+                            const childSchedule = childSchedules.find(schedule => schedule.child_id === parseInt(childId, 10));
+
+                            if (childSchedule) {
+                                const { daycareHoursStart, daycareHoursEnd, dayOfWeek } = childSchedule;
+
+                                employees.forEach(employee => {
+                                    const startHour = daycareHoursStart;
+                                    const endHour = daycareHoursEnd;
+
+                                    for (let hour = startHour; hour < endHour; hour++) {
+                                        if (canAssignEmployee(employee, dayOfWeek, hour)) {
+                                            event.start = moment().isoWeekday(dayOfWeek).hour(daycareHoursStart).toDate();
+                                            event.end = moment().isoWeekday(dayOfWeek).hour(daycareHoursEnd).toDate();
+                                            event.title += ` - ${employee.name}`;
+                                            break;
                                         }
-                                    } else {
-                                        console.error('Erreur lors de la récupération des données de planning.');
                                     }
-                                },
-                                error: function (error) {
-                                    console.error('Erreur AJAX (Planning) : ', error);
-                                }
-                            });
-            
-                            function updateCalendar() {
-                                $('#calendar').fullCalendar('removeEvents');
-                                $('#calendar').fullCalendar('rerenderEvents'); // Déplacez ceci avant 'addEventSource'
-                                $('#calendar').fullCalendar('addEventSource', events);
+                                });
+                            } else {
+                                console.error('Aucun horaire de garde trouvé pour l\'enfant avec l\'ID ' + childId);
                             }
-                            
                         } else {
-                            console.error('Erreur lors de la récupération des données des employés.');
+                            console.error('Le titre de l\'événement ne contient pas de childId valide.');
                         }
-                    },
-                    error: function (error) {
-                        console.error('Erreur AJAX (Employees) : ', error);
+                    } else {
+                        console.error('Le titre de l\'événement ne contient pas de séparateur ":".');
                     }
                 });
-            });   
-        </script>            
+            }
+
+            async function initialize() {
+                try {
+                    const employees = await loadEmployees();
+                    console.log('Employés récupérés :', employees);
+
+                    const response = await $.ajax({
+                        type: 'GET',
+                        url: '/planning',
+                    });
+
+                    console.log('Réponse du planning :', response);
+
+                    if (Array.isArray(employees) && Array.isArray(response.events)) {
+                        const childId = extractChildIdFromEvents(response.events);
+                        console.log('ID d\'enfant extrait :', childId);
+
+                        if (childId) {
+                            const childSchedules = await loadChildSchedules(childId);
+                            console.log('Horaires des enfants :', childSchedules);
+
+                            if (Array.isArray(childSchedules)) {
+                                childSchedules.forEach(childSchedule => {
+                                    const childEvent = {
+                                        title: `Garde: ${childSchedule.child_id}`,
+                                        start: moment().isoWeekday(childSchedule.dayOfWeek).set({ 'hour': childSchedule.daycareHoursStart }).toDate(),
+                                        end: moment().isoWeekday(childSchedule.dayOfWeek).set({ 'hour': childSchedule.daycareHoursEnd }).toDate(),
+                                        color: 'orange',
+                                    };
+                                    response.events.push(childEvent);
+                                });
+
+                                assignEmployeesToChildren(employees, childSchedules, response.events);
+
+                                $('#calendar').fullCalendar({
+                                    locale: 'fr',
+                                    header: {
+                                        left: 'prev,next today',
+                                        center: 'title',
+                                        right: 'agendaDay,agendaWeek,month'
+                                    },
+                                    defaultView: 'agendaDay',
+                                    views: {
+                                        agendaDay: {
+                                            buttonText: 'Jour',
+                                            slotLabelFormat: 'H:mm',
+                                            slotLabelInterval: '01:00',
+                                            slotLabel: function (date) {
+                                                if (date.hour() >= 7 && date.hour() <= 19) {
+                                                    return date.format('H:mm');
+                                                }
+                                                return '';
+                                            }
+                                        }
+                                    },
+                                    editable: true,
+                                    events: response.events
+                                });
+                            } else {
+                                console.error('Erreur lors du chargement des horaires des enfants.');
+                            }
+                        } else {
+                            console.error('Aucun ID d\'enfant trouvé dans les événements.');
+                        }
+                    } else {
+                        console.error('Erreur lors de la récupération des employés ou des événements.');
+                    }
+                } catch (error) {
+                    console.error('Erreur lors de l\'initialisation : ' + error.message);
+                }
+            }
+
+            function extractChildIdFromEvents(events) {
+                let childId = null;
+                events.forEach(event => {
+                    console.log('Titre de l\'événement :', event.title);
+                    const titleParts = event.title.split(':');
+                    if (titleParts.length === 2 && titleParts[0].trim() === 'Garde') {
+                        const eventId = parseInt(titleParts[1].trim(), 10);
+                        if (!isNaN(eventId)) {
+                            childId = eventId;
+                        }
+                    }
+                });
+                return childId;
+            }
+
+            initialize();
+        });
+
+        </script>          
     </body>
 </html>
 

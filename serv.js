@@ -196,61 +196,98 @@ app.get('/employes', (req, res) => {
 ///////////////////////////////////// DONNEES ENFANTS ////////////////////////////////////////////////////////
 
 
-async function getChildData(userId) {
-    return new Promise((resolve, reject) => {
-        // Remplacez les champs et la logique suivante par vos propres besoins
-        connection.query('SELECT id, daycareHoursStart, daycareHoursEnd FROM child_schedule_hours WHERE id = ?', [userId], (error, results) => {
-            if (error) {
-                console.error('Erreur lors de la récupération des données des enfants : ' + error.message);
-                reject(error);
-            } else {
-                const childrenData = results.map(result => ({
-                    id: result.id,
-                    daycareHoursStart: result.daycareHoursStart,
-                    daycareHoursEnd: result.daycareHoursEnd,
-                    // Ajoutez d'autres champs au besoin
-                }));
-                resolve(childrenData);
-            }
-        });
-    });
-}
+// async function getPlanningData(userId) {
+//     return new Promise((resolve, reject) => {
+//         const childSchedulesQuery = `
+//             SELECT c.id AS child_id, c.firstname AS child_firstname, c.lastname AS child_lastname, 
+//                    s.dayOfWeek, s.daycareHoursStart, s.daycareHoursEnd
+//             FROM children c
+//             JOIN child_schedule_hours s ON c.id = s.child_id
+//             WHERE c.user_id = ?;
+//         `;
 
-///////////////////////////////////// DONNEES EMPLOYES ////////////////////////////////////////////////////////
+//         const employeeSchedulesQuery = `
+//             SELECT e.id AS employee_id, e.firstname AS employee_firstname, e.lastname AS employee_lastname, 
+//                    s.day_id, s.workHoursStart, s.workHoursEnd
+//             FROM employees e
+//             JOIN employee_schedules s ON e.id = s.employee_id
+//             WHERE e.user_id = ?;
+//         `;
 
+//         connection.query(childSchedulesQuery, [userId], (childError, childResults) => {
+//             if (childError) {
+//                 console.error('Erreur lors de la récupération des horaires des enfants :', childError);
+//                 return reject(childError);
+//             }
+//             connection.query(employeeSchedulesQuery, [userId], (employeeError, employeeResults) => {
+//                 if (employeeError) {
+//                     console.error('Erreur lors de la récupération des horaires des employés :', employeeError);
+//                     return reject(employeeError);
+//                 }
+//                 resolve({ children: childResults, employees: employeeResults });
+//             });
+//         });
+//     });
+// }
 
-async function getEmployeeData(userId) {
-    return new Promise((resolve, reject) => {
-        // Sélectionnez les employés en fonction de leur ID utilisateur
-        connection.query('SELECT id, workHours FROM employees WHERE user_id = ?', [userId], (error, results) => {
-            if (error) {
-                console.error('Erreur lors de la récupération des données des employés : ' + error.message);
-                reject(error);
-            } else {
-                // Récupérez les informations sur les jours de travail à partir de la table employee_schedules
-                connection.query('SELECT day_id FROM employee_schedules WHERE employee_id = ?', [results[0].id], (error, scheduleResults) => {
+async function getPlanningData(userId) {
+    try {
+        const [children, childSchedules, employees] = await Promise.all([
+            new Promise((resolve, reject) => {
+                const query = `
+                    SELECT c.id AS child_id, c.firstname AS child_firstname, c.lastname AS child_lastname
+                    FROM children c
+                    WHERE c.user_id = ?;
+                `;
+                connection.query(query, [userId], (error, results) => {
                     if (error) {
-                        console.error('Erreur lors de la récupération des données des horaires des employés : ' + error.message);
-                        reject(error);
-                    } else {
-                        // Créez un tableau pour stocker les identifiants des jours de travail des employés
-                        const workDays = scheduleResults.map(schedule => schedule.day_id);
-                        
-                        // Créez un tableau d'objets pour les employés avec les jours de travail
-                        const employeesData = results.map(result => ({
-                            id: result.id,
-                            workDays: workDays, // Utilisez les identifiants des jours de travail
-                            workHours: result.workHours,
-                            // Ajoutez d'autres champs au besoin
-                        }));
-                        
-                        resolve(employeesData);
+                        console.error('Erreur lors de la récupération des enfants :', error);
+                        return reject(error);
                     }
+                    resolve(results);
                 });
-            }
-        });
-    });
+            }),
+            new Promise((resolve, reject) => {
+                const query = `
+                    SELECT s.child_id, s.dayOfWeek, s.daycareHoursStart, s.daycareHoursEnd
+                    FROM child_schedule_hours s
+                    JOIN children c ON s.child_id = c.id
+                    WHERE c.user_id = ?;
+                `;
+                connection.query(query, [userId], (error, results) => {
+                    if (error) {
+                        console.error('Erreur lors de la récupération des horaires des enfants :', error);
+                        return reject(error);
+                    }
+                    resolve(results);
+                });
+            }),
+            new Promise((resolve, reject) => {
+                const query = `
+                    SELECT e.id AS employee_id, e.firstname AS employee_firstname, e.lastname AS employee_lastname, 
+                           s.day_id, s.workHoursStart, s.workHoursEnd
+                    FROM employees e
+                    JOIN employee_schedules s ON e.id = s.employee_id
+                    WHERE e.user_id = ?;
+                `;
+                connection.query(query, [userId], (error, results) => {
+                    if (error) {
+                        console.error('Erreur lors de la récupération des horaires des employés :', error);
+                        return reject(error);
+                    }
+                    resolve(results);
+                });
+            })
+        ]);
+        return { children, childSchedules, employees };
+    } catch (error) {
+        console.error('Erreur lors de la récupération des données du planning :', error);
+        throw new Error('Erreur lors de la récupération des données du planning');
+    }
 }
+
+
+
 
 
 ///////////////////////////////////// AJOUT EMPLOYES PLANNING ////////////////////////////////////////////////////////
@@ -265,25 +302,28 @@ app.get('/employees', (req, res) => {
             return res.json({ success: false, message: 'Erreur lors de la récupération des employés' });
         }
 
-        const events = [];
+        const events = results.map(employee => {
+            const workHours = typeof employee.workHours === 'string' ? employee.workHours : '';
+            const [start, end] = workHours.split(',');
 
-        results.forEach(employee => {
-            const event = {
+            return {
                 title: `${employee.firstname} ${employee.lastname}`,
-                start: `${employee.workDays}T${employee.workHours[0]}`,
-                end: `${employee.workDays}T${employee.workHours[1]}`,
+                start: start ? `1970-01-01T${start}` : '1970-01-01T00:00', // Format ISO Date
+                end: end ? `1970-01-01T${end}` : '1970-01-01T00:00'    // Format ISO Date
             };
-            events.push(event);
         });
 
         res.json({ success: true, events });
     });
 });
 
+
+
+
 // Fonction pour récupérer les horaires de garde des enfants
 async function getChildSchedules(userId) {
     const sqlQuery = `
-        SELECT id, child_id, dayOfWeek, daycareHoursStart, daycareHoursEnd
+        SELECT child_id, dayOfWeek, daycareHoursStart, daycareHoursEnd
         FROM child_schedule_hours
         WHERE child_id IN (SELECT id FROM children WHERE user_id = ?);
     `;
@@ -299,8 +339,6 @@ async function getChildSchedules(userId) {
         });
     });
 }
-
-
 
 async function getChildDaycareHours(childId) {
     const sqlQuery = `
@@ -362,47 +400,37 @@ app.get('/childSchedules', async (req, res) => {
 
 ///////////////////////////////////// PLANNING ////////////////////////////////////////////////////////
 
+function convertTimeToMinutes(time) {
+    if (!time || time.trim() === '') return 0;
+    const [hours, minutes] = time.split(':').map(Number);
+    return (hours || 0) * 60 + (minutes || 0);
+}
+
+function convertMinutesToTime(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+}
 
 app.get('/planning', async (req, res) => {
     const userId = req.session.logUser ? req.session.logUser.id : null;
 
     try {
         if (userId) {
-            // Récupérez les données des enfants, des employés et les horaires de garde des enfants
-            const childrenResults = await getChildData(userId); // Assurez-vous d'avoir cette fonction définie
-            const employeesResults = await getEmployeeData(userId); // Assurez-vous d'avoir cette fonction définie
-            const childSchedules = await getChildSchedules(userId);
+            const { children, childSchedules, employees } = await getPlanningData(userId);
+            console.log('Données récupérées:', { children, childSchedules, employees });
 
-            // Créez un tableau pour stocker les événements du calendrier
-            const events = [];
+            if (!children || !employees) {
+                throw new Error('Données des enfants ou des employés manquantes');
+            }
 
-            // Ajoutez les événements pour les enfants
-            childrenResults.forEach(child => {
-                if (child.daycareHours) {
-                    const daycareHoursParts = child.daycareHours.split(',');
+            const validChildSchedules = Array.isArray(childSchedules) ? childSchedules : [];
 
-                    if (daycareHoursParts.length === 2) {
-                        const childEvent = {
-                            title: `Enfant:${child.id}`,
-                            start: moment().isoWeekday(child.daycareDays).hour(daycareHoursParts[0]),
-                            end: moment().isoWeekday(child.daycareDays).hour(daycareHoursParts[1]),
-                            color: 'blue',
-                        };
-                        events.push(childEvent);
-                    } else {
-                        console.error(`Format invalide pour daycareHours pour l'enfant avec l'ID ${child.id}`);
-                    }
-                } else {
-                    console.error(`Aucune valeur daycareHours pour l'enfant avec l'ID ${child.id}`);
-                }
-            });
-
-            // Assignez les employés aux enfants en fonction des horaires de garde
-            assignEmployeesToChildren(employeesResults, childSchedules, events);
-
+            const events = assignEmployeesToChildrenAndUpdateDatabase(employees, children, validChildSchedules);
+            console.log('Événements créés :', events);
+            
             res.json({ success: true, events });
         } else {
-            // Si l'utilisateur n'est pas connecté, renvoyez un planning vide
             res.json({ success: true, events: [] });
         }
     } catch (error) {
@@ -411,36 +439,89 @@ app.get('/planning', async (req, res) => {
     }
 });
 
+async function assignEmployeesToChildrenAndUpdateDatabase(employees, children, childSchedules) {
+    const events = [];
+    const employeeAvailability = {};
+    const employeeWorkHours = {};
 
-
-//////////////////////////////////////////// ROUTE POST /////////////////////////////////////////////////////////////////
-
-///////////////////////////////////// USERID ////////////////////////////////////////////////////////
-
-
-app.post('/UserId', (req, res) => {
-    const reqUserId = req.body.userId;
-
-    if (reqUserId != -1){
-        console.log("{ message: 'Id utilisateur chargé :", req.body.userId, "}");
-
-        // Utilisez la table correcte, qui est "users" dans ce cas
-        connection.query('SELECT * FROM users WHERE id = ?', [reqUserId], (error, userResults) => {
-            if (error) {
-                console.error('Erreur lors de la récupération des informations de l\'utilisateur : ' + error.message);
-                return;
-            }
-
-            req.session.logUser = userResults[0];
-            res.redirect('/');
+    employees.forEach(emp => {
+        if (!employeeAvailability[emp.day_id]) {
+            employeeAvailability[emp.day_id] = [];
+            employeeWorkHours[emp.day_id] = [];
+        }
+        employeeAvailability[emp.day_id].push(emp);
+        employeeWorkHours[emp.day_id].push({
+            employee_id: emp.employee_id,
+            workHoursStart: emp.workHoursStart ? convertTimeToMinutes(emp.workHoursStart) : 0,
+            workHoursEnd: emp.workHoursEnd ? convertTimeToMinutes(emp.workHoursEnd) : 0,
+            totalHours: emp.totalHours || 0
         });
-    } else {
-        console.log("{ message: 'Utilisateur déconnecté' }");
-        req.session.logUser = undefined;
-        res.redirect('/');
-    }
-});
+    });
 
+    children.forEach(child => {
+        const { child_id, child_firstname, child_lastname, dayOfWeek, daycareHoursStart, daycareHoursEnd } = child;
+        const startMinutes = convertTimeToMinutes(daycareHoursStart);
+        const endMinutes = convertTimeToMinutes(daycareHoursEnd);
+
+        const availableEmployees = employeeAvailability[dayOfWeek] || [];
+        const availableWorkHours = employeeWorkHours[dayOfWeek] || [];
+
+        availableEmployees.forEach((emp, index) => {
+            const workHours = availableWorkHours[index];
+            if (workHours.workHoursStart <= startMinutes && workHours.workHoursEnd >= endMinutes) {
+                const hoursNeeded = (endMinutes - startMinutes) / 60;
+                if (workHours.totalHours >= hoursNeeded * 60) {
+                    workHours.totalHours -= hoursNeeded * 60;
+
+                    events.push({
+                        title: `Garde pour ${child_firstname} ${child_lastname}`,
+                        start: `1970-01-01T${convertMinutesToTime(startMinutes)}`,
+                        end: `1970-01-01T${convertMinutesToTime(endMinutes)}`,
+                        color: 'orange'
+                    });
+
+                    events.push({
+                        title: `Travail de ${emp.employee_firstname} ${emp.employee_lastname}`,
+                        start: `1970-01-01T${convertMinutesToTime(workHours.workHoursStart)}`,
+                        end: `1970-01-01T${convertMinutesToTime(workHours.workHoursEnd)}`,
+                        color: 'blue'
+                    });
+
+                    updateEmployeeScheduleInDatabase(emp.employee_id, convertMinutesToTime(workHours.workHoursStart), convertMinutesToTime(workHours.workHoursEnd), dayOfWeek);
+                }
+            }
+        });
+
+        if (!events.some(e => e.title.includes(`Garde pour ${child_firstname} ${child_lastname}`))) {
+            events.push({
+                title: `Manque d'employé pour ${child_firstname} ${child_lastname}`,
+                start: `1970-01-01T${convertMinutesToTime(startMinutes)}`,
+                end: `1970-01-01T${convertMinutesToTime(endMinutes)}`,
+                color: 'red'
+            });
+        }
+    });
+
+    return events;
+}
+
+function updateEmployeeScheduleInDatabase(employeeId, start, end, dayId) {
+    return new Promise((resolve, reject) => {
+        const sqlQuery = `
+            UPDATE employee_schedules
+            SET workHoursStart = ?, workHoursEnd = ?
+            WHERE employee_id = ? AND day_id = ?
+        `;
+        connection.query(sqlQuery, [start, end, employeeId, dayId], (error, results) => {
+            if (error) {
+                console.error('Erreur lors de la mise à jour des horaires de travail des employés : ' + error.message);
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+}
 
 ///////////////////////////////////// REGISTER ////////////////////////////////////////////////////////
 
