@@ -1,5 +1,5 @@
 -- --------------------------------------------------------
--- Hôte:                         127.0.0.1
+-- Hôte:                         localhost
 -- Version du serveur:           8.0.30 - MySQL Community Server - GPL
 -- SE du serveur:                Win64
 -- HeidiSQL Version:             12.1.0.6537
@@ -16,12 +16,10 @@
 
 
 -- Listage de la structure de la base pour creche_planning
-DROP DATABASE IF EXISTS `creche_planning`;
 CREATE DATABASE IF NOT EXISTS `creche_planning` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `creche_planning`;
 
 -- Listage de la structure de table creche_planning. children
-DROP TABLE IF EXISTS `children`;
 CREATE TABLE IF NOT EXISTS `children` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL,
@@ -31,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `children` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `children_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Listage des données de la table creche_planning.children : ~3 rows (environ)
 DELETE FROM `children`;
@@ -41,7 +39,6 @@ INSERT INTO `children` (`id`, `user_id`, `firstname`, `lastname`, `age`) VALUES
 	(73, 26, 'alexandre', 'perez', 19);
 
 -- Listage de la structure de table creche_planning. child_schedule_hours
-DROP TABLE IF EXISTS `child_schedule_hours`;
 CREATE TABLE IF NOT EXISTS `child_schedule_hours` (
   `id` int NOT NULL AUTO_INCREMENT,
   `child_id` int NOT NULL,
@@ -53,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `child_schedule_hours` (
   KEY `fk_child_schedule_hours_dayOfWeek` (`dayOfWeek`),
   CONSTRAINT `fk_child_schedule_hours_child_id` FOREIGN KEY (`child_id`) REFERENCES `children` (`id`),
   CONSTRAINT `fk_child_schedule_hours_dayOfWeek` FOREIGN KEY (`dayOfWeek`) REFERENCES `jours_semaine` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Listage des données de la table creche_planning.child_schedule_hours : ~7 rows (environ)
 DELETE FROM `child_schedule_hours`;
@@ -63,11 +60,10 @@ INSERT INTO `child_schedule_hours` (`id`, `child_id`, `dayOfWeek`, `daycareHours
 	(14, 9, 1, '09:00', '18:00'),
 	(15, 9, 4, '09:00', '18:00'),
 	(16, 9, 5, '09:00', '18:00'),
-	(68, 73, 1, '10:00', '15:00'),
-	(69, 73, 3, '', '');
+	(72, 73, 1, '10:00', '14'),
+	(73, 73, 3, '', '');
 
 -- Listage de la structure de table creche_planning. employees
-DROP TABLE IF EXISTS `employees`;
 CREATE TABLE IF NOT EXISTS `employees` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL,
@@ -77,16 +73,15 @@ CREATE TABLE IF NOT EXISTS `employees` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `employees_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table creche_planning.employees : ~2 rows (environ)
+-- Listage des données de la table creche_planning.employees : ~3 rows (environ)
 DELETE FROM `employees`;
 INSERT INTO `employees` (`id`, `user_id`, `firstname`, `lastname`, `workHours`) VALUES
 	(15, 26, 'Alexandre', 'Perez', 35),
-	(16, 26, 'Pauline', 'Rainguez', 35);
+	(23, 26, 'alexandre', 'PEREZ', 10);
 
 -- Listage de la structure de table creche_planning. employee_schedules
-DROP TABLE IF EXISTS `employee_schedules`;
 CREATE TABLE IF NOT EXISTS `employee_schedules` (
   `id` int NOT NULL AUTO_INCREMENT,
   `employee_id` int NOT NULL,
@@ -98,22 +93,18 @@ CREATE TABLE IF NOT EXISTS `employee_schedules` (
   KEY `day_id` (`day_id`),
   CONSTRAINT `employee_schedules_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`),
   CONSTRAINT `employee_schedules_ibfk_2` FOREIGN KEY (`day_id`) REFERENCES `jours_semaine` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table creche_planning.employee_schedules : ~8 rows (environ)
+-- Listage des données de la table creche_planning.employee_schedules : ~5 rows (environ)
 DELETE FROM `employee_schedules`;
 INSERT INTO `employee_schedules` (`id`, `employee_id`, `day_id`, `workHoursStart`, `workHoursEnd`) VALUES
 	(11, 15, 2, NULL, NULL),
 	(12, 15, 3, NULL, NULL),
 	(13, 15, 4, NULL, NULL),
-	(14, 16, 1, NULL, NULL),
-	(15, 16, 2, NULL, NULL),
-	(16, 16, 3, NULL, NULL),
-	(17, 16, 4, NULL, NULL),
-	(18, 16, 5, NULL, NULL);
+	(37, 23, 3, NULL, NULL),
+	(38, 23, 4, NULL, NULL);
 
 -- Listage de la structure de table creche_planning. jours_semaine
-DROP TABLE IF EXISTS `jours_semaine`;
 CREATE TABLE IF NOT EXISTS `jours_semaine` (
   `id` int NOT NULL AUTO_INCREMENT,
   `dayName` varchar(255) NOT NULL,
@@ -132,7 +123,6 @@ INSERT INTO `jours_semaine` (`id`, `dayName`) VALUES
 	(7, 'Dimanche');
 
 -- Listage de la structure de table creche_planning. users
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(255) NOT NULL,
@@ -140,7 +130,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table creche_planning.users : ~1 rows (environ)
+-- Listage des données de la table creche_planning.users : ~0 rows (environ)
 DELETE FROM `users`;
 INSERT INTO `users` (`id`, `username`, `password`) VALUES
 	(26, 'alex', '$2b$10$XrK6UtFbFlS6/cg.cAcB3.CSXCJTO800qXjvgcE7F5/bc7LIXfe9K');
