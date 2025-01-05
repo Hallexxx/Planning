@@ -1,0 +1,6 @@
+<h2>Liste des employés</h2>
+<ul>
+  <% employees.forEach(employee => { %>
+    <li><a href="/employee/<%= employee._id %>"><%= employee.name %></a> - Position: <%= employee.position %>, Micro-crèche: <%= employee.microCreche.name %></li>
+  <% }) %>
+</ul>

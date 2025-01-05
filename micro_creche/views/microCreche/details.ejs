@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= microCreche.name %> - Votre Micro-Crèche</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: Arial, sans-serif;
+    }
+    .content-section {
+      margin-top: 20px;
+    }
+    .divider {
+      border-top: 1px solid #dee2e6;
+      margin: 20px 0;
+    }
+    .card img {
+      max-height: 150px;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <h1 class="mt-4">Votre Micro-Crèche : <%= microCreche.name %></h1>
+        <p><strong>Adresse :</strong> <%= microCreche.address %></p>
+        <p><strong>Description :</strong> <%= microCreche.description || "Vous n'avez pas encore de description." %></p>
+
+        <div class="divider"></div>
+
+        <h3>Enfants</h3>
+        <% if (children.length > 0) { %>
+          <div class="row">
+            <% children.forEach(child => { %>
+              <div class="col-md-4">
+                <div class="card">
+                  <img src="/images/placeholder.png" class="card-img-top" alt="<%= child.name %>">
+                  <div class="card-body">
+                    <h5 class="card-title"><%= child.name %></h5>
+                    <p class="card-text">Âge : <%= child.age %></p>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <p>Vous n'avez pas encore d'enfants ajoutés. <a href="/children/create" class="btn btn-primary">Ajoutez-en maintenant</a></p>
+        <% } %>
+
+        <div class="divider"></div>
+
+        <h3>Employés</h3>
+        <% if (employees.length > 0) { %>
+          <div class="row">
+            <% employees.forEach(employee => { %>
+              <div class="col-md-4">
+                <div class="card">
+                  <img src="/images/placeholder.png" class="card-img-top" alt="<%= employee.name %>">
+                  <div class="card-body">
+                    <h5 class="card-title"><%= employee.name %></h5>
+                    <p class="card-text">Poste : <%= employee.position %></p>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <p>Vous n'avez pas encore d'employés ajoutés. <a href="/employees/create" class="btn btn-primary">Ajoutez-en maintenant</a></p>
+        <% } %>
+
+        <div class="divider"></div>
+
+        <h3>Planning</h3>
+        <p>Vous n'avez pas encore de planning. Ajoutez des enfants ou des employés pour en créer un.</p>
+      </div>
+      <div class="col-md-4">
+        <img src="/images/microCreche-banner.png" class="img-fluid" alt="Micro-Crèche">
+      </div>
+    </div>
+  </div>
+</body>
+</html>

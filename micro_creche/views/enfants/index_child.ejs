@@ -1,0 +1,6 @@
+<h2>Liste des enfants</h2>
+<ul>
+  <% children.forEach(child => { %>
+    <li><a href="/child/<%= child._id %>"><%= child.name %></a> - Micro-crèche: <%= child.microCreche.name %></li>
+  <% }) %>
+</ul>
