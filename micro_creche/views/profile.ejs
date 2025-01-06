@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil utilisateur</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .separator {
+      border-top: 1px solid #ddd;
+      margin: 15px 0;
+    }
+    .card:hover {
+      transform: scale(1.02);
+      transition: transform 0.3s ease;
+      box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-5">
+    <h1 class="text-center mb-4">Profil utilisateur</h1>
+
+    <!-- Informations personnelles -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Informations personnelles</h5>
+        <p><strong>Nom :</strong> <%= user.nom %></p>
+        <p><strong>Prénom :</strong> <%= user.prenom %></p>
+        <p><strong>Email :</strong> <%= user.email %></p>
+        <p><strong>Rôle :</strong> <%= user.role %></p>
+      </div>
+    </div>
+
+    <!-- Liste des micro-crèches -->
+    <h4 class="mb-3">Micro-crèches liées</h4>
+    <div class="row">
+      <% microCreches.forEach(microCreche => { %>
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title"><%= microCreche.name %></h5>
+              <p class="card-text"><%= microCreche.address %></p>
+              <a href="/micro-creche/<%= microCreche._id %>" class="btn btn-primary">Voir les détails</a>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- Liste des enfants -->
+    <h4 class="mb-3">Enfants liés</h4>
+    <div class="row">
+      <% enfants.forEach(enfant => { %>
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title"><%= enfant.name %></h5>
+              <p class="card-text">Date de naissance : <%= new Date(enfant.dateOfBirth).toLocaleDateString() %></p>
+              <a href="/enfant/<%= enfant._id %>" class="btn btn-secondary">Voir les détails</a>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- Liste des employés -->
+    <h4 class="mb-3">Employés liés</h4>
+    <div class="row">
+      <% employees.forEach(employee => { %>
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title"><%= employee.name %></h5>
+              <p class="card-text">Email : <%= employee.email %></p>
+              <p class="card-text">Téléphone : <%= employee.phone || "Non renseigné" %></p>
+              <a href="/employee/<%= employee._id %>" class="btn btn-success">Voir les détails</a>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -4,6 +4,9 @@ const moment = require("moment");
 const { authMiddleware, authenticateUser } = require("../middleware/authMiddleware");
 const MicroCreche = require("../models/MicroCreche");
 const Planning = require("../models/Planning");
+const { getProfile } = require("../controllers/userController");
+
+router.get("/profile", getProfile);
 
 const isTimeWithinInterval = (time, interval) => {
   const [start, end] = interval.split("-").map(t => t.trim());

@@ -1,6 +1,10 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const MicroCreche = require("../models/MicroCreche");
+const Enfant = require("../models/Enfant");
+const Employee = require("../models/Employee");
+
 
 const signup = async (req, res) => {
   const { nom, prenom, email, password, role } = req.body;
@@ -73,7 +77,23 @@ const login = async (req, res) => {
   res.redirect("/");  // Redirection vers la page d'accueil ou le tableau de bord
 };
 
+const getProfile = async (req, res) => {
+  try {
+    const userId = req.user.id; // ID utilisateur récupéré depuis le middleware d'authentification
+    const user = await User.findById(userId).populate("microCreches");
+    const microCreches = await MicroCreche.find({ owner: userId }).populate("employees enfants");
+    const enfants = await Enfant.find({ microCreche: { $in: user.microCreches } });
+    const employees = await Employee.find({ microCreche: { $in: user.microCreches } });
+
+    res.render("profile", { user, microCreches, enfants, employees });
+  } catch (error) {
+    console.error("Erreur lors de la récupération du profil :", error);
+    res.status(500).send("Erreur serveur");
+  }
+};
+
 module.exports = {
   signup,
   login,
+  getProfile,
 };
