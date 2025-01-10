@@ -112,127 +112,104 @@ nav.navbar .nav-link:hover {
     word-wrap: break-word; /* Casser les mots longs pour éviter le débordement */
 }
 
-/**** Styles des légendes ****/
-.legend-box {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
-    margin-right: 5px;
-}
-.bg-blue {
-    background-color: #007bff !important;
-}
-.bg-orange {
-    background-color: #ffa500 !important;
-}
-.bg-red {
-    background-color: #ff4500 !important;
+:root {
+  --numDays: 5;
+  --numHours: 10;
+  --timeHeight: 60px;
+  --calBgColor: #fff1f8;
+  --eventBorderColor: #f2d3d8;
+  --eventColor1: #ffd6d1;
+  --eventColor2: #fafaa3;
+  --eventColor3: #e2f8ff;
+  --eventColor4: #d1ffe6;
 }
 
-/**** Styles pour le tableau avec ombres ****/
-.table {
-    border-spacing: 0;
-    overflow: hidden;
-    border-radius: 12px; /* Arrondi global du tableau */
-    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2), /* Ombre vers le bas */
-                -4px 0px 10px rgba(0, 0, 0, 0.1), /* Ombre à gauche */
-                 4px 0px 10px rgba(0, 0, 0, 0.1); /* Ombre à droite */
+.calendar {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: auto 1fr;
+  margin: 2rem;
 }
 
-/**** Styles des cellules internes ****/
-.table-bordered td,
-.table-bordered th {
-    border-radius: 6px; /* Arrondi léger des cellules */
-    overflow: hidden;
-    vertical-align: middle;
+.timeline {
+  display: grid;
+  grid-template-rows: repeat(14, var(--timeHeight));
 }
 
-/**** Dimensions minimales pour les cases horaires ****/
-.table-bordered td:first-child {
-    min-width: 80px; /* Largeur minimale pour les horaires */
-    text-align: center;
-    white-space: nowrap; /* Empêche le retour à la ligne */
+.days {
+  display: grid;
+  grid-column: 2;
+  gap: 5px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 }
 
-.table-bordered td:first-child span {
-    display: block;
-    line-height: 1.2; /* Contrôle de l'espacement vertical */
+.events {
+  display: grid;
+  grid-template-rows: repeat(14, var(--timeHeight));
+  border-radius: 5px;
+  background: var(--calBgColor);
 }
 
-/**** Arrondir les coins des cellules ****/
-.rounded-cell {
-    border-radius: 8px;
-    padding: 15px;
-    position: relative;
+.event {
+  border: 1px solid var(--eventBorderColor);
+  border-radius: 5px;
+  padding: 0.5rem;
+  background: white;
 }
 
-/**** Disposition flexible des enfants et employés ****/
-.slot-details {
-    display: flex; /* Flexbox activé */
-    flex-wrap: wrap; /* Retour à la ligne pour gérer l'espace */
-    gap: 8px; /* Espacement entre les éléments */
-    justify-content: center; /* Centrage horizontal */
+.date {
+  display: flex;
+  gap: 1em;
 }
 
-.child-name,
-.employee-name {
-    display: inline-block;
-    margin: 0;
-    font-weight: 500;
-    font-size: 0.85rem;
-    color: #333; /* Couleur par défaut */
+.date-num {
+  font-size: 3rem;
+  font-weight: 600;
+  display: inline;
 }
 
-/**** Couleurs de fond en fonction du nombre d'enfants ****/
-.table-bordered td.bg-blue {
-    background-color: #007bff; /* Bleu */
-    color: #ffffff; /* Texte blanc */
+.date-day {
+  display: inline;
+  font-size: 3rem;
+  font-weight: 100;
 }
 
-.table-bordered td.bg-orange {
-    background-color: #ffa500; /* Orange */
-    color: #ffffff; /* Texte blanc */
+.event .title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
 }
 
-.table-bordered td.bg-red {
-    background-color: #ff4500; /* Rouge */
-    color: #ffffff; /* Texte blanc */
+.text-danger {
+  color: red;
 }
 
-/**** Animation pour l'affichage des cellules colorées ****/
-.table-bordered td.bg-blue,
-.table-bordered td.bg-orange,
-.table-bordered td.bg-red {
-    animation: fadeIn 0.5s ease-in-out;
+.fw-bold {
+  font-weight: bold;
 }
 
-/**** Animation douce pour l'affichage ****/
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+.event {
+  border: 1px solid #ccc;
+  padding: 10px;
+  color: #333;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  margin: 2px 0;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/**** Ajustement des badges (noms des enfants et employés) ****/
-.child-name,
-.employee-name {
-    display: inline-block;
-    margin: 2px 4px; /* Espacement ajusté */
+.event p {
+  margin: 0;
+  padding: 0;
 }
 
-/**** Gérer l'arrière-plan des noms individuellement ****/
-.child-name {
-    color: #333; /* Texte foncé */
-    background-color: transparent; /* Pas de fond */
+.time {
+  font-weight: bold;
 }
 
-.employee-name {
-    color: #333; /* Texte foncé */
-    background-color: transparent; /* Pas de fond */
+.event:nth-child(odd) {
+  background-color: #f9f9f9;
 }
+

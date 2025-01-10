@@ -1,7 +1,8 @@
 const Employee = require("../models/Employee"); // Modèle de l'employé
 const MicroCreche = require("../models/MicroCreche");
+const mongoose = require("mongoose");
 
-exports.getAllEmployees = async (req, res) => {
+const getAllEmployees = async (req, res) => {
   try {
     const employees = await Employee.find().populate("microCreche");
     res.render("employees/index_employe", { employees });
@@ -11,9 +12,9 @@ exports.getAllEmployees = async (req, res) => {
   }
 };
 
-exports.getAddEmployeeForm = async (req, res) => {
+const getAddEmployeeForm = async (req, res) => {
   try {
-    const microCreches = await MicroCreche.find(); // Récupère toutes les micro-crèches
+    const microCreches = await MicroCreche.find(); 
     res.render("employees/create", { microCreches });
   } catch (error) {
     console.error(error);
@@ -21,11 +22,10 @@ exports.getAddEmployeeForm = async (req, res) => {
   }
 };
 
-exports.addEmployee = async (req, res) => {
+const addEmployee = async (req, res) => {
   const { name, email, phone, role, microCrecheId, workHoursPerWeek } = req.body;
 
   try {
-    // Créer l'employé
     const newEmployee = new Employee({
       name,
       email,
@@ -37,14 +37,13 @@ exports.addEmployee = async (req, res) => {
 
     await newEmployee.save();
 
-    // Mettre à jour la micro-crèche
     await MicroCreche.findByIdAndUpdate(
       microCrecheId,
-      { $push: { employees: newEmployee._id } }, // Ajouter l'employé à la liste
+      { $push: { employees: newEmployee._id } }, 
       { new: true }
     );
 
-    res.redirect("/employee"); // Redirection vers la liste des employés
+    res.redirect("/employee");
   } catch (error) {
     console.error(error);
     res.status(500).send("Erreur lors de l'ajout de l'employé.");
@@ -52,7 +51,7 @@ exports.addEmployee = async (req, res) => {
 };
 
 
-exports.getEmployeeDetails = async (req, res) => {
+const getEmployeeDetails = async (req, res) => {
   try {
     const employee = await Employee.findById(req.params.id).populate("microCreche");
     if (!employee) {
@@ -65,13 +64,11 @@ exports.getEmployeeDetails = async (req, res) => {
   }
 };
 
-// Suppression d'un employé
-exports.deleteEmployee = async (req, res) => {
+const deleteEmployee = async (req, res) => {
   try {
     const employee = await Employee.findByIdAndDelete(req.params.id);
 
     if (employee) {
-      // Retirer l'employé de la micro-crèche
       await MicroCreche.findByIdAndUpdate(employee.microCreche, {
         $pull: { employees: employee._id },
       });
@@ -83,4 +80,37 @@ exports.deleteEmployee = async (req, res) => {
     res.status(500).send("Erreur lors de la suppression de l'employé.");
   }
 };
+
+const updateEmployeeField = async (req, res) => {
+  try {
+    const { employeeId, field, value } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(employeeId)) {
+      return res.status(400).json({ error: "ID de l'employé invalide" });
+    }
+
+    const validFields = ["name", "email", "phone", "role", "workHoursPerWeek"];
+    if (!validFields.includes(field)) {
+      return res.status(400).json({ error: "Champ invalide" });
+    }
+
+    const updatedEmployee = await Employee.findByIdAndUpdate(
+      employeeId,
+      { [field]: value },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedEmployee) {
+      return res.status(404).json({ error: "Employé non trouvé" });
+    }
+
+    res.status(200).json({ message: "Mise à jour réussie", employee: updatedEmployee });
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour :", error);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+};
+
+module.exports = { updateEmployeeField, deleteEmployee, getEmployeeDetails, addEmployee, getAddEmployeeForm, getAllEmployees };
+
 

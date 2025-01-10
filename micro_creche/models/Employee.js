@@ -5,8 +5,8 @@ const employeeSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   phone: { type: String },
-  role: { type: String, default: "employee" }, // Rôle par défaut pour les employés
-  userAccount: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Référence au compte utilisateur si lié
+  role: { type: String, default: "employee" }, 
+  userAccount: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   addedAt: { type: Date, default: Date.now },
   workHoursPerWeek: { type: Number, required: true, min: 0 },
 });

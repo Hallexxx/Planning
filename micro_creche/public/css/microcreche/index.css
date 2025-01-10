@@ -1,0 +1,47 @@
+h1, h4 {
+    font-weight: 700;
+    color: #495057;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card-title {
+    font-size: 1.25rem;
+    color: #495057;
+    font-weight: 600;
+}
+
+.card-text {
+    color: #6c757d;
+}
+
+.btn {
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: #6c63ff;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #574bff;
+}
+
+.microcreche-bg{
+    background-image: url('../../media/creche.png');
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+} 

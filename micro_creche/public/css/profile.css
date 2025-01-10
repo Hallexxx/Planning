@@ -1,0 +1,122 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f8f9fa;
+  color: #343a40;
+  line-height: 1.6;
+}
+
+h1, h4 {
+  font-weight: 700;
+  color: #495057;
+}
+
+.card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card-title {
+  font-size: 1.25rem;
+  color: #495057;
+  font-weight: 600;
+}
+
+.card-text {
+  color: #6c757d;
+}
+
+.btn {
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background-color: #6c63ff;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #574bff;
+}
+
+.separator {
+  height: 1px;
+  background-color: #ddd;
+  margin: 10px 0;
+}
+
+.editable {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0px;
+  transition: background-color 0.3s ease;
+  border-radius: 5px;
+}
+
+.editable .edit-icon {
+  cursor: pointer;
+  color: #495057;
+  font-size: 1.2rem;
+}
+
+.editable.edit-mode {
+  background-color: #e9ecef;
+}
+
+.microcreche-bg {
+  height: 150px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+}
+
+.more-link {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: #6c63ff;
+  float: right;
+}
+
+.more-link:hover {
+  text-decoration: underline;
+}
+
+.profile-header {
+  background-image: linear-gradient(135deg, #6c63ff, #574bff);
+  color: white;
+  padding: 30px 15px;
+  border-radius: 10px;
+  margin-bottom: 3rem !important;
+  text-align: center;
+}
+
+.editable:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+.editable.active {
+  background-color: #e9ecef;
+}
+
+.edit-icon {
+  cursor: pointer;
+  color: #6c757d;
+}
+
+.edit-icon:hover {
+  color: #495057;
+}
+
+.separator {
+  border-top: 1px solid #ddd;
+  margin: 8px 0;
+}

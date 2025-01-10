@@ -1,7 +1,8 @@
-const Child = require("../models/Enfant"); // Modèle de l'enfant
+const Child = require("../models/Enfant"); 
 const MicroCreche = require("../models/MicroCreche");
+const mongoose = require("mongoose");
 
-exports.getAllChildren = async (req, res) => {
+const getAllChildren = async (req, res) => {
   try {
     const children = await Child.find().populate("microCreche");
     res.render("enfants/index_child", { children });
@@ -11,9 +12,9 @@ exports.getAllChildren = async (req, res) => {
   }
 };
 
-exports.getAddChildForm = async (req, res) => {
+const getAddChildForm = async (req, res) => {
   try {
-    const microCreches = await MicroCreche.find(); // Récupère toutes les micro-crèches
+    const microCreches = await MicroCreche.find(); 
     res.render("enfants/create", { microCreches });
   } catch (error) {
     console.error(error);
@@ -21,10 +22,9 @@ exports.getAddChildForm = async (req, res) => {
   }
 };
 
-exports.addChild = async (req, res) => {
-  const { name, dateOfBirth, microCrecheId, horaires } = req.body; // Données de l'enfant
+const addChild = async (req, res) => {
+  const { name, dateOfBirth, microCrecheId, horaires } = req.body;
 
-  // Valider que chaque horaire suit le format attendu "xh-xxh"
   const validTimeFormat = (time) => /^(\d{1,2})h-(\d{1,2})h$/.test(time);
 
   const horairesValid = Object.values(horaires).every(time => !time || validTimeFormat(time));
@@ -34,7 +34,6 @@ exports.addChild = async (req, res) => {
   }
 
   try {
-    // Créer l'enfant
     const newChild = new Child({
       name,
       dateOfBirth,
@@ -50,26 +49,24 @@ exports.addChild = async (req, res) => {
 
     await newChild.save();
 
-    // Mettre à jour la micro-crèche pour inclure l'enfant
     await MicroCreche.findByIdAndUpdate(
       microCrecheId,
-      { $push: { enfants: newChild._id } }, // Ajouter l'enfant à la liste des enfants
+      { $push: { enfants: newChild._id } }, 
       { new: true }
     );
 
-    res.redirect("/child"); // Redirection vers la liste des enfants
+    res.redirect("/child"); 
   } catch (error) {
     console.error(error);
     res.status(500).send("Erreur lors de l'ajout de l'enfant.");
   }
 };
 
-exports.deleteChild = async (req, res) => {
+const deleteChild = async (req, res) => {
   try {
     const child = await Child.findByIdAndDelete(req.params.id);
 
     if (child) {
-      // Retirer l'enfant de la micro-crèche
       await MicroCreche.findByIdAndUpdate(child.microCreche, {
         $pull: { enfants: child._id },
       });
@@ -82,8 +79,7 @@ exports.deleteChild = async (req, res) => {
   }
 };
   
-
-exports.getChildDetails = async (req, res) => {
+const getChildDetails = async (req, res) => {
   try {
     const child = await Child.findById(req.params.id).populate("microCreche");
     if (!child) {
@@ -95,3 +91,52 @@ exports.getChildDetails = async (req, res) => {
     res.status(500).send("Erreur lors de la récupération des détails de l'enfant.");
   }
 };
+
+const updateChildField = async (req, res) => {
+  try {
+    const { childId, field, value } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(childId)) {
+      return res.status(400).json({ error: "ID de l'enfant invalide" });
+    }
+
+    if (field === 'name' || field === 'dateOfBirth') {
+      const updatedChild = await Child.findByIdAndUpdate(
+        childId,
+        { [field]: value }, 
+        { new: true, runValidators: true }
+      );
+
+      if (!updatedChild) {
+        return res.status(404).json({ error: "Enfant non trouvé" });
+      }
+
+      return res.status(200).json({ message: "Mise à jour réussie", child: updatedChild });
+    }
+
+    const validDays = ["lundi", "mardi", "mercredi", "jeudi", "vendredi"];
+    const day = field.split(".")[1]; 
+
+    if (validDays.includes(day)) {
+      const updatedChild = await Child.findByIdAndUpdate(
+        childId,
+        { [`horaires.${day}`]: value }, 
+        { new: true, runValidators: true }
+      );
+
+      if (!updatedChild) {
+        return res.status(404).json({ error: "Enfant non trouvé" });
+      }
+
+      return res.status(200).json({ message: "Mise à jour des horaires réussie", child: updatedChild });
+    }
+
+    return res.status(400).json({ error: "Champ invalide ou non pris en charge" });
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour :", error);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+};
+
+
+module.exports = { getAllChildren, getAddChildForm, addChild, deleteChild, getChildDetails, updateChildField };

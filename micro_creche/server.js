@@ -4,16 +4,16 @@ const connectDB = require("./config/db");
 const cookieParser = require("cookie-parser");
 const { authenticateUser, authMiddleware } = require("./middleware/authMiddleware"); // Importer les middlewares d'authentification
 
-// Chargement des variables d'environnement depuis .env
+
 dotenv.config();
 
-// Connexion à la base de données
 connectDB();
 
 const app = express();
 
 // Middleware pour gérer les fichiers statiques (CSS, JS, images)
 app.use(express.static("public"));
+app.use(express.json()); 
 app.use(cookieParser());
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
@@ -23,7 +23,6 @@ app.use("/auth", authRoutes);
 
 app.use(authenticateUser); 
 
-// Définition des routes
 const indexRoutes = require("./routes/index");
 app.use("/", indexRoutes);
 
@@ -36,8 +35,10 @@ app.use("/", childRoutes);
 const employeeRoutes = require("./routes/employeeRoutes");
 app.use("/", employeeRoutes);
 
+const planningRoutes = require("./routes/planning");
+app.use("/planning", planningRoutes);
 
-// Lancer le serveur sur le port défini dans le fichier .env
+
 app.listen(process.env.PORT, () => {
   console.log(`Server running on http://localhost:${process.env.PORT}`);
 });

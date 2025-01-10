@@ -5,37 +5,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Micro-Crèche</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="../css/styles.css">
+        <link rel="stylesheet" href="/css/styles.css">
+        <link rel="stylesheet" href="/css/partials/navbar.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Quicksand:wght@400;500&family=Pacifico&display=swap" rel="stylesheet">
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">Micro-Crèche</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <% if (user) { %>
-                            <li class="nav-item">
-                                <div class="d-flex align-items-center">
-                                    <img src="/path/to/user-icon.png" alt="User" style="width: 30px; height: 30px; border-radius: 50%;">
-                                    <span class="ms-2"><%= user.prenom %> <%= user.nom %></span>
-                                </div>
-                            </li>
-                            <li class="nav-item"><a class="nav-link" href="/planning">Planning</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/employes">Employés</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/enfants">Enfants</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/auth/logout">Déconnexion</a></li>
-                        <% } else { %>
-                            <li class="nav-item"><a class="nav-link" href="/auth/signup/employe">Créer un compte Employé</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/auth/signup/pro">Créer un compte Pro</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/auth/login">Connexion</a></li>
-                        <% } %>
-                    </ul>
-                </div>                
-            </div>
-        </nav>
+        <%- include("partials/navbar") %>
 
         <!-- Presentation -->
         <div class="presentation">
@@ -136,115 +111,108 @@
         <section id="planning" class="py-5">
             <div class="container text-center">
                 <h2 class="mb-4">Consultez vos plannings</h2>
-            
+
                 <!-- Cas : utilisateur non authentifié -->
                 <% if (!userAuthenticated) { %>
                     <p>Connectez-vous ou créez un compte pour accéder à vos plannings.</p>
-            
+
                 <!-- Cas : aucune micro-crèche éligible -->
                 <% } else if (eligibleMicroCreches.length === 0) { %>
                     <p>Ajoutez des enfants et des employés à vos micro-crèches pour générer un planning.</p>
-            
+
                 <!-- Cas : plannings disponibles ou génération possible -->
                 <% } else { %>
                     <div>
                         <% if (plannings && plannings.length > 0) { %>
-                            <div class="container my-5">
-                              
-                                <div id="carousel-planning" class="carousel slide" data-bs-ride="carousel">
-                                    <div class="carousel-inner">
-                                      <% plannings.forEach((planning, index) => { %>
-                                        <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
-                                          <h4 class="text-center mb-4">Planning pour : <%= planning.microCreche.name %></h4>
-                                          <table class="table table-bordered text-center">
-                                            <thead>
-                                              <tr>
-                                                <th>Heure</th>
-                                                <% daysOfWeek.forEach(day => { %>
-                                                  <th><%= day %></th>
-                                                <% }); %>
-                                              </tr>
-                                            </thead>
-                                            <tbody>
-                                              <% for (let hour = 6; hour < 20; hour++) { %>
-                                                <tr>
-                                                  <td><%= hour %>:00 - <%= hour + 1 %>:00</td>
-                                                  <% daysOfWeek.forEach(day => { %>
-                                                    <% 
-                                                      const slot = planning.slots.find(
-                                                        s => s.day.toLowerCase() === day.toLowerCase() && s.start === `${hour}:00`
-                                                      );
-                                                      const childrenCount = slot?.children.length || 0;
-                                                      const bgColor =
-                                                        childrenCount === 1 ? 'bg-blue' :
-                                                        childrenCount === 2 ? 'bg-orange' :
-                                                        childrenCount >= 3 ? 'bg-red' : '';
-                                                    %>
-                                                    <td class="rounded-cell <%= bgColor %>">
-                                                      <% if (slot) { %>
-                                                        <% if (slot.children.length > 0) { %>
-                                                          <div class="slot-details">
-                                                            <strong>Enfants :</strong>
-                                                            <% slot.children.forEach(child => { %>
-                                                              <p class="child-name"><%= child.name %></p>
-                                                            <% }); %>
-                                                          </div>
-                                                        <% } %>
-                                                        <% if (slot.employees.length > 0) { %>
-                                                          <div class="slot-details">
-                                                            <strong>Employés :</strong>
-                                                            <% slot.employees.forEach(emp => { %>
-                                                              <p class="employee-name"><%= emp.name %></p>
-                                                            <% }); %>
-                                                          </div>
-                                                        <% } %>
-                                                        <% if (slot.missingEmployees > 0) { %>
-                                                          <p class="text-danger fw-bold">Employés manquants : <%= slot.missingEmployees %></p>
-                                                        <% } %>
-                                                      <% } %>
-                                                    </td>
-                                                  <% }); %>
-                                                </tr>
-                                              <% } %>
-                                            </tbody>
-                                          </table>
+                            <div id="carousel-planning" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                                  <% plannings.forEach((planning, index) => { %>
+                                    <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                                      <div class="calendar">
+                                        <div class="timeline">
+                                          <% for (let hour = 8; hour <= 18; hour++) { %>
+                                            <div class="time-marker"><%= hour %>:00</div>
+                                          <% } %>
                                         </div>
-                                      <% }); %>
-                                    </div>
                               
-                                  <!-- Navigation -->
-                                  <button class="carousel-control-prev" type="button" data-bs-target="#carousel-planning" data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Précédent</span>
-                                  </button>
-                                  <button class="carousel-control-next" type="button" data-bs-target="#carousel-planning" data-bs-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Suivant</span>
-                                  </button>
-                                  <div class="d-flex justify-content-start align-items-center mb-4">
-                                    <div class="me-3">
-                                      <span class="legend-box bg-blue"></span> 1 enfant
+                                        <div class="days">
+                                            <% daysOfWeek.forEach(day => { %>
+                                                <div class="day">
+                                                  <div class="date">
+                                                    <p class="date-day"><%= day %></p>
+                                                  </div>
+                                                  <div class="events">
+                                                    <% (planning.slotsByDay[day] || []).forEach(slot => { %>
+                                                      <div class="event" 
+                                                        style="
+                                                          grid-row-start: <%= parseInt(slot.start.split(':')[0]) - 6 + 1 %>;
+                                                          grid-row-end: <%= parseInt(slot.end.split(':')[0]) - 6 + 1 %>;
+                                                          background-color: <%= slot.children.length >= 3 ? '#d1ffe6' : slot.children.length >= 6 ? '#ffd6d1' : '#e2f8ff' %>;
+                                                          border-radius: 10px;
+                                                        ">
+                                                        <p class="time"><%= slot.start %> - <%= slot.end %></p>
+                                              
+                                                        <!-- Affichage des enfants -->
+                                                        <% if (slot.children && slot.children.length > 0) { %>
+                                                          <div class="children">
+                                                            <strong>Enfants :</strong>
+                                                            <ul>
+                                                              <% slot.children.forEach(child => { %>
+                                                                <li><%= child.name %></li>
+                                                              <% }); %>
+                                                            </ul>
+                                                          </div>
+                                                        <% } else { %>
+                                                          <p>Aucun enfant</p>
+                                                        <% } %>
+                                              
+                                                        <!-- Affichage des employés -->
+                                                        <% if (slot.employees && slot.employees.length > 0) { %>
+                                                          <div class="employees">
+                                                            <strong>Employés :</strong>
+                                                            <ul>
+                                                              <% slot.employees.forEach(emp => { %>
+                                                                <li><%= emp.name %></li>
+                                                              <% }); %>
+                                                            </ul>
+                                                          </div>
+                                                        <% } else { %>
+                                                          <p>Aucun employé</p>
+                                                        <% } %>
+                                                      </div>
+                                                    <% }); %>
+                                                  </div>
+                                                </div>
+                                              <% }); %>                                              
+                                        </div>
+                                      </div>
                                     </div>
-                                    <div class="me-3">
-                                      <span class="legend-box bg-orange"></span> 2 enfants
-                                    </div>
-                                    <div>
-                                      <span class="legend-box bg-red"></span> 3 enfants ou plus
-                                    </div>
-                                  </div>
-
+                                  <% }); %>
                                 </div>
-                              </div>
-                              
-                          <% } else { %>
+
+                                <!-- Controls -->
+                                <% if (plannings.length > 1) { %>
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-planning" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Précédent</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#carousel-planning" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Suivant</span>
+                                    </button>
+                                <% } %>
+                            </div>
+                        <% } else { %>
                             <p>Aucun planning disponible.</p>
-                          <% } %>
-                          
+                        <% } %>
+
                         <!-- Bouton pour générer un nouveau planning -->
                         <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#selectMicroCrecheModal">
                             Générer un nouveau planning
                         </button>
-                        
+
+                        <a href="/generate-pdf" class="btn btn-primary">Télécharger le planning en PDF</a>
+
                         <!-- Modale pour sélectionner une micro-crèche -->
                         <div class="modal fade" id="selectMicroCrecheModal" tabindex="-1" aria-labelledby="selectMicroCrecheModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
@@ -259,7 +227,7 @@
                                                 <li class="list-group-item">
                                                     <%= mc.name %>
                                                     <button class="btn btn-sm btn-success float-end" onclick="generatePlanning('<%= mc._id %>')">
-                                                    Générer
+                                                        Générer
                                                     </button>
                                                 </li>
                                             <% }); %>
@@ -272,28 +240,12 @@
                 <% } %>
             </div>
         </section>
-                  
-            <script>
-                function generatePlanning(microCrecheId) {
-                    fetch(`/generate-planning/${microCrecheId}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        if (data.success) {
-                        alert("Planning généré avec succès !");
-                        location.reload(); // Recharge la page pour afficher le nouveau planning
-                        } else {
-                        alert(`Erreur : ${data.message}`);
-                        }
-                    })
-                    .catch(() => {
-                        alert("Une erreur est survenue.");
-                    });
-                }
-            </script>
 
+
+        
+        <script src="/js/scripts.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
     </body>
 </html>

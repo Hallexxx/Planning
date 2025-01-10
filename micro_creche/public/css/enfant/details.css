@@ -1,0 +1,44 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f9fa;
+    color: #343a40;
+    line-height: 1.6;
+}
+
+h1, h4 {
+    font-weight: 700;
+    color: #495057;
+}
+  
+.profile-details {
+    font-size: 1.1rem;
+}
+
+.editable {
+    margin-bottom: 1rem;
+}
+
+.editable .edit-icon {
+    margin-left: 10px;
+}
+
+.separator {
+    border-top: 1px solid #ddd;
+    margin: 10px 0;
+}
+
+.edit-icon {
+    cursor: pointer;
+    color: #6c757d;
+}
+
+.edit-icon:hover {
+    color: #495057;
+}
+
+.text-center img {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}

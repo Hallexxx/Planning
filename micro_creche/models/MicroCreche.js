@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 
 const microCrecheSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  address: { type: String, required: true }, // Champ pour l'adresse
-  description: { type: String, required: false }, // Description facultative
+  address: { type: String, required: true }, 
+  description: { type: String, required: false }, 
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  employees: [{ type: mongoose.Schema.Types.ObjectId, ref: "Employee" }], // Liste des employés
+  employees: [{ type: mongoose.Schema.Types.ObjectId, ref: "Employee" }],
   enfants: [{ type: mongoose.Schema.Types.ObjectId, ref: "Enfant" }],
 });
 
