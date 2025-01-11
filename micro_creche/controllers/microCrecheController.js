@@ -81,42 +81,36 @@ const createMicroCreche = async (req, res) => {
   }
 };
 
-// Endpoint pour mettre à jour un champ spécifique d'une micro-crèche
 const updateField = async (req, res) => {
   try {
+    console.log("Données reçues dans le backend :", req.body);
+
     const { microCrecheId, field, value } = req.body;
 
-    // Validation des données
-    if (!microCrecheId || !field || value === undefined) {
-      return res.status(400).json({ error: "Données manquantes ou invalides" });
+    // Champs autorisés à être modifiés
+    const validFields = ["name", "address", "description"];
+    if (!validFields.includes(field)) {
+      return res.status(400).json({ error: "Champ invalide" });
     }
 
-    // Vérification du champ autorisé à être mis à jour
-    const allowedFields = ['name', 'address', 'description']; // Ajoutez ici les champs que vous souhaitez autoriser
-    if (!allowedFields.includes(field)) {
-      return res.status(400).json({ error: "Champ non autorisé à être mis à jour" });
-    }
-
-    // Mise à jour de la micro-crèche
+    // Mise à jour de la micro-crèche avec l'ID spécifié
     const updatedMicroCreche = await MicroCreche.findByIdAndUpdate(
       microCrecheId,
-      { [field]: value }, // Mise à jour dynamique du champ
-      { new: true, runValidators: true } // Retourne le document mis à jour et applique les validateurs de schéma
+      { [field]: value },
+      { new: true, runValidators: true }
     );
 
     if (!updatedMicroCreche) {
       return res.status(404).json({ error: "Micro-crèche non trouvée" });
     }
 
-    res.status(200).json({
-      message: "Mise à jour réussie",
-      updatedMicroCreche,
-    });
+    res.status(200).json({ message: "Mise à jour réussie", microCreche: updatedMicroCreche });
   } catch (error) {
-    console.error("Erreur lors de la mise à jour de la micro-crèche :", error);
-    res.status(500).json({ error: "Erreur interne du serveur" });
+    console.error("Erreur lors de la mise à jour :", error);
+    res.status(500).json({ error: "Erreur serveur" });
   }
 };
+
 
 module.exports = {
   updateField,

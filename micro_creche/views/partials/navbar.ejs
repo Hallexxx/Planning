@@ -10,7 +10,9 @@
         <ul class="navbar-nav ms-auto align-items-center">
           <% if (user) { %>
             <li class="nav-item d-flex align-items-center">
-              <img src="/media/user.png" alt="User" class="rounded-circle" style="width: 50px; height: 50px;">
+              <a href="/profile">
+                <img src="/media/user.png" alt="User" class="rounded-circle" style="width: 50px; height: 50px;">
+              </a>
               <span class="fw-semibold" style="font-family: 'Poppins', sans-serif; color: #007bff;">
                 <%= user.prenom %> <%= user.nom %>
               </span>

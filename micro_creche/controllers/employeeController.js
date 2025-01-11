@@ -65,21 +65,30 @@ const getEmployeeDetails = async (req, res) => {
 };
 
 const deleteEmployee = async (req, res) => {
-  try {
-    const employee = await Employee.findByIdAndDelete(req.params.id);
+  const { id } = req.params;
 
-    if (employee) {
-      await MicroCreche.findByIdAndUpdate(employee.microCreche, {
-        $pull: { employees: employee._id },
-      });
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: "ID invalide" });
+  }
+
+  try {
+    const employee = await Employee.findByIdAndDelete(id);
+
+    if (!employee) {
+      return res.status(404).json({ error: "Employé non trouvé" });
     }
 
-    res.redirect("/employee");
+    await MicroCreche.findByIdAndUpdate(employee.microCreche, {
+      $pull: { employees: id },
+    });
+
+    res.status(200).json({ success: true, message: "Employé supprimé avec succès" });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Erreur lors de la suppression de l'employé.");
+    console.error("Erreur lors de la suppression de l'employé :", error);
+    res.status(500).json({ error: "Erreur serveur lors de la suppression de l'employé" });
   }
 };
+
 
 const updateEmployeeField = async (req, res) => {
   try {

@@ -63,19 +63,27 @@ const addChild = async (req, res) => {
 };
 
 const deleteChild = async (req, res) => {
-  try {
-    const child = await Child.findByIdAndDelete(req.params.id);
+  const { id } = req.params;
 
-    if (child) {
-      await MicroCreche.findByIdAndUpdate(child.microCreche, {
-        $pull: { enfants: child._id },
-      });
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: "ID invalide" });
+  }
+
+  try {
+    const child = await Child.findByIdAndDelete(id);
+
+    if (!child) {
+      return res.status(404).json({ error: "Enfant non trouvé" });
     }
 
-    res.redirect("/child");
+    await MicroCreche.findByIdAndUpdate(child.microCreche, {
+      $pull: { enfants: id },
+    });
+
+    res.status(200).json({ success: true, message: "Enfant supprimé avec succès" });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Erreur lors de la suppression de l'enfant.");
+    console.error("Erreur lors de la suppression de l'enfant :", error);
+    res.status(500).json({ error: "Erreur serveur lors de la suppression de l'enfant" });
   }
 };
   
