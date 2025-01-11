@@ -17,121 +17,115 @@
             Bienvenue sur Micro-Crèche ! Créez et gérez vos micro-crèches en toute simplicité.
         </div>
 
-        <!-- Blocs -->
         <section id="home">
             <div class="container mt-5">
-                <div class="row text-center">
-                    <div class="col-md-4">
-                        <div class="card card-bg" id="block1">
-                            <div class="card-body">
-                                <h5 class="card-title">Créer une micro-crèche</h5>
-                                <div class="card-text">
-                                    <p>Créez votre propre micro-crèche et ajoutez toutes les informations nécessaires.</p>
-                                </div>
-                                <a href="/micro-creche/create" class="btn btn-primary">Accéder</a>
-                              </div>                              
-                        </div>
+              <div class="row text-center d-flex flex-wrap justify-content-center">
+                <!-- Bloc 1 -->
+                <div class="col-lg-4 col-md-6 col-12 d-flex justify-content-center mb-3">
+                  <div class="card card-bg" id="block1">
+                    <div class="card-body">
+                      <h5 class="card-title">Créer une micro-crèche</h5>
+                      <div class="card-text">
+                        <p>Créez votre propre micro-crèche et ajoutez toutes les informations nécessaires.</p>
+                      </div>
+                      <a href="/micro-creche/create" class="btn btn-primary">Accéder</a>
                     </div>
-                    <div class="col-md-4">
-                        <div class="card card-bg" id="block2">
-                            <div class="card-body">
-                                <h5 class="card-title">Ajouter des employés</h5>
-                                <div class="card-text">
-                                    <p>Ajoutez facilement vos employés et gérez leur emploi du temps.</p>
-                                </div>
-                                <a href="/employee/add" class="btn btn-primary">Accéder</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card card-bg" id="block3">
-                            <div class="card-body">
-                                <h5 class="card-title">Ajouter des enfants</h5>
-                                <div class="card-text">
-                                    <p>Inscrivez les enfants et suivez leurs présences.</p>
-                                </div>
-                                <a href="/child/add" class="btn btn-primary">Accéder</a>
-                            </div>
-                        </div>
-                    </div>
-                    <% if (user) { %>
-                        <div class="col-md-4">
-                            <div class="card card-bg" id="block4">
-                                <div class="card-body">
-                                    <h5 class="card-title">Votre profil</h5>
-                                    <div class="card-text">
-                                        <p>Consultez et modifiez votre profil, gérez vos informations personnelles et vos micro-crèches.</p>
-                                    </div>
-                                    <a href="/profile" class="btn btn-primary">Accéder</a>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-4">
-                            <div class="card card-bg" id="block5">
-                                <div class="card-body">
-                                    <h5 class="card-title">Vos micro-crèches</h5>
-                                    <div class="card-text">
-                                        <p>Consultez et gérez toutes vos micro-crèches. Modifiez les informations, ajoutez des enfants ou des employés, et accédez à leurs détails.</p>
-                                    </div>
-                                    <a href="/micro-creche" class="btn btn-primary">Accéder</a>
-                                </div>
-                            </div>
-                        </div>
-        
-                        <div class="col-md-4">
-                            <div class="card card-bg" id="block6">
-                                <div class="card-body">
-                                    <h5 class="card-title">Vos employés</h5>
-                                    <div class="card-text">
-                                        <p>Consultez et gérez tous vos employés. Modifiez leurs informations, leur emploi du temps et leurs rôles.</p>
-                                    </div>
-                                    <a href="/employee" class="btn btn-primary">Accéder</a>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-4">
-                            <div class="card card-bg" id="block7">
-                                <div class="card-body">
-                                    <h5 class="card-title">Vos enfants</h5>
-                                    <div class="card-text">
-                                        <p>Consultez et gérez tous les enfants inscrits dans vos micro-crèches. Modifiez leurs informations et leurs présences.</p>
-                                    </div>
-                                    <a href="/child" class="btn btn-primary">Accéder</a>
-                                </div>
-                            </div>
-                        </div>
-                    <% } %>    
+                  </div>
                 </div>
+                <!-- Bloc 2 -->
+                <div class="col-lg-4 col-md-6 col-12 d-flex justify-content-center mb-3">
+                  <div class="card card-bg" id="block2">
+                    <div class="card-body">
+                      <h5 class="card-title">Ajouter des employés</h5>
+                      <div class="card-text">
+                        <p>Ajoutez facilement vos employés et gérez leur emploi du temps.</p>
+                      </div>
+                      <a href="/employee/add" class="btn btn-primary">Accéder</a>
+                    </div>
+                  </div>
+                </div>
+                <!-- Bloc 3 -->
+                <div class="col-lg-4 col-md-6 col-12 d-flex justify-content-center mb-3">
+                  <div class="card card-bg" id="block3">
+                    <div class="card-body">
+                      <h5 class="card-title">Ajouter des enfants</h5>
+                      <div class="card-text">
+                        <p>Inscrivez les enfants et suivez leurs présences.</p>
+                      </div>
+                      <a href="/child/add" class="btn btn-primary">Accéder</a>
+                    </div>
+                  </div>
+                </div>
+                <% if (user) { %>
+                    <div class="col-lg-4 col-md-6 col-12 d-flex justify-content-center mb-3">
+                    <div class="card card-bg" id="block4">
+                        <div class="card-body">
+                        <h5 class="card-title">Votre profil</h5>
+                        <div class="card-text">
+                            <p>Consultez et modifiez votre profil, gérez vos informations personnelles et vos micro-crèches.</p>
+                        </div>
+                        <a href="/profile" class="btn btn-primary">Accéder</a>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-12 d-flex justify-content-center mb-3">
+                        <div class="card card-bg" id="block5">
+                        <div class="card-body">
+                            <h5 class="card-title">Vos micro-crèches</h5>
+                            <div class="card-text">
+                                <p>Consultez et gérez toutes vos micro-crèches. Modifiez les informations, ajoutez des enfants ou des employés, et accédez à leurs détails.</p>
+                            </div>
+                            <a href="/micro-creche" class="btn btn-primary">Accéder</a>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-12 d-flex justify-content-center mb-3">
+                        <div class="card card-bg" id="block6">
+                            <div class="card-body">
+                                <h5 class="card-title">Vos employés</h5>
+                            <div class="card-text">
+                                <p>Consultez et gérez tous vos employés. Modifiez leurs informations, leur emploi du temps et leurs rôles.</p>
+                            </div>
+                            <a href="/employee" class="btn btn-primary">Accéder</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-12 d-flex justify-content-center mb-3">
+                        <div class="card card-bg" id="block7">
+                            <div class="card-body">
+                                <h5 class="card-title">Vos enfants</h5>
+                                <div class="card-text">
+                                    <p>Consultez et gérez tous les enfants inscrits dans vos micro-crèches. Modifiez leurs informations et leurs présences.</p>
+                                </div>
+                                <a href="/child" class="btn btn-primary">Accéder</a>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+              </div>
             </div>
         </section>
-
-        <!-- Section Planning -->
+        
         <section id="planning" class="py-5">
             <div class="container text-center">
                 <h2 class="mb-4">Consultez vos plannings</h2>
         
-                <!-- Cas : utilisateur non authentifié -->
-                <% if (!userAuthenticated) { %>
+                <% if (!user) { %>
                     <p>Connectez-vous ou créez un compte pour accéder à vos plannings.</p>
         
-                <!-- Cas : aucune micro-crèche éligible -->
                 <% } else if (eligibleMicroCreches.length === 0) { %>
                     <p>Ajoutez des enfants et des employés à vos micro-crèches pour générer un planning.</p>
         
-                <!-- Cas : plannings disponibles ou génération possible -->
                 <% } else { %>
                     <div>
                         <% if (plannings && plannings.length > 0) { %>
                             <div class="col-md-12">
-                                <!-- Carousel pour plusieurs plannings -->
-                                <div id="carousel-planning" class="carousel slide" data-bs-ride="carousel">
+                                <div id="carousel-planning" class="carousel slide carou" data-bs-ride="carousel">
                                   <div class="carousel-inner">
                                     <% plannings.forEach((planning, index) => { %>
                                       <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
                                         <div class="card shadow-sm">
-                                          <div class="card-body">
+                                          <div class="card-body card-white-bg">
                                             <table class="table table-bordered text-center">
                                               <thead class="table-primary">
                                                 <tr>
@@ -149,15 +143,13 @@
                                                       <% const slot = planning.slots.find(s => s.day.toLowerCase() === day.toLowerCase() && s.start === `${hour}:00`); %>
                                                       <td class="<%= slot ? 'has-slot' : 'no-slot' %>">
                                                         <% if (slot) { %>
-                                                          <!-- Affichage des enfants et employés -->
                                                           <div class="slot-details">
-                                                            <!-- Affichage des enfants -->
                                                             <% if (slot.children && slot.children.length > 0) { %>
                                                               <div class="children-list">
                                                                 <strong>Enfants :</strong>
                                                                 <div class="flex-container">
                                                                   <% slot.children.forEach((child, index) => { %>
-                                                                    <% if (index < 2) { %> <!-- Affiche jusqu'à deux enfants --> 
+                                                                    <% if (index < 2) { %> 
                                                                       <div class="flex-item"><%= child.name || 'Enfant supprimé' %></div>
                                                                     <% } %>
                                                                   <% }); %>
@@ -167,13 +159,12 @@
                                                               <p>Aucun enfant</p>
                                                             <% } %>
                           
-                                                            <!-- Affichage des employés -->
                                                             <% if (slot.employees && slot.employees.length > 0) { %>
                                                               <div class="employees-list">
                                                                 <strong>Employés :</strong>
                                                                 <div class="flex-container">
                                                                   <% slot.employees.forEach((emp, index) => { %>
-                                                                    <% if (index < 2) { %> <!-- Affiche jusqu'à deux employés -->
+                                                                    <% if (index < 2) { %> 
                                                                       <div class="flex-item"><%= emp.name || 'Employé supprimé' %></div>
                                                                     <% } %>
                                                                   <% }); %>
@@ -198,7 +189,6 @@
                                     <% }); %>
                                   </div>
                           
-                                  <!-- Controls (Previous and Next buttons) -->
                                   <% if (plannings.length > 1) { %>
                                     <button class="carousel-control-prev" type="button" data-bs-target="#carousel-planning" data-bs-slide="prev">
                                       <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -214,14 +204,12 @@
                             <p>Aucun planning disponible.</p>
                         <% } %>
         
-                        <!-- Bouton pour générer un nouveau planning -->
                         <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#selectMicroCrecheModal">
                             Générer un nouveau planning
                         </button>
         
                         <a href="/generate-pdf" class="btn btn-primary">Télécharger le planning en PDF</a>
         
-                        <!-- Modale pour sélectionner une micro-crèche -->
                         <div class="modal fade" id="selectMicroCrecheModal" tabindex="-1" aria-labelledby="selectMicroCrecheModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">

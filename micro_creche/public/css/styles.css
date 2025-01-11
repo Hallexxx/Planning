@@ -3,61 +3,87 @@ body {
     margin: 0;
     padding: 0;
 }
-nav.navbar {
-    background-color: transparent !important;
-    box-shadow: none;
-}
-nav.navbar .nav-link, nav.navbar .navbar-brand {
-    color: black !important;
-    font-weight: bold;
-}
-nav.navbar .nav-link:hover {
-    color: #007bff !important;
-}
+
 .presentation {
-    text-align: center;
-    margin: 2rem auto;
-    font-size: 1.2rem;
-    color: #333;
+  text-align: center;
+  margin: 2rem auto;
+  font-size: 1.2rem;
+  color: #333;
 }
+
+#home .row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between; 
+}
+
 .card {
-    border: none;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-    margin: 1.5vh 0 0 0;
+  border: none;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  margin: 1.5vh 0 0 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: white;
 }
+
+.card-text {
+  flex-grow: 1; 
+}
+
+.col-md-4 {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .card:hover {
-    transform: translateY(-10px);
+  transform: translateY(-10px);
 }
 .card h5 {
-    font-weight: bold;
+  font-weight: bold;
+}
+
+.card-bg {
+  min-height: 300px; 
+}
+
+@media (max-width: 768px) {
+  .card-bg {
+    min-height: 200px; 
+  }
 }
 .card-body {
-    position: relative;
-    text-align: center;
-    color: white;
-    padding: 2rem;
-    min-height: 255px;
+  position: relative;
+  text-align: center;
+  color: white;
+  padding: 2rem;
+  min-height: 255px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  justify-content: space-between;
 }
 .card-body::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 .card-body * {
-    position: relative;
-    z-index: 2;
+  position: relative;
+  z-index: 2;
 }
 .card-bg {
-    background-size: cover;
-    background-position: center;
+  background-size: cover;
+  background-position: center;
 }
 #block1 {
     background-image: url('../media/creche.png');
@@ -81,35 +107,35 @@ nav.navbar .nav-link:hover {
     background-image: url('../media/enfants.jpg');
 }
 #planning h2 {
-    text-align: center;
-    margin-top: 3rem;
-    font-weight: bold;
-    font-size: 2rem;
+  text-align: center;
+  margin-top: 3rem;
+  font-weight: bold;
+  font-size: 2rem;
 }
 #planning p {
-    text-align: center;
-    margin-top: 1rem;
-    font-size: 1.2rem;
-    color: #555;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  color: #555;
 }
 .btn-primary {
-    background-color: #007bff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 25px;
+  background-color: #007bff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
 }
 
 .card-text {
-    display: flex; 
-    margin: 1vh 0 1vh 0;
-    min-height: 112px; 
-    align-items: center; 
-    justify-content: center; 
-    text-align: center;
-    overflow: hidden;
-    text-overflow: ellipsis; /* Ajouter "..." si le texte dépasse */
-    white-space: normal; /* Permettre au texte de s'étendre sur plusieurs lignes */
-    word-wrap: break-word; /* Casser les mots longs pour éviter le débordement */
+  display: flex; 
+  margin: 1vh 0 1vh 0;
+  min-height: 112px; 
+  align-items: center; 
+  justify-content: center; 
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Ajouter "..." si le texte dépasse */
+  white-space: normal; /* Permettre au texte de s'étendre sur plusieurs lignes */
+  word-wrap: break-word; /* Casser les mots longs pour éviter le débordement */
 }
 .carousel-item {
   transition: transform 0.5s ease-in-out;
@@ -121,25 +147,22 @@ nav.navbar .nav-link:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Suppression de la limite du fond et ajustement de la largeur */
 .carousel-inner {
-  padding: 20px; /* Ajouter du padding pour éviter le chevauchement des bords */
-  overflow: visible; /* Permet aux éléments de dépasser sans être coupés */
+  padding: 20px; 
+  overflow: visible; 
   border-radius: 15px;
   margin-top: 20px;
-  width: 105%; /* Augmenter légèrement la largeur pour un aspect plus large */
+  width: 105%; 
 }
 
-/* Largeur et style du tableau */
 .table {
   width: 100%;
   table-layout: auto;
-  margin: 0 auto; /* Centrer le tableau */
-  max-width: 1200px; /* Définir une largeur maximale */
+  margin: 0 auto; 
+  max-width: 1200px; 
   box-sizing: border-box;
 }
 
-/* Flexbox pour l'affichage horizontal */
 .flex-container {
   display: flex;
   justify-content: start;
@@ -182,7 +205,6 @@ strong {
   color: #007bff;
 }
 
-/* Style de fond pour les cellules du tableau */
 .has-slot {
   background-color: #e9f7fd;
 }
@@ -196,22 +218,21 @@ strong {
   vertical-align: middle;
 }
 
-/* Style des contrôles du carousel */
 .carousel-control-prev-icon, .carousel-control-next-icon {
   background-color: #007bff;
 }
 
 th, td {
-  padding: 20px; /* Augmenter le padding pour plus d'espace */
+  padding: 20px; 
   text-align: center;
   vertical-align: middle;
-  white-space: nowrap; /* Empêche le texte de se couper sur plusieurs lignes */
+  white-space: nowrap; 
 }
 
 th {
   font-weight: bold;
   background-color: #f2f2f2;
-  font-size: 1.1rem; /* Augmente la taille du texte des titres */
+  font-size: 1.1rem; 
 }
 
 td {
@@ -219,26 +240,23 @@ td {
   position: relative;
 }
 
-/* Ajuster les titres des jours pour éviter qu'ils soient coupés */
 th {
-  min-width: 120px; /* Donne plus de place à chaque colonne */
+  min-width: 120px; 
 }
 
 th:nth-child(n+2) {
-  max-width: 160px; /* Applique une largeur maximum aux colonnes des jours */
+  max-width: 160px;
 }
 
-/* Couleurs pour les créneaux avec des employés */
 .has-employees {
-  background-color: #d1ffe6; /* Vert clair */
+  background-color: #d1ffe6; 
   animation: fadeIn 1s ease-out;
 }
 
 .no-employees {
-  background-color: #f8f9fa; /* Gris clair */
+  background-color: #f8f9fa; 
 }
 
-/* Style pour les noms des employés */
 .employee-list {
   margin-bottom: 10px;
   align-items: center;
@@ -257,10 +275,9 @@ th:nth-child(n+2) {
 }
 
 .employee-name:nth-child(2n) {
-  margin-right: 0; /* Supprime l'espace après le deuxième nom */
+  margin-right: 0; 
 }
 
-/* Animations pour l'apparition des éléments */
 @keyframes fadeIn {
   0% {
     opacity: 0;
@@ -272,12 +289,22 @@ th:nth-child(n+2) {
   }
 }
 
-/* Animation au passage entre les plannings */
 .carousel-inner {
   transition: transform 0.5s ease-in-out;
 }
 
-/* Stylisation des boutons de contrôle */
+.card-white-bg {
+  background-color: white;
+  border: none; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.card-white-bg::before {
+  background-color: white;
+  border: none; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
   background-color: #000;
@@ -288,7 +315,6 @@ th:nth-child(n+2) {
   font-size: 1.5rem;
 }
 
-/* Améliorer la largeur du tableau pour une vue plus large */
 .table {
   width: 100%;
   margin: 0 auto;
@@ -296,10 +322,16 @@ th:nth-child(n+2) {
   overflow: hidden;
 }
 
-/* Utilisation de max-width pour garder la largeur plus grande tout en restant fluide */
 @media screen and (max-width: 1200px) {
   .table {
     width: 100%;
-    margin: 0 15px; /* Ajout de marges pour les écrans plus petits */
+    margin: 0 15px; 
   }
 }
+
+.carou{
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
