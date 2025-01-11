@@ -111,105 +111,195 @@ nav.navbar .nav-link:hover {
     white-space: normal; /* Permettre au texte de s'étendre sur plusieurs lignes */
     word-wrap: break-word; /* Casser les mots longs pour éviter le débordement */
 }
-
-:root {
-  --numDays: 5;
-  --numHours: 10;
-  --timeHeight: 60px;
-  --calBgColor: #fff1f8;
-  --eventBorderColor: #f2d3d8;
-  --eventColor1: #ffd6d1;
-  --eventColor2: #fafaa3;
-  --eventColor3: #e2f8ff;
-  --eventColor4: #d1ffe6;
+.carousel-item {
+  transition: transform 0.5s ease-in-out;
 }
 
-.calendar {
-  display: grid;
-  gap: 10px;
-  grid-template-columns: auto 1fr;
-  margin: 2rem;
+.card {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.timeline {
-  display: grid;
-  grid-template-rows: repeat(14, var(--timeHeight));
+/* Suppression de la limite du fond et ajustement de la largeur */
+.carousel-inner {
+  padding: 20px; /* Ajouter du padding pour éviter le chevauchement des bords */
+  overflow: visible; /* Permet aux éléments de dépasser sans être coupés */
+  border-radius: 15px;
+  margin-top: 20px;
+  width: 105%; /* Augmenter légèrement la largeur pour un aspect plus large */
 }
 
-.days {
-  display: grid;
-  grid-column: 2;
-  gap: 5px;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+/* Largeur et style du tableau */
+.table {
+  width: 100%;
+  table-layout: auto;
+  margin: 0 auto; /* Centrer le tableau */
+  max-width: 1200px; /* Définir une largeur maximale */
+  box-sizing: border-box;
 }
 
-.events {
-  display: grid;
-  grid-template-rows: repeat(14, var(--timeHeight));
-  border-radius: 5px;
-  background: var(--calBgColor);
-}
-
-.event {
-  border: 1px solid var(--eventBorderColor);
-  border-radius: 5px;
-  padding: 0.5rem;
-  background: white;
-}
-
-.date {
+/* Flexbox pour l'affichage horizontal */
+.flex-container {
   display: flex;
-  gap: 1em;
+  justify-content: start;
+  align-items: center;
+  text-align: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-top: 10px;
 }
 
-.date-num {
-  font-size: 3rem;
-  font-weight: 600;
-  display: inline;
-}
-
-.date-day {
-  display: inline;
-  font-size: 3rem;
-  font-weight: 100;
-}
-
-.event .title {
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-
-.text-danger {
-  color: red;
-}
-
-.fw-bold {
-  font-weight: bold;
-}
-
-.event {
-  border: 1px solid #ccc;
-  padding: 10px;
-  color: #333;
+.flex-item {
+  background-color: #f0f8ff;
+  padding: 5px 10px;
+  border-radius: 10px;
   font-size: 0.9rem;
+  font-weight: bold;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  max-width: 150px;
+  white-space: nowrap;
+}
+
+.slot-details {
+  margin-bottom: 10px;
+}
+
+.children-list, .employees-list {
+  margin-bottom: 10px;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+}
+
+strong {
+  font-size: 1.1rem;
+  color: #007bff;
+}
+
+/* Style de fond pour les cellules du tableau */
+.has-slot {
+  background-color: #e9f7fd;
+}
+
+.no-slot {
+  background-color: #f8d7da;
+}
+
+.table th, .table td {
   text-align: center;
-  margin: 2px 0;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  vertical-align: middle;
 }
 
-.event p {
-  margin: 0;
-  padding: 0;
+/* Style des contrôles du carousel */
+.carousel-control-prev-icon, .carousel-control-next-icon {
+  background-color: #007bff;
 }
 
-.time {
+th, td {
+  padding: 20px; /* Augmenter le padding pour plus d'espace */
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap; /* Empêche le texte de se couper sur plusieurs lignes */
+}
+
+th {
   font-weight: bold;
+  background-color: #f2f2f2;
+  font-size: 1.1rem; /* Augmente la taille du texte des titres */
 }
 
-.event:nth-child(odd) {
-  background-color: #f9f9f9;
+td {
+  height: 100px;
+  position: relative;
 }
 
+/* Ajuster les titres des jours pour éviter qu'ils soient coupés */
+th {
+  min-width: 120px; /* Donne plus de place à chaque colonne */
+}
+
+th:nth-child(n+2) {
+  max-width: 160px; /* Applique une largeur maximum aux colonnes des jours */
+}
+
+/* Couleurs pour les créneaux avec des employés */
+.has-employees {
+  background-color: #d1ffe6; /* Vert clair */
+  animation: fadeIn 1s ease-out;
+}
+
+.no-employees {
+  background-color: #f8f9fa; /* Gris clair */
+}
+
+/* Style pour les noms des employés */
+.employee-list {
+  margin-bottom: 10px;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.employee-name {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #333;
+  max-width: 100%;
+  text-align: center;
+}
+
+.employee-name:nth-child(2n) {
+  margin-right: 0; /* Supprime l'espace après le deuxième nom */
+}
+
+/* Animations pour l'apparition des éléments */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation au passage entre les plannings */
+.carousel-inner {
+  transition: transform 0.5s ease-in-out;
+}
+
+/* Stylisation des boutons de contrôle */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: #000;
+}
+
+.carousel-control-prev, 
+.carousel-control-next {
+  font-size: 1.5rem;
+}
+
+/* Améliorer la largeur du tableau pour une vue plus large */
+.table {
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Utilisation de max-width pour garder la largeur plus grande tout en restant fluide */
+@media screen and (max-width: 1200px) {
+  .table {
+    width: 100%;
+    margin: 0 15px; /* Ajout de marges pour les écrans plus petits */
+  }
+}

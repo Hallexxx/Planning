@@ -46,33 +46,29 @@ exports.getHomePage = async (req, res) => {
           .populate("slots.children", "name horaires")
           .populate("slots.employees", "name");
       }
+    }
 
-      plannings.forEach(planning => {
-        planning.slotsByDay = {};
-        console.log("Slots by Day:", planning.slotsByDay);
+    // Initialisation de slotsByDay pour chaque planning
+    plannings.forEach(planning => {
+      planning.slotsByDay = {};
 
-        planning.slots.forEach(slot => {
-          const day = slot.day;
+      // Remplir slotsByDay avec les données de planning
+      planning.slots.forEach(slot => {
+        const day = slot.day;
 
-          if (!planning.slotsByDay[day]) {
-            planning.slotsByDay[day] = [];
-          }
+        if (!planning.slotsByDay[day]) {
+          planning.slotsByDay[day] = [];
+        }
 
-          planning.slotsByDay[day].push({
-            start: slot.start,
-            end: slot.end,
-            children: slot.children.map(c => c), 
-            employees: slot.employees.map(e => e), 
-            missingEmployees: slot.missingEmployees || 0,
-          });
-        });
-
-
-        Object.keys(planning.slotsByDay).forEach(day => {
-          planning.slotsByDay[day] = mergeTimeSlots(planning.slotsByDay[day]);
+        planning.slotsByDay[day].push({
+          start: slot.start,
+          end: slot.end,
+          children: slot.children.filter(child => !!child), // Exclut les enfants supprimés
+          employees: slot.employees.filter(emp => !!emp), // Exclut les employés supprimés
+          missingEmployees: slot.missingEmployees || 0,
         });
       });
-    }
+    });
 
     res.render("home", {
       userAuthenticated,
@@ -88,3 +84,4 @@ exports.getHomePage = async (req, res) => {
     res.status(500).send("Une erreur s'est produite. Veuillez réessayer plus tard.");
   }
 };
+

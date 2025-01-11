@@ -27,140 +27,198 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .carousel-inner {
-      border-radius: 15px;
-      margin-top: 20px;
-    }
+    /* Suppression de la limite du fond et ajustement de la largeur */
+.carousel-inner {
+  padding: 20px; /* Ajouter du padding pour éviter le chevauchement des bords */
+  overflow: visible; /* Permet aux éléments de dépasser sans être coupés */
+  border-radius: 15px;
+  margin-top: 20px;
+}
 
-    .carousel-control-prev-icon,
-    .carousel-control-next-icon {
-      background-color: black;
-      border-radius: 50%;
-    }
+/* Largeur et style du tableau */
+table {
+  width: 100%;
+  table-layout: auto; /* Utilisation de 'auto' pour permettre une plus grande flexibilité */
+}
 
-    .table {
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
+th, td {
+  padding: 20px; /* Augmenter le padding pour plus d'espace */
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap; /* Empêche le texte de se couper sur plusieurs lignes */
+}
 
-    .slot-details p {
-      font-size: 14px;
-      margin: 0;
-    }
+th {
+  font-weight: bold;
+  background-color: #f2f2f2;
+  font-size: 1.1rem; /* Augmente la taille du texte des titres */
+}
 
-    .slot-details strong {
-      color: #007bff;
-    }
+td {
+  height: 100px;
+  position: relative;
+}
 
-    .carousel-caption {
-      font-size: 24px;
-      font-weight: 600;
-      margin-top: 10px;
-    }
+/* Ajuster les titres des jours pour éviter qu'ils soient coupés */
+th {
+  min-width: 120px; /* Donne plus de place à chaque colonne */
+}
 
-    .slot-details .employee-name {
-      font-weight: bold;
-    }
+th:nth-child(n+2) {
+  max-width: 160px; /* Applique une largeur maximum aux colonnes des jours */
+}
 
-    .carousel-button {
-      display: flex;
-      justify-content: flex-end;
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: transparent;
-      border: none;
-      font-size: 24px;
-      color: #007bff;
-      cursor: pointer;
-    }
+/* Couleurs pour les créneaux avec des employés */
+.has-employees {
+  background-color: #d1ffe6; /* Vert clair */
+  animation: fadeIn 1s ease-out;
+}
 
-    .carousel-button:hover {
-      color: #0056b3;
-    }
+.no-employees {
+  background-color: #f8f9fa; /* Gris clair */
+}
 
-    .description {
-      font-size: 18px;
-      font-weight: 300;
-      color: #555;
-      margin-bottom: 40px;
-    }
+/* Style pour les noms des employés */
+.employee-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.employee-name {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #333;
+  max-width: 100%;
+  text-align: center;
+}
+
+.employee-name:nth-child(2n) {
+  margin-right: 0; /* Supprime l'espace après le deuxième nom */
+}
+
+/* Animations pour l'apparition des éléments */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation au passage entre les plannings */
+.carousel-inner {
+  transition: transform 0.5s ease-in-out;
+}
+
+/* Stylisation des boutons de contrôle */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: #000;
+}
+
+.carousel-control-prev, 
+.carousel-control-next {
+  font-size: 1.5rem;
+}
+
+/* Améliorer la largeur du tableau pour une vue plus large */
+.table {
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 1200px) {
+  .table {
+    width: 100%;
+  }
+}   
   </style>
 </head>
 <body>
 
     <%- include("../partials/navbar") %>
 
-  <div class="container my-5">
-    <div class="row justify-content-center">
-      <div class="col-md-8 text-center">
-        <h1 class="display-4 mb-4"><%= title %></h1>
-        <p class="description">
-          Bienvenue sur la page dédiée au planning des employés de votre micro-crèche. Ici, vous pouvez consulter l'emploi du temps des employés. Si vous êtes responsable de plusieurs micro-crèches, vous pouvez naviguer facilement entre les différents plannings en utilisant la flèche à droite.
-        </p>
-
-        <h3 class="mb-4">Planning des employés pour <%= plannings[0].microCreche.name %></h3>
-
-        <!-- Carousel (for multiple plannings) -->
-        <div id="carousel-planning" class="carousel slide" data-bs-ride="carousel">
-          <div class="carousel-inner">
-            <% plannings.forEach((planning, index) => { %>
-              <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
-                <div class="card shadow-sm">
-                  <div class="card-body">
-                    <table class="table table-bordered text-center">
-                      <thead class="table-primary">
-                        <tr>
-                          <th>Heure</th>
-                          <% daysOfWeek.forEach(day => { %>
-                            <th><%= day %></th>
-                          <% }); %>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <% for (let hour = 6; hour < 20; hour++) { %>
+    <div class="container my-5">
+      <div class="row justify-content-center">
+        <!-- Colonne avec texte de présentation et nom de la micro-crèche -->
+        <div class="col-md-8 text-center">
+          <h1 class="display-4 mb-4"><%= title %></h1>
+          <p class="description">
+            Bienvenue sur la page dédiée au planning des employés de votre micro-crèche. Ici, vous pouvez consulter l'emploi du temps des employés. Si vous êtes responsable de plusieurs micro-crèches, vous pouvez naviguer facilement entre les différents plannings en utilisant la flèche à droite.
+          </p>
+    
+          <h3 class="mb-4">Planning des employés pour <%= plannings[0].microCreche.name %></h3>
+        </div>
+    
+        <!-- Colonne avec le carousel (planning) qui occupe toute la largeur -->
+        <div class="col-md-12">
+          <!-- Carousel pour plusieurs plannings -->
+          <div id="carousel-planning" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              <% plannings.forEach((planning, index) => { %>
+                <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                  <div class="card shadow-sm">
+                    <div class="card-body">
+                      <table class="table table-bordered text-center">
+                        <thead class="table-primary">
                           <tr>
-                            <td><%= hour %>:00 - <%= hour + 1 %>:00</td>
+                            <th>Heure</th>
                             <% daysOfWeek.forEach(day => { %>
-                              <% const slot = planning.slots.find(s => s.day.toLowerCase() === day.toLowerCase() && s.start === `${hour}:00`); %>
-                              <td>
-                                <% if (slot && slot.employees.length > 0) { %>
-                                  <div class="slot-details">
-                                    <strong>Employés :</strong>
-                                    <% slot.employees.forEach(emp => { %>
-                                      <p class="employee-name"><%= emp.name %></p>
-                                    <% }); %>
-                                  </div>
-                                <% } else { %>
-                                  <p>Aucun employé</p>
-                                <% } %>
-                              </td>
+                              <th><%= day %></th>
                             <% }); %>
                           </tr>
-                        <% } %>
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          <% for (let hour = 8; hour < 18; hour++) { %>
+                            <tr class="hour-row">
+                              <td><%= hour %>:00 - <%= hour + 1 %>:00</td>
+                              <% daysOfWeek.forEach(day => { %>
+                                <% const slot = planning.slots.find(s => s.day.toLowerCase() === day.toLowerCase() && s.start === `${hour}:00`); %>
+                                <td class="<%= slot && slot.employees.length > 0 ? 'has-employees' : 'no-employees' %>">
+                                  <% if (slot && slot.employees.length > 0) { %>
+                                    <div class="employee-list">
+                                      <% slot.employees.forEach((emp, index) => { %>
+                                        <span class="employee-name"><%= emp.name %></span><%= index < 1 ? ' ' : '' %>
+                                      <% }); %>
+                                    </div>
+                                  <% } else { %>
+                                    <p>Aucun employé</p>
+                                  <% } %>
+                                </td>
+                              <% }); %>
+                            </tr>
+                          <% } %>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
-              </div>
-            <% }); %>
+              <% }); %>
+            </div>
+            
+            <!-- Controls (Previous and Next buttons) -->
+            <% if (plannings.length > 1) { %>
+              <button class="carousel-control-prev" type="button" data-bs-target="#carousel-planning" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Précédent</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carousel-planning" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Suivant</span>
+              </button>
+            <% } %>
           </div>
-
-          <!-- Controls -->
-          <% if (plannings.length > 1) { %>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-planning" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Précédent</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carousel-planning" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Suivant</span>
-            </button>
-          <% } %>
         </div>
       </div>
     </div>
-  </div>
+    
 
   <!-- Bootstrap JS (with Popper) -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

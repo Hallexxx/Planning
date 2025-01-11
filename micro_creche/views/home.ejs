@@ -111,108 +111,116 @@
         <section id="planning" class="py-5">
             <div class="container text-center">
                 <h2 class="mb-4">Consultez vos plannings</h2>
-
+        
                 <!-- Cas : utilisateur non authentifié -->
                 <% if (!userAuthenticated) { %>
                     <p>Connectez-vous ou créez un compte pour accéder à vos plannings.</p>
-
+        
                 <!-- Cas : aucune micro-crèche éligible -->
                 <% } else if (eligibleMicroCreches.length === 0) { %>
                     <p>Ajoutez des enfants et des employés à vos micro-crèches pour générer un planning.</p>
-
+        
                 <!-- Cas : plannings disponibles ou génération possible -->
                 <% } else { %>
                     <div>
                         <% if (plannings && plannings.length > 0) { %>
-                            <div id="carousel-planning" class="carousel slide" data-bs-ride="carousel">
-                                <div class="carousel-inner">
-                                  <% plannings.forEach((planning, index) => { %>
-                                    <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
-                                      <div class="calendar">
-                                        <div class="timeline">
-                                          <% for (let hour = 8; hour <= 18; hour++) { %>
-                                            <div class="time-marker"><%= hour %>:00</div>
-                                          <% } %>
-                                        </div>
-                              
-                                        <div class="days">
-                                            <% daysOfWeek.forEach(day => { %>
-                                                <div class="day">
-                                                  <div class="date">
-                                                    <p class="date-day"><%= day %></p>
-                                                  </div>
-                                                  <div class="events">
-                                                    <% (planning.slotsByDay[day] || []).forEach(slot => { %>
-                                                      <div class="event" 
-                                                        style="
-                                                          grid-row-start: <%= parseInt(slot.start.split(':')[0]) - 6 + 1 %>;
-                                                          grid-row-end: <%= parseInt(slot.end.split(':')[0]) - 6 + 1 %>;
-                                                          background-color: <%= slot.children.length >= 3 ? '#d1ffe6' : slot.children.length >= 6 ? '#ffd6d1' : '#e2f8ff' %>;
-                                                          border-radius: 10px;
-                                                        ">
-                                                        <p class="time"><%= slot.start %> - <%= slot.end %></p>
-                                              
-                                                        <!-- Affichage des enfants -->
-                                                        <% if (slot.children && slot.children.length > 0) { %>
-                                                          <div class="children">
-                                                            <strong>Enfants :</strong>
-                                                            <ul>
-                                                              <% slot.children.forEach(child => { %>
-                                                                <li><%= child.name %></li>
-                                                              <% }); %>
-                                                            </ul>
+                            <div class="col-md-12">
+                                <!-- Carousel pour plusieurs plannings -->
+                                <div id="carousel-planning" class="carousel slide" data-bs-ride="carousel">
+                                  <div class="carousel-inner">
+                                    <% plannings.forEach((planning, index) => { %>
+                                      <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                                        <div class="card shadow-sm">
+                                          <div class="card-body">
+                                            <table class="table table-bordered text-center">
+                                              <thead class="table-primary">
+                                                <tr>
+                                                  <th>Heure</th>
+                                                  <% daysOfWeek.forEach(day => { %>
+                                                    <th><%= day %></th>
+                                                  <% }); %>
+                                                </tr>
+                                              </thead>
+                                              <tbody>
+                                                <% for (let hour = 8; hour < 18; hour++) { %>
+                                                  <tr class="hour-row">
+                                                    <td><%= hour %>:00 - <%= hour + 1 %>:00</td>
+                                                    <% daysOfWeek.forEach(day => { %>
+                                                      <% const slot = planning.slots.find(s => s.day.toLowerCase() === day.toLowerCase() && s.start === `${hour}:00`); %>
+                                                      <td class="<%= slot ? 'has-slot' : 'no-slot' %>">
+                                                        <% if (slot) { %>
+                                                          <!-- Affichage des enfants et employés -->
+                                                          <div class="slot-details">
+                                                            <!-- Affichage des enfants -->
+                                                            <% if (slot.children && slot.children.length > 0) { %>
+                                                              <div class="children-list">
+                                                                <strong>Enfants :</strong>
+                                                                <div class="flex-container">
+                                                                  <% slot.children.forEach((child, index) => { %>
+                                                                    <% if (index < 2) { %> <!-- Affiche jusqu'à deux enfants --> 
+                                                                      <div class="flex-item"><%= child.name || 'Enfant supprimé' %></div>
+                                                                    <% } %>
+                                                                  <% }); %>
+                                                                </div>
+                                                              </div>
+                                                            <% } else { %>
+                                                              <p>Aucun enfant</p>
+                                                            <% } %>
+                          
+                                                            <!-- Affichage des employés -->
+                                                            <% if (slot.employees && slot.employees.length > 0) { %>
+                                                              <div class="employees-list">
+                                                                <strong>Employés :</strong>
+                                                                <div class="flex-container">
+                                                                  <% slot.employees.forEach((emp, index) => { %>
+                                                                    <% if (index < 2) { %> <!-- Affiche jusqu'à deux employés -->
+                                                                      <div class="flex-item"><%= emp.name || 'Employé supprimé' %></div>
+                                                                    <% } %>
+                                                                  <% }); %>
+                                                                </div>
+                                                              </div>
+                                                            <% } else { %>
+                                                              <p>Aucun employé</p>
+                                                            <% } %>
                                                           </div>
                                                         <% } else { %>
-                                                          <p>Aucun enfant</p>
+                                                          <p>Aucun planning pour cette période</p>
                                                         <% } %>
-                                              
-                                                        <!-- Affichage des employés -->
-                                                        <% if (slot.employees && slot.employees.length > 0) { %>
-                                                          <div class="employees">
-                                                            <strong>Employés :</strong>
-                                                            <ul>
-                                                              <% slot.employees.forEach(emp => { %>
-                                                                <li><%= emp.name %></li>
-                                                              <% }); %>
-                                                            </ul>
-                                                          </div>
-                                                        <% } else { %>
-                                                          <p>Aucun employé</p>
-                                                        <% } %>
-                                                      </div>
+                                                      </td>
                                                     <% }); %>
-                                                  </div>
-                                                </div>
-                                              <% }); %>                                              
+                                                  </tr>
+                                                <% } %>
+                                              </tbody>
+                                            </table>
+                                          </div>
                                         </div>
                                       </div>
-                                    </div>
-                                  <% }); %>
-                                </div>
-
-                                <!-- Controls -->
-                                <% if (plannings.length > 1) { %>
+                                    <% }); %>
+                                  </div>
+                          
+                                  <!-- Controls (Previous and Next buttons) -->
+                                  <% if (plannings.length > 1) { %>
                                     <button class="carousel-control-prev" type="button" data-bs-target="#carousel-planning" data-bs-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Précédent</span>
+                                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                      <span class="visually-hidden">Précédent</span>
                                     </button>
                                     <button class="carousel-control-next" type="button" data-bs-target="#carousel-planning" data-bs-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Suivant</span>
+                                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                      <span class="visually-hidden">Suivant</span>
                                     </button>
-                                <% } %>
-                            </div>
+                                  <% } %>
+                                </div>
                         <% } else { %>
                             <p>Aucun planning disponible.</p>
                         <% } %>
-
+        
                         <!-- Bouton pour générer un nouveau planning -->
                         <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#selectMicroCrecheModal">
                             Générer un nouveau planning
                         </button>
-
+        
                         <a href="/generate-pdf" class="btn btn-primary">Télécharger le planning en PDF</a>
-
+        
                         <!-- Modale pour sélectionner une micro-crèche -->
                         <div class="modal fade" id="selectMicroCrecheModal" tabindex="-1" aria-labelledby="selectMicroCrecheModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
@@ -239,7 +247,7 @@
                     </div>
                 <% } %>
             </div>
-        </section>
+        </section>        
 
 
         

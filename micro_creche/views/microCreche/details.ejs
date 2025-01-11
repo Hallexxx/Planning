@@ -59,30 +59,34 @@
 
         <h4 class="mb-3 mt-4">Enfants de votre micro-creche</h4>
         <div class="row mt-4">
-            <% children.forEach(childrens => { %>
-                <div class="col-md-4">
-                    <div class="card mb-4 mt-4">
-                        <div class="card-body text-center">
-                            <img src="/media/enfant.jpg" alt="Enfant" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
-                            <h5 class="card-title"><%= childrens.name %></h5>
-                            <p class="card-text">Né(e) le : <%= new Date(childrens.dateOfBirth).toLocaleDateString() %></p>
-                            <a href="/child/<%= childrens._id %>" class="btn btn-secondary">Voir les détails</a>
-                        </div>
-                        <div class="delete-btn-container">
-                          <div class="delete-btn">
-                              <i class="fas fa-trash-alt"></i>
-                          </div>
-                      </div>                      
-                    </div>
+          <% children.forEach(childrens => { %>
+            <div class="col-md-4">
+              <div class="card-wrapper mb-3">
+                <div class="card mt-4 child-card" data-id="<%= childrens._id %>">
+                  <div class="card-body text-center">
+                    <img src="/media/enfant.jpg" alt="Enfant" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+                    <h5 class="card-title"><%= childrens.name %></h5>
+                    <p class="card-text">Né(e) le : <%= new Date(childrens.dateOfBirth).toLocaleDateString() %></p>
+                    <a href="/child/<%= childrens._id %>" class="btn btn-secondary">Voir les détails</a>
+                  </div>
                 </div>
-            <% }) %>
+                <div class="delete-btn-container">
+                  <div class="delete-btn">
+                    <i class="fas fa-trash-alt"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% }) %>
         </div>
+        
 
         <h4 class="mb-3 mt-4">Employes de votre micro-creche</h4>
         <div class="row mt-4">
             <% employees.forEach(employee => { %>
                 <div class="col-md-4">
-                    <div class="card mb-4 mt-4">
+                  <div class="card-wrapper mb-3">
+                    <div class="card mt-4 employee-card" data-id="<%= employee._id %>">
                         <div class="card-body text-center">
                             <img src="/media/employe.jpg" alt="Employé" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
                             <h5 class="card-title"><%= employee.name %></h5>
@@ -90,12 +94,13 @@
                             <p class="card-text">Téléphone : <%= employee.phone || "Non renseigné" %></p>
                             <a href="/employee/<%= employee._id %>" class="btn btn-success">Voir les détails</a>
                         </div>
-                        <div class="delete-btn-container">
-                          <div class="delete-btn">
-                              <i class="fas fa-trash-alt"></i>
-                          </div>
+                      </div>
+                      <div class="delete-btn-container">
+                        <div class="delete-btn">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
                       </div>                      
-                    </div>
+                  </div>
                 </div>
             <% }) %>
         </div>

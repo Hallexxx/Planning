@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".delete-btn").forEach((button) => {
     button.addEventListener("click", async (event) => {
       const card = event.target.closest(".card");
-      const id = card.getAttribute("data-id"); // Assurez-vous que l'ID est défini dans la carte
+      const id = card.getAttribute("data-id"); 
       const endpoint = card.classList.contains("child-card")
         ? `/child/${id}`
         : `/employee/${id}`;
