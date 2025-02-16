@@ -1,126 +1,125 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil utilisateur</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Quicksand:wght@400;500&family=Pacifico&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/microcreche/details.css">
-    <link rel="stylesheet" href="/css/partials/navbar.css">
-    <script src="../js/microcreche.js"></script>
-</head>
-<body>
-    <%- include("../partials/navbar") %>
-    <div class="container py-5">
-        <div class="profile-header text-center">
-            <h1>Bienvenue sur la page de gestion de votre micro-crèche. </h1>
-            <p> 
-              Ici, vous pouvez consulter et mettre à jour les informations sur votre micro-crèche, 
-              les enfants, les employés et bien plus encore. Vous avez également la possibilité de modifier les informations selon vos besoins.
-            </p>
-        </div>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Profil utilisateur</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Quicksand:wght@400;500&family=Pacifico&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/microcreche/details.css">
+        <link rel="stylesheet" href="/css/partials/navbar.css">
+        <link rel="stylesheet" href="/css/partials/footer.css">
+        <script src="../js/microcreche.js"></script>
+        <link rel="icon" href="/media/logoo.png" type="image/x-icon">
+    </head>
+    <body>
+        <%- include("../partials/navbar") %>
+        <div class="container py-5">
+            <div class="profile-header text-center">
+                <h1>Bienvenue sur la page de gestion de votre micro-crèche. </h1>
+                <p> 
+                    Ici, vous pouvez consulter et mettre à jour les informations sur votre micro-crèche, 
+                    les enfants, les employés et bien plus encore. Vous avez également la possibilité de modifier les informations selon vos besoins.
+                </p>
+            </div>
 
-        <div class="mb-5 mt-4">
-          <div class="card-body" data-microcreche-id="<%= microCreche._id %>">
-            <h2 class="section-title fade-up">Votre Micro-Crèche : <%= microCreche.name %></h2>
-            <img src="/media/creche.png" class="img-fluid rounded mb-3 microcreche-image" alt="Image de la micro-crèche" style="width: 600px; height: 300px; object-fit: cover;">
-            
-            <div class="editable" id="edit-name" data-field="name">
-              <p>
-                <strong>Nom :</strong> 
-                <span class="editable-content"><%= microCreche.name %></span>
-              </p>
-              <i class="fas fa-edit edit-icon"></i>
-            </div>
-            
-            <div class="separator"></div>
-            <div class="editable" id="edit-description" data-field="description">
-              <p>
-                <strong>Description :</strong> 
-                <span class="editable-content"><%= microCreche.description || "Aucune description disponible." %></span>
-              </p>
-              <i class="fas fa-edit edit-icon"></i>
-            </div>
-            
-            <div class="separator"></div>
-            <div class="editable" id="edit-address" data-field="address">
-              <p>
-                <strong>Adresse :</strong> 
-                <span class="editable-content"><%= microCreche.address %></span>
-              </p>
-              <i class="fas fa-edit edit-icon"></i>
-            </div>
-            
-          </div>
-        </div>
-
-        <h4 class="mb-3 mt-4">Enfants de votre micro-creche</h4>
-        <div class="row mt-4">
-          <% children.forEach(childrens => { %>
-            <div class="col-md-4">
-              <div class="card-wrapper mb-3">
-                <div class="card mt-4 child-card" data-id="<%= childrens._id %>">
-                  <div class="card-body text-center">
-                    <img src="/media/enfant.jpg" alt="Enfant" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
-                    <h5 class="card-title"><%= childrens.name %></h5>
-                    <p class="card-text">Né(e) le : <%= new Date(childrens.dateOfBirth).toLocaleDateString() %></p>
-                    <a href="/child/<%= childrens._id %>" class="btn btn-secondary">Voir les détails</a>
-                  </div>
+            <div class="mb-5 mt-4">
+                <div class="card-body" data-microcreche-id="<%= microCreche._id %>">
+                    <h2 class="section-title fade-up">Votre Micro-Crèche : <%= microCreche.name %></h2>
+                    <img src="/media/creche.png" class="img-fluid rounded mb-3 microcreche-image" alt="Image de la micro-crèche" style="width: 600px; height: 300px; object-fit: cover;">
+                    
+                    <div class="editable" id="edit-name" data-field="name">
+                        <p>
+                        <strong>Nom :</strong> 
+                        <span class="editable-content"><%= microCreche.name %></span>
+                        </p>
+                        <i class="fas fa-edit edit-icon"></i>
+                    </div>
+                    
+                    <div class="separator"></div>
+                    <div class="editable" id="edit-description" data-field="description">
+                        <p>
+                        <strong>Description :</strong> 
+                        <span class="editable-content"><%= microCreche.description || "Aucune description disponible." %></span>
+                        </p>
+                        <i class="fas fa-edit edit-icon"></i>
+                    </div>
+                    
+                    <div class="separator"></div>
+                    <div class="editable" id="edit-address" data-field="address">
+                        <p>
+                        <strong>Adresse :</strong> 
+                        <span class="editable-content"><%= microCreche.address %></span>
+                        </p>
+                        <i class="fas fa-edit edit-icon"></i>
+                    </div>
                 </div>
-                <div class="delete-btn-container">
-                  <div class="delete-btn">
-                    <i class="fas fa-trash-alt"></i>
-                  </div>
-                </div>
-              </div>
             </div>
-          <% }) %>
-        </div>
-        
 
-        <h4 class="mb-3 mt-4">Employes de votre micro-creche</h4>
-        <div class="row mt-4">
-            <% employees.forEach(employee => { %>
-                <div class="col-md-4">
-                  <div class="card-wrapper mb-3">
-                    <div class="card mt-4 employee-card" data-id="<%= employee._id %>">
-                        <div class="card-body text-center">
-                            <img src="/media/employe.jpg" alt="Employé" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
-                            <h5 class="card-title"><%= employee.name %></h5>
-                            <p class="card-text">Email : <%= employee.email %></p>
-                            <p class="card-text">Téléphone : <%= employee.phone || "Non renseigné" %></p>
-                            <a href="/employee/<%= employee._id %>" class="btn btn-success">Voir les détails</a>
+            <h4 class="mb-3 mt-4">Enfants de votre micro-creche</h4>
+            <div class="row mt-4">
+                <% children.forEach(childrens => { %>
+                    <div class="col-md-4">
+                        <div class="card-wrapper mb-3 child-card" data-id="<%= childrens._id %>">
+                            <div class="card mt-4 child-card">
+                                <div class="card-body text-center">
+                                    <img src="/media/enfant.jpg" alt="Enfant" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+                                    <h5 class="card-title"><%= childrens.name %></h5>
+                                    <p class="card-text">Né(e) le : <%= new Date(childrens.dateOfBirth).toLocaleDateString() %></p>
+                                    <a href="/child/<%= childrens._id %>" class="btn btn-secondary">Voir les détails</a>
+                                </div>
+                            </div>
+                            <div class="delete-btn-container">
+                                <div class="delete-btn">
+                                    <i class="fas fa-trash-alt"></i>
+                                </div>
+                            </div>
                         </div>
-                      </div>
-                      <div class="delete-btn-container">
-                        <div class="delete-btn">
-                            <i class="fas fa-trash-alt"></i>
-                        </div>
-                      </div>                      
-                  </div>
-                </div>
-            <% }) %>
-        </div>
-
-        <h4 class="mb-3 mt-4">Planning de votre micro-creche</h4>
-        <div class="section-title fade-up">Planning de la Micro-Crèche</div>
-          <% if (microCreche.schedule) { %>
-            <div class="info-card fade-up">
-              <h4>Planning :</h4>
-              <p><%= microCreche.schedule %></p>
+                    </div>
+                <% }) %>
             </div>
-          <% } else { %>
-            <p>Aucun planning disponible. Créez un planning pour voir les informations.</p>
-          <% } %>
+                
+            <h4 class="mb-3 mt-4">Employes de votre micro-creche</h4>
+            <div class="row mt-4">
+                <% employees.forEach(employee => { %>
+                    <div class="col-md-4">
+                        <div class="card-wrapper mb-3 employee-card" data-id="<%= employee._id %>">
+                            <div class="card mt-4 employee-card">
+                                <div class="card-body text-center">
+                                    <img src="/media/employe.jpg" alt="Employé" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+                                    <h5 class="card-title"><%= employee.name %></h5>
+                                    <p class="card-text">Email : <%= employee.email %></p>
+                                    <p class="card-text">Téléphone : <%= employee.phone || "Non renseigné" %></p>
+                                    <a href="/employee/<%= employee._id %>" class="btn btn-success">Voir les détails</a>
+                                </div>
+                            </div>
+                            <div class="delete-btn-container">
+                                <div class="delete-btn">
+                                    <i class="fas fa-trash-alt"></i>
+                                </div>
+                            </div>                      
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
 
+            <h4 class="mb-3 mt-4">Planning de votre micro-creche</h4>
+            <div class="section-title fade-up">Planning de la Micro-Crèche</div>
+                <% if (microCreche.schedule) { %>
+                    <div class="info-card fade-up">
+                        <h4>Planning :</h4>
+                        <p><%= microCreche.schedule %></p>
+                    </div>
+                <% } else { %>
+                    <p>Aucun planning disponible. Créez un planning pour voir les informations.</p>
+                <% } %>
+            </div>
         </div>
 
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+        <%- include("../partials/footer") %>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
 </html>
 

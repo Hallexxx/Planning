@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications de votre compte</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="/css/notification/notification.css">
+    <link rel="stylesheet" href="/css/partials/navbar.css">
+    <link rel="stylesheet" href="/css/partials/footer.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" href="/media/logoo.png" type="image/x-icon">
+    <style>
+      /* Largeur fixe pour la description */
+      .notification-content p {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      /* Sur petit écran, centrer le contenu et espacer verticalement les actions */
+      @media (max-width: 768px) {
+        .notification-list {
+          text-align: center;
+        }
+        .notification-actions {
+          flex-direction: column;
+          align-items: center;
+        }
+        .notification-actions .form-check,
+        .notification-actions button {
+          margin-bottom: 10px;
+        }
+      }
+      /* Style pour notification marquée comme lue */
+      .notification-item.read {
+        background-color: #f0f0f0;
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+
+  <body>
+    <%- include("../partials/navbar") %>
+
+    <div class="container notifications-container my-5">
+      <div class="text-center mb-5">
+        <h1 class="display-4 animate__animated animate__fadeInDown">Notifications de votre compte</h1>
+        <p class="lead animate__animated animate__fadeInUp">
+          Gérez facilement toutes vos notifications. Passez la souris sur une notification pour voir les options.
+        </p>
+      </div>
+      
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="notification-list">
+            <% if (notifications && notifications.length > 0) { %>
+              <% notifications.forEach(notification => { %>
+                <div class="notification-item d-flex align-items-center p-4 mb-4 rounded shadow-sm animate__animated animate__fadeIn <%= notification.read ? 'read' : '' %>">
+                  <div class="icon me-3">
+                    <i class="fas fa-bell fa-2x text-primary"></i>
+                  </div>
+                  <div class="notification-content flex-grow-1 text-start">
+                    <h5 class="mb-1"><%= notification.title %></h5>
+                    <p class="mb-0"><%= notification.description %></p>
+                  </div>
+                  <div class="notification-actions d-flex align-items-center">
+                    <div class="form-check me-3">
+                      <input class="form-check-input mark-read-checkbox" type="checkbox" data-id="<%= notification._id %>" id="markRead-<%= notification._id %>" <%= notification.read ? 'checked' : '' %>>
+                      <label class="form-check-label" for="markRead-<%= notification._id %>">Marquer comme lu</label>
+                    </div>
+                    <button class="btn btn-outline-danger delete-notification" data-id="<%= notification._id %>">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </div>
+              <% }); %>
+            <% } else { %>
+              <div class="no-notifications text-center p-5 animate__animated animate__fadeIn">
+                <h3>Vous n'avez pas de notification pour le moment</h3>
+                <p class="mb-4">Revenez plus tard pour découvrir de nouvelles notifications.</p>
+                <a href="/" class="btn btn-primary btn-lg animate__animated animate__pulse animate__infinite">Retour à l'accueil</a>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Bouton pour basculer le statut de toutes les notifications -->
+      <% if (notifications && notifications.length > 0) { %>
+        <div class="text-center my-4">
+          <button id="toggleAllRead" class="btn btn-success btn-lg">Basculer le statut de toutes</button>
+        </div>
+      <% } %>
+    </div>
+
+    <%- include("../partials/footer") %>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+  // Fonctionnalité "Marquer comme lu" individuel
+  document.querySelectorAll('.mark-read-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      const id = this.getAttribute('data-id');
+      fetch(`/notifications/toggle-read/${id}`, { method: 'POST' })
+        .then(response => response.text())
+        .then(data => {
+          Swal.fire({
+            position: 'bottom-end',
+            icon: 'success',
+            title: data,
+            toast: true,
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+          });
+          // Ne supprimez pas l'élément, simplement changer son style
+          const notificationItem = this.closest('.notification-item');
+          if (this.checked) {
+            notificationItem.classList.add('read');
+          } else {
+            notificationItem.classList.remove('read');
+          }
+        })
+        .catch(error => {
+          console.error('Erreur:', error);
+          Swal.fire({
+            position: 'bottom-end',
+            icon: 'error',
+            title: 'Erreur lors de la mise à jour.',
+            toast: true,
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+          });
+        });
+    });
+  });
+
+  // Fonctionnalité "Basculer le statut de toutes"
+  const toggleAllReadBtn = document.getElementById("toggleAllRead");
+  if (toggleAllReadBtn) {
+    toggleAllReadBtn.addEventListener("click", () => {
+      const checkboxes = document.querySelectorAll('.mark-read-checkbox');
+      checkboxes.forEach(checkbox => {
+        const id = checkbox.getAttribute('data-id');
+        // Pour chaque notification, appeler l'API pour basculer le statut
+        fetch(`/notifications/toggle-read/${id}`, { method: 'POST' })
+          .then(response => response.text())
+          .then(data => {
+            // On bascule le statut dans l'UI
+            checkbox.checked = !checkbox.checked;
+            const notificationItem = checkbox.closest('.notification-item');
+            if (checkbox.checked) {
+              notificationItem.classList.add('read');
+            } else {
+              notificationItem.classList.remove('read');
+            }
+          })
+          .catch(error => {
+            console.error('Erreur:', error);
+            Swal.fire({
+              position: 'bottom-end',
+              icon: 'error',
+              title: 'Erreur lors de la mise à jour.',
+              toast: true,
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
+            });
+          });
+      });
+      Swal.fire({
+        position: 'bottom-end',
+        icon: 'success',
+        title: 'Le statut de toutes les notifications a été basculé.',
+        toast: true,
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+      });
+    });
+  }
+
+  // Fonctionnalité "Supprimer" la notification
+  document.querySelectorAll('.delete-notification').forEach(button => {
+    button.addEventListener('click', function() {
+      const id = this.getAttribute('data-id');
+      Swal.fire({
+        title: 'Êtes-vous sûr ?',
+        text: "Cette notification sera supprimée.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Oui, supprimer!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/notifications/delete/${id}`, { method: 'DELETE' })
+            .then(response => response.text())
+            .then(data => {
+              Swal.fire({
+                position: 'bottom-end',
+                icon: 'success',
+                title: 'Notification supprimée.',
+                toast: true,
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+              });
+              const notificationItem = button.closest('.notification-item');
+              notificationItem.remove();
+            })
+            .catch(error => {
+              console.error('Erreur:', error);
+              Swal.fire({
+                position: 'bottom-end',
+                icon: 'error',
+                title: 'Erreur lors de la suppression.',
+                toast: true,
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+              });
+            });
+        }
+      });
+    });
+  });
+});
+
+    </script>
+  </body>
+</html>

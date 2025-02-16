@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Invitation à rejoindre la micro-crèche</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+        <link rel="stylesheet" href="/css/employe/invitation.css">
+        <link rel="stylesheet" href="/css/partials/navbar.css">
+        <link rel="stylesheet" href="/css/partials/footer.css">
+        <link rel="icon" href="/media/logoo.png" type="image/x-icon">
+    </head>
+    <body>
+        <%- include("../partials/navbar") %>
+
+        <div class="hero-section">
+            <h1 class="hero-title animate__animated animate__fadeInDown">
+              Invitation à rejoindre la micro-crèche
+            </h1>
+            <p class="hero-description animate__animated animate__fadeInUp">
+              Bonjour, vous avez été invité à rejoindre la micro-crèche
+              <strong class="animate__animated animate__pulse animate__infinite" style="animation-duration: 2s;">"<%= microCreche.name %>"</strong>.
+            </p>
+            <div class="form-container animate__animated animate__zoomIn">
+                <p class="mb-4">
+                    En acceptant, vous serez ajouté(e) à cette micro-crèche en tant qu'employé(e).
+                </p>
+                <div class="button-container">
+                    <form action="/invitation/accept" method="POST">
+                        <input type="hidden" name="employeeId" value="<%= employee._id %>" />
+                        <input type="hidden" name="microCrecheId" value="<%= microCreche._id %>" />
+                        <button type="submit" class="btn btn-primary btn-invite">
+                            Accepter l'invitation
+                        </button>
+                    </form>
+                    <form action="/invitation/decline" method="POST">
+                        <input type="hidden" name="employeeId" value="<%= employee._id %>" />
+                        <input type="hidden" name="microCrecheId" value="<%= microCreche._id %>" />
+                        <button type="submit" class="btn btn-danger btn-invite">
+                            Refuser l'invitation
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <%- include("../partials/footer") %>
+
+        <script src="../js/invitation.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

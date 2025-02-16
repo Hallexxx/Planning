@@ -1,0 +1,404 @@
+.carousel-item {
+  transition: transform 0.5s ease-in-out;
+}
+
+.card {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.carousel-inner {
+  padding: 20px; 
+  overflow: visible; 
+  border-radius: 15px;
+  margin-top: 20px;
+  width: 100%; 
+}
+
+.table {
+  width: 100%;
+  table-layout: auto;
+  margin: 0 auto; 
+  max-width: 1200px; 
+  box-sizing: border-box;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  text-align: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.flex-item {
+  background-color: #f0f8ff;
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  max-width: 150px;
+  white-space: nowrap;
+}
+
+.slot-details {
+  margin-bottom: 10px;
+}
+
+.children-list, .employees-list {
+  margin-bottom: 10px;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+}
+
+strong {
+  font-size: 1.1rem;
+  color: #007bff;
+}
+
+.has-slot {
+  background-color: #e9f7fd;
+}
+
+.no-slot {
+  background-color: #f8d7da;
+}
+
+.table th, .table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.carousel-control-prev-icon, .carousel-control-next-icon {
+  background-color: #007bff;
+}
+
+th, td {
+  padding: 20px; 
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap; 
+}
+
+th {
+  font-weight: bold;
+  background-color: #f2f2f2;
+  font-size: 1.1rem; 
+}
+
+td {
+  height: 100px;
+  position: relative;
+}
+
+th {
+  min-width: 120px; 
+}
+
+th:nth-child(n+2) {
+  max-width: 160px;
+}
+
+.has-employees {
+  background-color: #d1ffe6; 
+  animation: fadeIn 1s ease-out;
+}
+
+.no-employees {
+  background-color: #f8f9fa; 
+}
+
+.employee-list {
+  margin-bottom: 10px;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.employee-name {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #333;
+  max-width: 100%;
+  text-align: center;
+}
+
+.employee-name:nth-child(2n) {
+  margin-right: 0; 
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.carousel-inner {
+  transition: transform 0.5s ease-in-out;
+}
+
+.card-white-bg {
+  background-color: white;
+  border: none; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.card-white-bg::before {
+  background-color: white;
+  border: none; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: #000;
+}
+
+.carousel-control-prev, 
+.carousel-control-next {
+  font-size: 1.5rem;
+}
+
+.table {
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 1200px) {
+  .table {
+    width: 100%;
+    margin: 0 15px; 
+  }
+}
+
+.carou{
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+.profile-header {
+  margin: 20px auto;
+  text-align: center;
+  padding: 20px;
+}
+.profile-header h1 {
+  color: #007bff;
+  letter-spacing: 1.5px;
+}
+.profile-header p {
+  font-size: 1.2rem;
+  color: #666;
+  margin-top: 10px;
+}
+
+.scroll {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  margin: 0 auto;
+  border: none;
+  border-radius: 8px;
+}
+
+.scroll-images {
+  display: flex;
+  gap: 10px;
+  animation: scroll-left 20s linear infinite;
+  border: none;
+}
+
+.scroll-images img {
+  width: 1200px;
+  height: 800px;
+  border-radius: 8px;
+  border: none;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0); 
+  }
+  100% {
+    transform: translateX(-50%); 
+  }
+}
+
+.btn-lg {
+  font-size: 1.25rem;
+  padding: 12px 24px;
+  border-radius: 30px;
+}
+
+.planning-container {
+  margin: 20px;
+}
+
+.bg-blue {
+  background-color: #cce5ff;
+}
+
+.bg-orange {
+  background-color: #ffeeba;
+}
+
+.bg-red {
+  background-color: #f8d7da;
+}
+
+.slot-popup {
+  display: none;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  position: absolute;
+}
+
+tr:hover .slot-popup {
+  display: block;
+}
+
+.details-container {
+  margin-top: 20px;
+}
+
+.toggle-section {
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.toggle-section h4 {
+  margin: 0;
+}
+
+.toggle-btn {
+  float: right;
+  cursor: pointer;
+}
+
+.children-details,
+.employees-details {
+  display: none;
+}
+
+.toggle-section.open .children-details,
+.toggle-section.open .employees-details {
+  display: block;
+}
+
+.details-hidden {
+  display: none;
+}
+.details-visible {
+  display: block;
+}
+.toggle-button {
+  cursor: pointer;
+  color: blue;
+}
+
+.table-responsive {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; 
+}
+
+.days-container button.active {
+  font-weight: bold;
+}
+
+@media (min-width: 1200px) {
+  .table {
+    max-width: 80%;
+    margin: auto;
+  }
+}
+
+.spa{
+  min-width: 195px;
+}
+
+.details-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 767px) {
+  .details-card .d-flex.flex-column {
+    align-items: flex-start;
+  }
+}
+
+.details-card h4 {
+  font-size: 1.25rem;
+}
+
+.toggle-button {
+  cursor: pointer;
+  color: black;
+}
+
+.toggle-button i {
+  font-size: 1.25rem;
+  transition: transform 0.3s ease;
+}
+
+.details-visible {
+  display: none;
+}
+
+.details-visible.active {
+  display: block;
+}
+
+
+.details-visible .d-flex {
+  gap: 20px;
+}
+
+.details-visible div {
+  padding: 10px 0;
+}
+
+.toggle-button {
+  cursor: pointer;
+  color: #007bff;
+}
+
+.toggle-button i {
+  font-size: 1.25rem;
+}
+
+.shadow-sm {
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline-primary {
+  color: #007bff;
+  border: 2px solid #007bff;
+  background: transparent;
+  margin-right: 1vh;
+  margin-bottom: 1vh;
+}

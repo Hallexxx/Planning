@@ -1,0 +1,122 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f8f9fa;
+}
+
+.notification-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.notification-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.notification-item:not(:last-child) {
+    border-bottom: 1px solid #ddd;
+}
+
+.notification-item:hover {
+    transform: translateX(10px);
+}
+
+.notification-item:hover .delete-icon {
+    display: block;
+}
+
+.delete-icon {
+    /* display: none; */
+    top: 10px;
+    left: -40px;
+    transition: all 0.3s ease;
+}
+
+.notification-item:hover .delete-icon {
+    display: block;
+    left: 10px;
+    color: red;
+}
+
+.notification-item h5 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
+
+.notification-item p {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 400;
+    font-size: 0.95rem;
+}
+
+.notification-list {
+    margin-top: 30px;
+}
+
+.container {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+@media (max-width: 768px) {
+    .notification-item {
+        font-size: 0.9rem;
+    }
+}
+
+.notifications-container {
+    min-height: 80vh;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+.notification-list .notification-item {
+    background: #ffffff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+.notification-list .notification-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+.notification-actions .btn {
+    transition: background-color 0.3s ease;
+}
+.notification-actions .btn:hover {
+    background-color: #dc3545;
+    color: #fff;
+}
+.no-notifications {
+    background: #fff;
+    border: 2px dashed #dee2e6;
+    border-radius: 10px;
+}
+.no-notifications h3 {
+    font-weight: 600;
+}
+
+.notification-content p {
+    max-width: 385px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .notification-list {
+        text-align: center;
+    }
+    .notification-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    .notification-actions .form-check,
+    .notification-actions button {
+        margin-bottom: 10px;
+    }
+}
+
+.notification-item.read {
+    background-color: #f0f0f0;
+    opacity: 0.8;
+}

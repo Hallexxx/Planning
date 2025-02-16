@@ -1,47 +1,227 @@
 <nav class="navbar navbar-expand-lg bg-light shadow-sm py-3">
     <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="/" style="font-family: 'Pacifico', cursive;">
-        Micro-Crèche
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto align-items-center">
-          <% if (user) { %>
-            <li class="nav-item d-flex align-items-center">
-              <a href="/profile">
-                <img src="/media/user.png" alt="User" class="rounded-circle" style="width: 50px; height: 50px;">
-              </a>
-              <span class="fw-semibold" style="font-family: 'Poppins', sans-serif; color: #007bff;">
-                <%= user.prenom %> <%= user.nom %>
-              </span>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link nav-hover" href="/planning">Planning</a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="/planning/child">Planning des enfants</a></li>
-                    <li><a class="dropdown-item" href="/planning/employee">Planning des employés</a></li>
-                </ul>
-            </li>  
-            <li class="nav-item"><a class="nav-link nav-hover" href="/employee">Employés</a></li>
-            <li class="nav-item"><a class="nav-link nav-hover" href="/child">Enfants</a></li>
-            <li class="nav-item">
-              <a class="btn btn-logout" href="/auth/logout">Déconnexion</a>
-            </li>
-          <% } else { %> 
-            <li class="nav-item">
-              <a class="btn btn-outline-primary me-2 btn-animated" href="/auth/signup/employe">Créer un compte Employé</a>
-            </li>
-            <li class="nav-item">
-              <a class="btn btn-outline-primary me-2 btn-animated" href="/auth/signup/pro">Créer un compte Pro</a>
-            </li>
-            <li class="nav-item">
-              <a class="btn btn-primary btn-animated" href="/auth/login">Connexion</a>
-            </li>
-          <% } %>
-        </ul>
-      </div>
+        <a class="navbar-brand fw-bold" href="/" style="font-family: 'Pacifico', cursive;">Planète-Crèche</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <% if (user) { %>
+                    <li class="nav-item position-relative me-3">
+                        <a href="javascript:void(0);" id="notificationIcon" class="nav-link position-relative">
+                            <i class="bi bi-bell" style="font-size: 1.5rem;"></i>
+                            <% 
+                                var unreadNotifications = notifications ? notifications.filter(function(n) { return n.read === false; }) : []; 
+                                if (unreadNotifications.length > 0) { 
+                            %>
+                                <span id="notificationBadge" class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle">
+                                <%= unreadNotifications.length %>
+                                </span>
+                            <% } %>
+                        </a>
+                        <div id="notificationPopup" class="dropdown-menu shadow-lg p-3 notification-popup fade-animation" style="display: none; width: 320px;">
+                            <div class="w-100">
+                                <% if (unreadNotifications.length > 0) { %>
+                                    <% unreadNotifications.slice(0, 3).forEach(function(notification) { %>
+                                        <div class="d-flex align-items-center justify-content-between notification-item mb-2 p-2 border-bottom" style="cursor: pointer;">
+                                            <div class="flex-grow-1" onclick="window.location.href='/alert';">
+                                                <strong class="notification-title"><%= notification.title %></strong>
+                                                <p class="mb-0 notification-description"><%= notification.description %></p>
+                                            </div>
+                                            <div class="notification-actions text-center">
+                                                <input type="checkbox" class="mark-read-checkbox mb-1" data-id="<%= notification._id %>" title="Marquer comme lue" style="width: 16px; height: 16px;">
+                                                <button class="btn btn-sm btn-outline-danger delete-notification" data-id="<%= notification._id %>" style="font-size: 0.8rem; padding: 0.2rem 0.4rem;">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    <% }); %>
+                                <% } else { %>
+                                    <p class="text-center mb-0">Aucune nouvelle notification</p>
+                                <% } %>
+                            </div>
+                            <a href="/alert" class="btn btn-link w-100 text-center">Voir toutes les notifications</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/profile" id="userIcon" class="nav-link">
+                        <img src="/media/user.png" alt="User" class="rounded-circle" style="width: 50px; height: 50px;">
+                        </a>
+                    </li>
+                    <% if (user.role === "pro") { %>
+                        <li class="nav-item menu-deroulant">
+                            <a class="nav-link nav-hover" href="#">Planning</a>
+                            <ul class="sous">
+                                <li><a class="dropdown-item" href="/planning/child">Planning des enfants</a></li>
+                                <li><a class="dropdown-item" href="/planning/employee">Planning des employés</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link nav-hover" href="/employee">Employés</a></li>
+                        <li class="nav-item"><a class="nav-link nav-hover" href="/child">Enfants</a></li>
+                    <% } else if (user.role === "employe") { %>
+                        <li class="nav-item"><a class="nav-link nav-hover" href="/employee/my-details">Status Employer</a></li>
+                        <li class="nav-item menu-deroulant">
+                          <a class="nav-link nav-hover" href="/planning/employee">Planning</a>
+                          <ul class="sous">
+                            <li><a class="dropdown-item" href="/planning/employee">Votre Planning</a></li>
+                            <li><a class="dropdown-item" href="/planning/child">Planning Enfant</a></li>
+                          </ul>
+                        </li>
+                    <% } %>
+                    <li class="nav-item">
+                        <a class="btn btn-logout" href="/auth/logout">Déconnexion</a>
+                    </li>
+                <% } else { %>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary me-2 btn-animated" href="/auth/signup/employe">Créer un compte Employé</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary me-2 btn-animated" href="/auth/signup/employe?role=pro">Créer un compte Pro</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary btn-animated" href="/auth/login">Connexion</a>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
     </div>
-  </nav>
+</nav>
+  
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const notificationIcon = document.getElementById('notificationIcon');
+      const notificationPopup = document.getElementById('notificationPopup');
+  
+      // Afficher/cacher le popup lors du clic sur l'icône de notifications
+      if (notificationIcon) {
+        notificationIcon.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if (notificationPopup.style.display === 'none' || notificationPopup.style.display === '') {
+            notificationPopup.style.display = 'block';
+            notificationPopup.classList.add('show');
+          } else {
+            notificationPopup.style.display = 'none';
+            notificationPopup.classList.remove('show');
+          }
+        });
+      }
+  
+      // Fermer le popup si on clique ailleurs
+      document.addEventListener('click', function() {
+        if (notificationPopup) {
+          notificationPopup.style.display = 'none';
+          notificationPopup.classList.remove('show');
+        }
+      });
+  
+      // Prévenir la fermeture du popup quand on clique dedans
+      if (notificationPopup) {
+        notificationPopup.addEventListener('click', function(e) {
+          e.stopPropagation();
+        });
+      }
+  
+      // Gestion du marquage comme lu via la checkbox
+      const markReadCheckboxes = document.querySelectorAll('.mark-read-checkbox');
+      markReadCheckboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', function(e) {
+          const notificationId = this.getAttribute('data-id');
+          if (this.checked) {
+            // Appel vers la route pour marquer comme lu
+            fetch(`/notifications/${notificationId}/read`, { method: 'POST' })
+              .then(response => {
+                if (response.ok) {
+                  Swal.fire({
+                    position: 'bottom-end',
+                    icon: 'success',
+                    title: 'Notification marquée comme lue',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    toast: true
+                  });
+                  // Retirer l'élément du DOM
+                  const notificationItem = this.closest('.notification-item');
+                  if (notificationItem) {
+                    notificationItem.remove();
+                  }
+                  // Mettre à jour le badge de notifications
+                  let badge = document.querySelector('#notificationIcon .badge');
+                  if (badge) {
+                    let count = parseInt(badge.innerText);
+                    count = count - 1;
+                    if (count <= 0) {
+                      badge.remove();
+                    } else {
+                      badge.innerText = count;
+                    }
+                  }
+                } else {
+                  Swal.fire('Erreur', 'Erreur lors du marquage.', 'error');
+                }
+              })
+              .catch(error => {
+                console.error(error);
+                Swal.fire('Erreur', 'Erreur lors du marquage.', 'error');
+              });
+          }
+        });
+      });
+  
+      // Gestion de la suppression des notifications
+      const deleteButtons = document.querySelectorAll('.delete-notification');
+      deleteButtons.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation(); // Ne pas déclencher le clic sur la notification
+          const notificationId = this.getAttribute('data-id');
+  
+          Swal.fire({
+            title: 'Supprimer la notification ?',
+            text: "Êtes-vous sûr de vouloir supprimer cette notification ?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Oui, supprimer !',
+            cancelButtonText: 'Annuler'
+          }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/notifications/${notificationId}/delete`, { method: 'DELETE' })
+                .then(response => {
+                  if (response.ok) {
+                    Swal.fire({
+                      position: 'bottom-end',
+                      icon: 'success',
+                      title: 'Notification supprimée avec succès',
+                      showConfirmButton: false,
+                      timer: 1500,
+                      toast: true
+                    });
+                    const notificationItem = btn.closest('.notification-item');
+                    if (notificationItem) {
+                      notificationItem.remove();
+                    }
+                    // Mise à jour du badge
+                    let badge = document.querySelector('#notificationIcon .badge');
+                    if (badge) {
+                      let count = parseInt(badge.innerText);
+                      count = count - 1;
+                      if (count <= 0) {
+                        badge.remove();
+                      } else {
+                        badge.innerText = count;
+                      }
+                    }
+                  } else {
+                    Swal.fire('Erreur', 'Une erreur est survenue lors de la suppression.', 'error');
+                  }
+                })
+                .catch(error => {
+                  console.error(error);
+                  Swal.fire('Erreur', 'Une erreur est survenue lors de la suppression.', 'error');
+                });
+            }
+          });
+        });
+      });
+    });
+  </script>
   

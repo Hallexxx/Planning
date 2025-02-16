@@ -106,6 +106,9 @@ body {
 #block7 {
     background-image: url('../media/enfants.jpg');
 }
+#block8 {
+  background-image: url('../media/plann.png');
+}
 #planning h2 {
   text-align: center;
   margin-top: 3rem;
@@ -133,9 +136,9 @@ body {
   justify-content: center; 
   text-align: center;
   overflow: hidden;
-  text-overflow: ellipsis; /* Ajouter "..." si le texte dépasse */
-  white-space: normal; /* Permettre au texte de s'étendre sur plusieurs lignes */
-  word-wrap: break-word; /* Casser les mots longs pour éviter le débordement */
+  text-overflow: ellipsis; 
+  white-space: normal;
+  word-wrap: break-word;
 }
 .carousel-item {
   transition: transform 0.5s ease-in-out;
@@ -152,7 +155,7 @@ body {
   overflow: visible; 
   border-radius: 15px;
   margin-top: 20px;
-  width: 105%; 
+  width: 100%; 
 }
 
 .table {
@@ -335,3 +338,353 @@ th:nth-child(n+2) {
   display: flex;
 }
 
+.profile-header {
+  margin: 20px auto;
+  text-align: center;
+  padding: 20px;
+}
+.profile-header h1 {
+  color: #007bff;
+  letter-spacing: 1.5px;
+}
+.profile-header p {
+  font-size: 1.2rem;
+  color: #666;
+  margin-top: 10px;
+}
+
+.scroll {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  margin: 0 auto;
+  border: none;
+  border-radius: 8px;
+}
+
+.scroll-images {
+  display: flex;
+  gap: 10px;
+  animation: scroll-left 20s linear infinite;
+  border: none;
+}
+
+.scroll-images img {
+  width: 1200px;
+  height: 800px;
+  border-radius: 8px;
+  border: none;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0); 
+  }
+  100% {
+    transform: translateX(-80%); 
+  }
+}
+
+.btn-lg {
+  font-size: 1.25rem;
+  padding: 12px 24px;
+  border-radius: 30px;
+}
+
+.planning-container {
+  margin: 20px;
+}
+
+.bg-blue {
+  background-color: #cce5ff;
+}
+
+.bg-orange {
+  background-color: #ffeeba;
+}
+
+.bg-red {
+  background-color: #f8d7da;
+}
+
+.slot-popup {
+  display: none;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  position: absolute;
+}
+
+tr:hover .slot-popup {
+  display: block;
+}
+
+.details-container {
+  margin-top: 20px;
+}
+
+.toggle-section {
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.toggle-section h4 {
+  margin: 0;
+}
+
+.toggle-btn {
+  float: right;
+  cursor: pointer;
+}
+
+.children-details,
+.employees-details {
+  display: none;
+}
+
+.toggle-section.open .children-details,
+.toggle-section.open .employees-details {
+  display: block;
+}
+
+
+.details-hidden {
+  display: none;
+}
+.details-visible {
+  display: block;
+}
+.toggle-button {
+  cursor: pointer;
+  color: blue;
+}
+
+.table-responsive {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; 
+}
+
+.days-container button.active {
+  font-weight: bold;
+}
+
+@media (min-width: 1200px) {
+  .table {
+    max-width: 80%;
+    margin: auto;
+  }
+}
+
+.spa{
+  min-width: 195px;
+}
+
+.details-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 767px) {
+  .details-card .d-flex.flex-column {
+    align-items: flex-start;
+  }
+}
+
+.details-card h4 {
+  font-size: 1.25rem;
+}
+
+.toggle-button {
+  cursor: pointer;
+  color: black;
+}
+
+.toggle-button i {
+  font-size: 1.25rem;
+  transition: transform 0.3s ease;
+}
+
+.details-visible {
+  display: none;
+}
+
+.details-visible.active {
+  display: block;
+}
+
+
+.details-visible .d-flex {
+  gap: 20px;
+}
+
+.details-visible div {
+  padding: 10px 0;
+}
+
+.toggle-button {
+  cursor: pointer;
+  color: #007bff;
+}
+
+.toggle-button i {
+  font-size: 1.25rem;
+}
+
+.shadow-sm {
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.floating-chat {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  width: 50px;
+  height: 50px;
+  background: #0AD5C1;
+  border-radius: 50%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-evenly;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 100;
+  flex-direction: row;
+}
+
+.mes {
+  font-size: 24px;
+  color: white;
+  position: absolute;
+  left: 12px;
+  top: 8px;
+}
+
+.floating-chat.expanded {
+  width: 350px;
+  height: auto;
+  max-height: 450px;
+  border-radius: 10px;
+}
+
+.floating-chat.expanded .chat {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  transition: all 0.3s ease;
+}
+
+.croix{
+  font-size: 24px;
+  color: white;
+  position: absolute;
+  right: 28px;
+  top: 33px;
+}
+
+.chat {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.9);
+  transition: all 0.3s ease;
+  background-color: #2c3e50;  
+  color: white;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.chat .header {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  background: #34495e;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.chat .header span.title {
+  font-size: 18px;
+  color: white;
+}
+
+.chat .contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+
+.chat .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat .form-group label {
+  font-size: 14px;
+  color: #ddd;
+}
+
+.chat .form-group input,
+.chat .form-group textarea {
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  background-color: #34495e;
+  color: white;
+}
+
+.chat .form-group input:focus,
+.chat .form-group textarea:focus {
+  outline: none;
+  border-color: #16a085;
+}
+
+.chat button {
+  background: #16a085;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.chat button:hover {
+  background: #1abc9c;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+  font-size: 18px;
+}
+
+.close-btn:hover {
+  color: #16a085;
+}
+
+.floating-chat.expanded .chat {
+  background-color: #2c3e50; 
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  z-index: 50;
+}

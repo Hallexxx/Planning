@@ -3,34 +3,62 @@ body {
     font-family: 'Arial', sans-serif;
 }
 
-.login {
+.login-wrapper {
+    max-width: 900px;
+    margin: 30px auto;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.login-row {
     display: flex;
-    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.login-image {
+    background-color: transparent;
+    display: flex;
     align-items: center;
-    height: 100vh;
-    margin: 0;
+    justify-content: center;
+    min-height: 400px;
 }
 
-.login-container {
-    background: #ffffff;
-    padding: 30px;
+.login-image .img-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.login-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    animation: fadeIn 1s ease-in-out;
 }
 
-h1 {
-    color: #007bff;
-    text-align: center;
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    animation: slideIn 1s ease-out;
+.login-form {
+    background-color: #ffffff;
+    padding: 2rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-form form {
+    width: 100%;
+}
+
+.login-form h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
 }
 
 .form-control {
     border-radius: 20px;
     box-shadow: none;
     transition: all 0.3s;
+    font-size: 1rem;
 }
 
 .form-control:focus {
@@ -38,24 +66,48 @@ h1 {
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.75);
 }
 
-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
+.btn {
     border-radius: 50px;
-    padding: 10px 20px;
-    width: 100%;
-    transition: all 0.3s ease;
+    padding: 15px 20px;
+    transition: all 0.3s;
+    font-size: 1.1rem;
 }
 
-button:hover {
-    background-color: #0056b3;
+.form-check-input {
+    margin-top: 0 !important;
+    vertical-align: middle;
+}
+
+.form-check-label {
+    vertical-align: middle;
+}
+
+.btn:hover {
     transform: translateY(-3px);
     box-shadow: 0 5px 10px rgba(0, 123, 255, 0.4);
 }
 
-button:active {
-    transform: translateY(0);
+@media (max-width: 767.98px) {
+    .login-row {
+        flex-direction: column;
+    }
+    .login-image, .login-form {
+        flex: 1 1 100%;
+        min-height: auto;
+    }
+    .login-image {
+        height: 250px;
+    }
+    .login-form {
+        padding: 1.5rem;
+    }
+}
+
+.remember-forgot {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
 }
 
 .error-message {
@@ -66,7 +118,6 @@ button:active {
     animation: fadeIn 1s ease-out;
 }
 
-/* Animations */
 @keyframes fadeIn {
     0% { opacity: 0; }
     100% { opacity: 1; }

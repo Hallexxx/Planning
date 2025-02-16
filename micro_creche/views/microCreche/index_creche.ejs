@@ -1,42 +1,53 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liste des Micro-Crèches</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Quicksand:wght@400;500&family=Pacifico&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/microcreche/index.css">
-    <link rel="stylesheet" href="/css/partials/navbar.css">
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Liste des Micro-Crèches</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Quicksand:wght@400;500&family=Pacifico&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/microcreche/index.css">
+        <link rel="stylesheet" href="/css/partials/navbar.css">
+        <link rel="stylesheet" href="/css/partials/footer.css">
+        <script src="../js/microcreche.js"></script>
+        <link rel="icon" href="/media/logoo.png" type="image/x-icon">
+    </head>
+    <body>
 
-    <%- include("../partials/navbar") %>
-    
-    <div class="container py-5">
-        <div class="profile-header text-center">
-            <h1>Toutes vos Micro-Crèche</h1>
-            <p>Consultez toutes les micro-crèches que vous avez créées. Vous pouvez accéder à chaque micro-crèche pour voir plus de détails.</p>
-        </div>
-        <div class="row">
-            <% microCreches.forEach(microCreche => { %>
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="microcreche-bg"></div>
-                        <div class="card-body text-center">
-                            <h5 class="card-title"><%= microCreche.name %></h5>
-                            <p class="card-text"><%= microCreche.address %></p>
-                            <a href="/micro-creche/<%= microCreche._id %>" class="btn btn-primary">Voir les détails</a>
+        <%- include("../partials/navbar") %>
+        
+        <div class="container py-5">
+            <div class="profile-header text-center">
+                <h1>Toutes vos Micro-Crèche</h1>
+                <p>Consultez toutes les micro-crèches que vous avez créées. Vous pouvez accéder à chaque micro-crèche pour voir plus de détails.</p>
+            </div>
+            <div class="row mt-5">
+                <% microCreches.forEach(microCreche => { %>
+                    <div class="col-md-4">
+                        <div class="card-wrapper mb-3 microCreche-card" data-id="<%= microCreche._id %>">
+                            <div class="card mb-4" data-name="<%= microCreche.name.toLowerCase() %>" data-microcreche="<%= microCreche._id %>">
+                                <div class="microcreche-bg"></div>
+                                <div class="card-body text-center">
+                                    <h5 class="card-title"><%= microCreche.name %></h5>
+                                    <p class="card-text"><%= microCreche.address %></p>
+                                    <a href="/micro-creche/<%= microCreche._id %>" class="btn btn-primary">Voir les détails</a>
+                                </div>
+                            </div>
+                            <div class="delete-btn-container">
+                                <div class="delete-btn">
+                                    <i class="fas fa-trash-alt"></i>
+                                </div>
+                            </div> 
                         </div>
                     </div>
-                </div>
-            <% }) %>
+                <% }) %>
+            </div>
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+        <%- include("../partials/footer") %>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
 </html>

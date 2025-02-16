@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGV - Planète Crèche</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/partials/navbar.css">
+    <link rel="stylesheet" href="/css/partials/footer.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Quicksand:wght@400;500&family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="icon" href="/media/logoo.png" type="image/x-icon">
+    <style>
+
+        h1, h2 {
+            color: #007bff;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        h2 {
+            margin-top: 30px;
+            font-size: 24px;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background: #f39c12;
+            margin-top: 10px;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        ul li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        ul li::before {
+            content: '✔';
+            position: absolute;
+            left: 0;
+            color: #007bff;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        /* Animations */
+        .container {
+            animation: fadeInUp 1s ease-out;
+        }
+
+        h1, h2, p, ul {
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include("../partials/navbar") %>
+
+    <section>
+        <div class="container">
+            <h2>1. Objet</h2>
+            <p>Les présentes Conditions Générales de Vente (CGV) régissent la vente de services proposés par Planète Crèche. En accédant à nos services, vous acceptez nos termes et conditions.</p>
+            
+            <h2>2. Accès aux services</h2>
+            <p>Les services proposés sont accessibles après une inscription gratuite. La création d'un compte utilisateur est obligatoire pour accéder à toutes les fonctionnalités.</p>
+            
+            <h2>3. Tarifs et paiement</h2>
+            <p>Les tarifs des services sont clairement affichés sur notre site. Les paiements sécurisés peuvent être effectués via carte bancaire ou autres moyens proposés.</p>
+            
+            <h2>4. Abonnement et résiliation</h2>
+            <p>Les utilisateurs peuvent souscrire à un abonnement mensuel ou annuel. La résiliation peut être effectuée à tout moment via votre espace utilisateur, sans frais supplémentaires.</p>
+            
+            <h2>5. Responsabilité</h2>
+            <p>Planète Crèche décline toute responsabilité en cas d'utilisation non conforme de nos services. Les interruptions de service planifiées seront annoncées à l'avance.</p>
+            
+            <h2>6. Modifications des services</h2>
+            <p>Nous nous réservons le droit de modifier nos services pour améliorer l'expérience utilisateur. Les utilisateurs seront notifiés en cas de modifications importantes.</p>
+            
+            <h2>7. Confidentialité et données personnelles</h2>
+            <p>Vos données personnelles sont protégées conformément à notre <a href="/privacy">Politique de confidentialité</a>. Nous ne partageons aucune donnée sans votre consentement explicite.</p>
+            
+            <h2>8. Loi applicable et résolution des litiges</h2>
+            <p>Les présentes CGV sont régies par la loi française. En cas de litige, nous encourageons une résolution à l'amiable avant tout recours judiciaire.</p>
+        </div>
+    </section>
+
+    
+
+    <%- include("../partials/footer") %>
+</body>
+</html>

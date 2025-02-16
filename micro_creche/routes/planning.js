@@ -1,15 +1,13 @@
 const express = require("express");
-const { getChildPlannings, getEmployeePlannings,  generatePDF} = require("../controllers/planningController");
+const { getChildPlannings, getEmployeePlannings} = require("../controllers/planningController");
 const { authMiddleware, authenticateUser } = require("../middleware/authMiddleware");
+const { isEmployer } = require("../middleware/employeurMiddleware");
+const { checkEmployeeOwnership } = require("../middleware/employeurMiddleware");
 
 const router = express.Router();
 
-// Route pour afficher les plannings des enfants
-router.get("/child", authenticateUser, getChildPlannings);
+router.get("/child", checkEmployeeOwnership, getChildPlannings);
 
-// Route pour afficher les plannings des employés
-router.get("/employee", authenticateUser, getEmployeePlannings);
-
-// router.get('/generate-pdf', generatePDF);
+router.get("/employee", checkEmployeeOwnership, getEmployeePlannings);
 
 module.exports = router;

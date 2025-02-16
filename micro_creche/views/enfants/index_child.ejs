@@ -1,40 +1,95 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Liste des Micro-Crèches</title>
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Quicksand:wght@400;500&family=Pacifico&display=swap" rel="stylesheet">
-      <link rel="stylesheet" href="/css/enfant/index.css">
-      <link rel="stylesheet" href="/css/partials/navbar.css">
-  </head>
-  <body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Liste des Micro-Crèches</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Quicksand:wght@400;500&family=Pacifico&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+        <link rel="stylesheet" href="/css/enfant/index.css">
+        <link rel="stylesheet" href="/css/partials/navbar.css">
+        <link rel="stylesheet" href="/css/partials/footer.css">
+        <script src="../js/enfant.js"></script>
+        <link rel="icon" href="/media/logoo.png" type="image/x-icon">
+    </head>
+    <body>
+        <%- include("../partials/navbar") %>
 
-      <%- include("../partials/navbar") %>
-      
-      <div class="container py-5">
-        <div class="profile-header text-center">
-          <h1>Toutes vos Micro-Crèches</h1>
-          <p>Consultez toutes les micro-crèches que vous avez créées. Vous pouvez accéder à chaque micro-crèche pour voir plus de détails.</p>
-        </div>
-        <div class="row">
-          <% children.forEach(child => { %>
-            <div class="col-md-4">
-              <div class="card mb-4">
-                <div class="card-body text-center">
-                  <img src="/media/enfant.jpg" alt="Enfant" class="rounded-circle mb-3" 
-                       style="width: 100px; height: 100px; object-fit: cover;">
-                  <h5 class="card-title"><%= child.name %></h5>
-                  <p class="card-text">Né(e) le : <%= new Date(child.dateOfBirth).toLocaleDateString() %></p>
-                  <a href="/child/<%= child._id %>" class="btn btn-secondary">Voir les détails</a>
-                </div>
-              </div>
+        <div class="container py-5">
+            <div class="profile-header text-center mb-4">
+                <h1>Enfants de vos Micro‑Crèches</h1>
+                <p>
+                    Consultez la liste de tous les enfants associés à vos micro‑crèches.
+                    Vous pouvez rechercher par nom ou filtrer par ordre alphabétique ou par micro‑crèche.
+                </p>
             </div>
-          <% }) %>
-        </div>
-      </div>
 
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+            <% if (microCreches.length === 0) { %>
+                <div class="alert alert-warning text-center">
+                    <h3>Vous n'avez pas encore d'enfant ni de micro‑crèche</h3>
+                    <p>Créez une micro‑crèche pour pouvoir en ajouter.</p>
+                    <a href="/microcreche/create" class="btn btn-primary">
+                        Créer une Micro‑Crèche
+                    </a>
+                </div>
+            <% } else if (microCreches.length > 0 && children.length === 0) { %>
+                <div class="alert alert-info text-center">
+                    <h3>Vous n'avez pas encore d'enfant associé à votre ou vos micro‑crèches</h3>
+                    <p>Vous pouvez en ajouter dès maintenant.</p>
+                    <a href="/child/add" class="btn btn-success">
+                        Ajouter un Enfant
+                    </a>
+                </div>
+            <% } else { %>
+                <div class="search-bar-container mb-3">
+                    <div class="search-bar">
+                        <input type="text" id="searchInput" placeholder="Rechercher un enfant par nom..." />
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="filters mt-2">
+                        <select id="filterMicroCreche">
+                            <option value="">Toutes les Micro‑Crèches</option>
+                            <% microCreches.forEach(mc => { %>
+                            <option value="<%= mc._id %>"><%= mc.name %></option>
+                            <% }); %>
+                        </select>
+                        <select id="filterSelect">
+                            <option value="nameAsc">Nom (A-Z)</option>
+                            <option value="nameDesc">Nom (Z-A)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    <% children.forEach(child => { %>
+                        <div class="col-md-4">
+                            <div class="card-wrapper mb-3 child-card" data-id="<%= child._id %>">
+                                <div class="card mb-4" data-name="<%= child.name.toLowerCase() %>" data-microcreche="<%= child.microCreche._id %>">
+                                    <div class="card-body text-center">
+                                        <img src="/media/enfant.jpg" alt="Enfant" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+                                        <h5 class="card-title"><%= child.name %></h5>
+                                        <p class="card-text">
+                                            Né(e) le : <%= new Date(child.dateOfBirth).toLocaleDateString() %>
+                                        </p>
+                                        <a href="/child/<%= child._id %>" class="btn btn-secondary">Voir les détails</a>
+                                    </div>
+                                </div>
+                                <div class="delete-btn-container">
+                                    <div class="delete-btn">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } %>
+        </div>
+
+        <%- include("../partials/footer") %>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
 </html>

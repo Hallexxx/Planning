@@ -1,97 +1,98 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil utilisateur</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Quicksand:wght@400;500&family=Pacifico&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/enfant/details.css">
-    <link rel="stylesheet" href="/css/partials/navbar.css">
-    <script src="../js/enfant.js"></script>
-</head>
-<body>
-    <%- include("../partials/navbar") %>
-    <div class="container py-5">
-        <div class="text-center">
-          <h2>Modification des Informations des Enfants</h2>
-          <p>Vous pouvez modifier les informations personnelles des enfants en cliquant sur les champs à modifier.</p>
-        </div>
-      
-        <div class="row mt-5">
-            <div class="col-lg-8">
-                <div class="card" data-child-id="<%= child._id %>">
-                    <div class="card-header">
-                        <h5>Informations de l'Enfant</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="profile-details">
-                            <div class="editable" id="edit-child-name" data-field="name">
-                                <strong>Nom :</strong> <span class="field-value"><%= child.name %></span>
-                                <i class="fas fa-edit edit-icon"></i>
-                            </div>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Profil utilisateur</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Quicksand:wght@400;500&family=Pacifico&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+        <link rel="stylesheet" href="/css/enfant/details.css">
+        <link rel="stylesheet" href="/css/partials/navbar.css">
+        <link rel="stylesheet" href="/css/partials/footer.css">
+        <script src="../js/enfant.js"></script>
+        <link rel="icon" href="/media/logoo.png" type="image/x-icon">
+    </head>
+    <body>
+        <%- include("../partials/navbar") %>
+        <div class="container py-5">
+            <div class="profile-header text-center">
+                <h1>Modification des Informations des Enfants</h1>
+                <p>Consultez les informations personnelles de votre enfants. Vous pouvez modifier les informations personnelles en cliquant sur les champs à modifier.</p>
+            </div>
+        
+            <div class="row mt-5">
+                <div class="col-lg-8">
+                    <div class="card" data-child-id="<%= child._id %>">
+                        <div class="card-header">
+                            <h5>Informations de l'Enfant</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="profile-details">
+                                <div class="editable" id="edit-child-name" data-field="name">
+                                    <strong>Nom :</strong> <span class="field-value"><%= child.name %></span>
+                                    <i class="fas fa-edit edit-icon"></i>
+                                </div>
 
-                            <div class="separator"></div>
-                            <div class="editable" id="edit-child-dob" data-field="dateOfBirth">
-                                <strong>Date de Naissance :</strong>
-                                <span class="field-value"><%= child.dateOfBirth.toISOString().split("T")[0] %></span>
-                                <i class="fas fa-edit edit-icon"></i>
-                            </div>
+                                <div class="separator"></div>
+                                <div class="editable" id="edit-child-dob" data-field="dateOfBirth">
+                                    <strong>Date de Naissance :</strong>
+                                    <span class="field-value"><%= child.dateOfBirth.toISOString().split("T")[0] %></span>
+                                    <i class="fas fa-edit edit-icon"></i>
+                                </div>
 
-                            <div class="separator"></div>
-                            <div class="editable" id="edit-horaires-lundi" data-field="horaires.lundi">
-                                <strong>Lundi :</strong>
-                                <span class="field-value">
-                                <%= child.horaires.lundi || "Non renseigné" %>
-                                </span>
-                                <i class="fas fa-edit edit-icon"></i>
+                                <div class="separator"></div>
+                                <div class="editable" id="edit-horaires-lundi" data-field="horaires.lundi">
+                                    <strong>Lundi :</strong>
+                                    <span class="field-value">
+                                    <%= child.horaires.lundi || "Non renseigné" %>
+                                    </span>
+                                    <i class="fas fa-edit edit-icon"></i>
+                                </div>
+                                <div class="separator"></div>
+                                <div class="editable" id="edit-horaires-mardi" data-field="horaires.mardi">
+                                    <strong>Mardi :</strong>
+                                    <span class="field-value"><%= child.horaires.mardi || "Non renseigné" %></span>
+                                    <i class="fas fa-edit edit-icon"></i>
+                                </div>
+                                
+                                <div class="separator"></div>
+                                <div class="editable" id="edit-horaires-mercredi" data-field="horaires.mercredi">
+                                    <strong>Mercredi :</strong>
+                                    <span class="field-value"><%= child.horaires.mercredi || "Non renseigné" %></span>
+                                    <i class="fas fa-edit edit-icon"></i>
+                                </div>
+                                
+                                <div class="separator"></div>
+                                <div class="editable" id="edit-horaires-jeudi" data-field="horaires.jeudi">
+                                    <strong>Jeudi :</strong>
+                                    <span class="field-value"><%= child.horaires.jeudi || "Non renseigné" %></span>
+                                    <i class="fas fa-edit edit-icon"></i>
+                                </div>
+                                
+                                <div class="separator"></div>
+                                <div class="editable" id="edit-horaires-vendredi" data-field="horaires.vendredi">
+                                    <strong>Vendredi :</strong>
+                                    <span class="field-value"><%= child.horaires.vendredi || "Non renseigné" %></span>
+                                    <i class="fas fa-edit edit-icon"></i>
+                                </div>
                             </div>
-                            <div class="separator"></div>
-                            <div class="editable" id="edit-horaires-mardi" data-field="horaires.mardi">
-                                <strong>Mardi :</strong>
-                                <span class="field-value"><%= child.horaires.mardi || "Non renseigné" %></span>
-                                <i class="fas fa-edit edit-icon"></i>
-                            </div>
-                            
-                            <div class="separator"></div>
-                            <div class="editable" id="edit-horaires-mercredi" data-field="horaires.mercredi">
-                                <strong>Mercredi :</strong>
-                                <span class="field-value"><%= child.horaires.mercredi || "Non renseigné" %></span>
-                                <i class="fas fa-edit edit-icon"></i>
-                            </div>
-                            
-                            <div class="separator"></div>
-                            <div class="editable" id="edit-horaires-jeudi" data-field="horaires.jeudi">
-                                <strong>Jeudi :</strong>
-                                <span class="field-value"><%= child.horaires.jeudi || "Non renseigné" %></span>
-                                <i class="fas fa-edit edit-icon"></i>
-                            </div>
-                            
-                            <div class="separator"></div>
-                            <div class="editable" id="edit-horaires-vendredi" data-field="horaires.vendredi">
-                                <strong>Vendredi :</strong>
-                                <span class="field-value"><%= child.horaires.vendredi || "Non renseigné" %></span>
-                                <i class="fas fa-edit edit-icon"></i>
-                            </div>
-                              
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-4 text-center">
-                <div class="profile-image mt-5">
-                    <img src="/media/enfant.jpg" alt="<%= child.name %>" class="img-fluid rounded-circle" style="width: 250px;height: 250px;object-fit: cover;margin-bottom: 2vh;">
-                    <h5><%= child.name %></h5>
-                    <p><%= child.dateOfBirth.toISOString().split("T")[0] %></p>
+                <div class="col-lg-4 text-center">
+                    <div class="profile-image mt-5">
+                        <img src="/media/enfant.jpg" alt="<%= child.name %>" class="img-fluid rounded-circle" style="width: 250px;height: 250px;object-fit: cover;margin-bottom: 2vh;">
+                        <h5><%= child.name %></h5>
+                        <p><%= child.dateOfBirth.toISOString().split("T")[0] %></p>
+                    </div>
                 </div>
             </div>
         </div>
-      
-         <!-- Section Image Employé -->
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+        <%- include("../partials/footer") %>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
 </html>

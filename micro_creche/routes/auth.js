@@ -1,32 +1,47 @@
-// /routes/auth.js
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
 
 router.get("/signup/employe", (req, res) => {
-    res.render("signup/signup_employe", { user: req.user || null });  // Page de formulaire pour les employés
+  const token = req.query.token || null;
+  const message = req.query.message || null;
+    res.render("signup/signup_employe", { message,token,user: req.user || null }); 
 });
 
-// Route pour afficher le formulaire d'inscription pour les professionnels
 router.get("/signup/pro", (req, res) => {
-res.render("signup/signup_pro", { user: req.user || null });  // Page de formulaire pour les professionnels
+  const token = req.query.token || null;
+  const message = req.query.message || null;
+  res.render("signup/signup_pro", { message,token,user: req.user || null }); 
 });
 
-// Route pour traiter l'inscription
 router.post("/signup", userController.signup);
 
-// Route pour afficher le formulaire de connexion
 router.get("/login", (req, res) => {
   const message = req.query.message || null;
-  res.render("login/login", { message, user: req.user || null });
+  const token = req.query.token || null;
+  const employeeId = req.query.employeeId || "";
+  res.render("login/login", { message, token, employeeId, user: req.user || null });
 });
+
+router.post("/login", userController.login);
 
 router.get("/logout", (req, res) => {
-  res.clearCookie("auth_token"); // Supprime le cookie contenant le token
-  res.redirect("/"); // Redirige vers la page d'accueil
+  res.clearCookie("auth_token");
+  res.redirect("/");
 });
 
-// Route pour traiter la connexion
-router.post("/login", userController.login);
+router.get('/forgot-password', (req, res) => {
+  res.render('login/forgot-password', { message: null, user: req.user || null });
+});
+
+router.post('/forgot-password', userController.forgotPassword);
+
+router.get('/reset-password', (req, res) => {
+  const { token } = req.query;
+  res.render('login/reset-password', { token, message: null, user: req.user || null });
+});
+
+router.post('/reset-password', userController.resetPassword);
+
 
 module.exports = router;

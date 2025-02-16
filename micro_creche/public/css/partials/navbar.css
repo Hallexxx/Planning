@@ -1,6 +1,6 @@
 body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #f9f9f9;
+  font-family: 'Poppins', sans-serif;
+  /* background-color: #f9f9f9; */
 }
 
 .navbar {
@@ -15,7 +15,6 @@ nav.navbar .nav-link, nav.navbar .navbar-brand {
   color: black !important;
   font-weight: bold;
 }
-
 
 .navbar:hover {
   background-color: rgba(0, 123, 255, 0.05);
@@ -50,7 +49,6 @@ nav.navbar .nav-link, nav.navbar .navbar-brand {
 .nav-hover a {
   color: black;
 }
-
 
 .nav-hover:hover::after {
   width: 100%;
@@ -103,15 +101,8 @@ nav.navbar .nav-link, nav.navbar .navbar-brand {
   box-shadow: 0px 4px 10px rgba(220, 53, 69, 0.3);
 }
 
-.dropdown-menu {
-  position: absolute;
-  top: 100%; 
-  left: 0;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  display: none; 
-  min-width: 200px;
-  z-index: 1000; 
+.nav-item {
+  position: relative;
 }
 
 .dropdown-item {
@@ -119,23 +110,171 @@ nav.navbar .nav-link, nav.navbar .navbar-brand {
   text-decoration: none;
   color: #000;
   display: block;
+  position: relative;  
 }
 
-.dropdown-item:hover {
-  background-color: #f0f0f0;
-}
-
-.nav-item .dropdown-menu {
+.dropdown-item:hover::after {
+  content: "";
   position: absolute;
-  top: 100%;
-  display: none;
-  opacity: 0;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  visibility: hidden;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #007bff;
+  transition: width 0.3s ease-in-out;
 }
 
-.nav-item:hover .dropdown-menu {
+.menu-deroulant {
+  position: relative;
+}
+
+.sous {
+  position: absolute;
+  top: 115%;
+  left: 0;
+  width: max-content;
+  max-height: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: white; 
+  transition: max-height 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.sous li {
+  list-style: none;
+  margin: 1vh 0 0 0;
+}
+
+.menu-deroulant:hover > .sous {
+  max-height: 50em;  
+  transition: max-height 0.3s ease-in-out;
+}
+
+.menu-deroulant .nav-hover {
+  position: relative;
+  font-weight: 500;
+  transition: color 0.3s ease-in-out;
+}
+
+#userDropdown {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  min-width: 200px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.notifications-content {
+  display: none;
+  margin-top: 10px;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  transition: transform 0.3s ease-in-out;
+}
+
+.notifications-content.active {
   display: block;
+  animation: slideIn 0.5s ease forwards;
+}
+
+.notification-item {
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+#notificationBtn:hover {
+  color: #007bff;
+}
+
+.notifications-content a {
+  text-align: center;
+  display: block;
+  margin-top: 10px;
+}
+
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+      transform: translateY(-10px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+      transform: translateX(100%);
+      opacity: 0;
+  }
+  to {
+      transform: translateX(0);
+      opacity: 1;
+  }
+}
+
+.bi-arrow-right {
+  transform: rotate(90deg);
+  transition: transform 0.3s;
+}
+
+.notifications-content.active + .bi-arrow-right {
+  transform: rotate(0deg);
+}
+
+.badge {
+  font-size: 0.75rem;
+}
+
+#notificationPopup {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.notification-popup {
+  position: absolute;
+  right: 0;
+  top: 120%;
+  width: 350px;           
+  max-height: 400px;      
+  overflow-y: auto;
+  background-color: #fff;
+  z-index: 1050;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.fade-animation {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease-in-out;
+}
+.fade-animation.show {
   opacity: 1;
-  visibility: visible;
+  transform: translateY(0);
+}
+
+.notification-item {
+  border-bottom: 1px solid #777; 
+}
+.notification-title {
+  font-size: 0.9rem;
+}
+.notification-description {
+  font-size: 0.8rem;
 }

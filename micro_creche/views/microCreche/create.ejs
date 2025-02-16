@@ -8,31 +8,37 @@
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Quicksand:wght@400;500&family=Pacifico&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="/css/microcreche/create.css">
         <link rel="stylesheet" href="/css/partials/navbar.css">
+        <link rel="stylesheet" href="/css/partials/footer.css">
+        <link rel="icon" href="/media/logoo.png" type="image/x-icon">
     </head>
     <body>
         <%- include("../partials/navbar") %>
         
-        <div class="form-container">
-            <h1>Créer une micro-crèche</h1>
-            <% if (message) { %>
-                <div class="error-message"><%= message %></div>
-            <% } %>
-            <form action="/micro-creche/create" method="POST">
-                <div class="mb-3">
-                  <label for="name" class="form-label">Nom</label>
-                  <input type="text" name="name" class="form-control" placeholder="Nom de la micro-crèche" required>
-                </div>
-                <div class="mb-3">
-                  <label for="address" class="form-label">Adresse</label>
-                  <input type="text" name="address" class="form-control" placeholder="Adresse complète" required>
-                </div>
-                <div class="mb-3">
-                  <label for="description" class="form-label">Description (facultatif)</label>
-                  <textarea name="description" class="form-control" rows="4" placeholder="Ajoutez une description si nécessaire"></textarea>
-                  <small class="form-text text-muted">Ce champ est facultatif.</small>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Créer</button>
-              </form>              
-        </div>
+        <section class="mt-5 mb-4">
+          <div class="form-container">
+              <h1>Créer une micro-crèche</h1>
+              <% if (message) { %>
+                  <div class="error-message"><%= message %></div>
+              <% } %>
+              <form action="/micro-creche/create" method="POST">
+                  <div class="form-group">
+                      <label for="name" class="form-label">Nom</label>
+                      <input type="text" name="name" class="form-control" placeholder="Nom de la micro-crèche" required>
+                  </div>
+                  <div class="form-group">
+                      <label for="address" class="form-label">Adresse</label>
+                      <input type="text" name="address" class="form-control" placeholder="Adresse complète" required>
+                  </div>
+                  <div class="form-group">
+                      <label for="description" class="form-label">Description (facultatif)</label>
+                      <textarea name="description" class="form-control" rows="4" placeholder="Ajoutez une description si nécessaire"></textarea>
+                      <small class="form-text">Ce champ est facultatif.</small>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100">Créer</button>
+              </form>
+          </div>
+        </section>
+      
+        <%- include("../partials/footer") %>
     </body>
 </html>

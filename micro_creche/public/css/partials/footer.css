@@ -1,0 +1,108 @@
+/* Footer */
+#footer {
+    background: linear-gradient(135deg, #222, #333);
+    color: #f8f9fa;
+    padding: 60px 20px;
+    font-family: 'Poppins', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+#footer h5 {
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    color: #f8f9fa;
+    position: relative;
+}
+
+#footer h5::after {
+    content: "";
+    width: 50px;
+    height: 2px;
+    background: #007bff;
+    display: block;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#footer ul {
+    list-style: none;
+    padding: 0;
+}
+
+#footer ul li {
+    margin-bottom: 10px;
+}
+
+#footer ul li a {
+    color: #f8f9fa;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+#footer ul li a:hover {
+    color: #007bff;
+    transform: translateX(5px);
+}
+
+/* Social Icons */
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.social-icons a {
+    color: #f8f9fa;
+    font-size: 1.5rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: #007bff;
+    transform: scale(1.2);
+}
+
+/* Animations */
+#footer h5,
+#footer ul,
+#footer .social-icons {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1s ease forwards;
+    animation-delay: 0.3s;
+}
+
+#footer ul {
+    animation-delay: 0.5s;
+}
+
+#footer .social-icons {
+    animation-delay: 0.7s;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Copyright Section */
+#footer p {
+    margin-top: 30px;
+    font-size: 0.85rem;
+    color: #bbb;
+    animation: fadeIn 1.5s ease-in forwards;
+    opacity: 0;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
