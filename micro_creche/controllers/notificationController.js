@@ -12,36 +12,52 @@ const getNotifications = async (req, res) => {
 
 const toggleReadStatus = async (req, res) => {
     try {
-        if (!req.user || (!req.user._id && !req.user.id)) {
-            console.error("⛔ Utilisateur non authentifié.");
-            return res.status(401).send("Utilisateur non authentifié.");
-        }
-        const notification = await Notification.findById(req.params.id);
-        if (!notification) {
-            console.error("⛔ Notification non trouvée :", req.params.id);
-            return res.status(404).send("Notification non trouvée.");
-        }
-        if (!notification.user) {
-            console.error("⚠️ Notification sans utilisateur associé.");
-            return res.status(500).send("Erreur interne.");
-        }
-        const userId = req.user._id ? req.user._id.toString() : req.user.id.toString();
-        if (notification.user.toString() !== userId) {
-            console.error("⛔ Accès interdit à cette notification.");
-            return res.status(403).send("Accès interdit à cette notification.");
-        }
-        notification.read = !notification.read;
-        await notification.save();
-        const message = notification.read 
-        ? "Notification marquée comme lue." 
+      if (!req.user || (!req.user._id && !req.user.id)) {
+        console.error("⛔ Utilisateur non authentifié.");
+        return res.status(401).json({ error: "Utilisateur non authentifié." });
+      }
+      const notification = await Notification.findById(req.params.id);
+      if (!notification) {
+        console.error("⛔ Notification non trouvée :", req.params.id);
+        return res.status(404).json({ error: "Notification non trouvée." });
+      }
+      const userId = req.user._id ? req.user._id.toString() : req.user.id.toString();
+      if (notification.user.toString() !== userId) {
+        console.error("⛔ Accès interdit à cette notification.");
+        return res.status(403).json({ error: "Accès interdit à cette notification." });
+      }
+      // Bascule du statut
+      notification.read = !notification.read;
+      await notification.save();
+      const message = notification.read
+        ? "Notification marquée comme lue."
         : "Notification n'est plus marquée comme lue.";
-        console.log("✅", message);
-        res.status(200).send(message);
+      console.log("✅", message);
+      res.status(200).json({ read: notification.read, message });
     } catch (error) {
-        console.error("❌ Erreur dans toggleReadStatus :", error);
-        res.status(500).send("Une erreur est survenue lors de la mise à jour.");
+      console.error("❌ Erreur dans toggleReadStatus :", error);
+      res.status(500).json({ error: "Une erreur est survenue lors de la mise à jour." });
     }
 };
+  
+  
+  const markAllAsRead = async (req, res) => {
+    try {
+      if (!req.user || !req.user.id) {
+        return res.status(401).send("Utilisateur non authentifié.");
+      }
+      // Mise à jour en masse : seules les notifications non lues sont modifiées
+      await Notification.updateMany(
+        { user: req.user.id, read: false },
+        { $set: { read: true } }
+      );
+      res.status(200).send("Toutes les notifications non lues ont été marquées comme lues.");
+    } catch (error) {
+      console.error("❌ Erreur lors de la mise à jour des notifications:", error);
+      res.status(500).send("Une erreur est survenue lors de la mise à jour.");
+    }
+  };
+  
 
 const deleteNotification = async (req, res) => {
     try {
@@ -76,4 +92,4 @@ const deleteNotification = async (req, res) => {
     }
 };
 
-module.exports = { getNotifications, toggleReadStatus, deleteNotification };
+module.exports = { getNotifications, toggleReadStatus, deleteNotification, markAllAsRead };
