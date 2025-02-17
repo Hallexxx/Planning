@@ -24,7 +24,7 @@ exports.addEmployeeAndSendInvitation = async (req, res) => {
 
         await newEmployee.save();
 
-        const invitationUrl = `${process.env.BASE_URL}/invitation/handle?token=${invitationToken}&employeeId=${newEmployee._id}`;
+        const invitationUrl = `https://planning-pbox.onrender.com/invitation/handle?token=${invitationToken}&employeeId=${newEmployee._id}`;
 
         const transporter = nodemailer.createTransport({
             service: "gmail",
@@ -191,7 +191,7 @@ exports.sendInvitation = async (req, res) => {
         employee.invitationExpiration = invitationExpiration;
         await employee.save();
 
-        const invitationUrl = `${process.env.BASE_URL}/invitation/handle?token=${invitationToken}&employeeId=${employee._id}`;
+        const invitationUrl = `https://planning-pbox.onrender.com/invitation/handle?token=${invitationToken}&employeeId=${employee._id}`;
 
         const transporter = nodemailer.createTransport({
             service: "gmail",
