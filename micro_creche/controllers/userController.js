@@ -235,7 +235,7 @@ const forgotPassword = async (req, res) => {
         user.resetPasswordExpires = Date.now() + 3600000; 
         await user.save();
     
-        const resetLink = `${process.env.BASE_URL}/auth/reset-password?token=${token}`;
+        const resetLink = `https://planning-pbox.onrender.com/auth/reset-password?token=${token}`;
   
         const mailOptions = {
             to: user.email,
